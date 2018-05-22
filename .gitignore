@@ -1,0 +1,7 @@
+*.dcu
+*.exe
+*.rsm
+TankBiathlon/__history/
+*.~dsk
+*.local
+*.identcache

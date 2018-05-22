@@ -14,6 +14,16 @@ Var
 
   GWheelDelta : integer = 0; // колесико мыши
 
+  // Данные камеры.
+  CameraSpeed : single;   //  скорость камеры
+  CamViewLen : single;    //  дистанция камеры
+  CamViewDir : TVector;   //  направление
+  CameraMoving : dword;   //  флаги состояние движения камеры
+  const
+    CAM_MOVE_TO_TANKS : dword = $00000001;
+
+
+
 function UpdateTankPoligon( SceneName: PAnsiChar;  Flags: dword;  pEvents: PJtpEvent;  FrameTime: single;  pReserve: pointer ) : UInt64;  stdcall;
 
 implementation

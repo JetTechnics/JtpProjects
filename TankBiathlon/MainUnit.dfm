@@ -73,6 +73,16 @@ object MainForm: TMainForm
       TabOrder = 1
       OnClick = ClosePoligonButtonClick
     end
+    object DirectCamButton1: TButton
+      Left = 3
+      Top = 301
+      Width = 57
+      Height = 35
+      Caption = #1053#1072#1074#1077#1089#1090#1080' '#1082#1072#1084#1077#1088#1091' 1'
+      TabOrder = 2
+      WordWrap = True
+      OnClick = DirectCamButton1Click
+    end
   end
   object GroupBox2: TGroupBox
     Left = 8

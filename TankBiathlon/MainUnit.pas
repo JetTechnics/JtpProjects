@@ -22,6 +22,7 @@ type
     GpsPortEdit: TEdit;
     GpsBox: TCheckBox;
     ClosePoligonButton: TButton;
+    DirectCamButton1: TButton;
     procedure StartButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ShowButtonClick(Sender: TObject);
@@ -29,6 +30,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure DirectCamButton1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -87,6 +89,17 @@ begin
   end;
 
   CloseRecords( 0, nil );
+end;
+
+
+
+procedure TMainForm.DirectCamButton1Click(Sender: TObject);
+begin
+  CameraSpeed := 10.0;
+
+  CamViewDir.VSet( 0.0, 1.0, -0.001 );     CamViewLen := 1000.0;
+
+  CameraMoving := CAM_MOVE_TO_TANKS;
 end;
 
 
