@@ -1,0 +1,190 @@
+
+SceneDeclarations:
+{
+	Version: 3.0
+	Name: "Scores"
+
+	Features:  [  ]
+
+	EditCamPoses:
+	{	Top [ 368.81 2312.39 0.00 0.41 ]    Bottom [ 0.00 -20.00 0.00 1.00 ]    Left [ -20.00 0.00 0.00 1.00 ]    Right [ 20.00 0.00 0.00 1.00 ]    
+		Front [ 368.81 259.35 -2053.28 0.41 ]    Back [ 0.00 0.00 20.00 1.00 ]    Perspective [ 279.40 430.29 -169.91 1.00 ]     [ 368.81 259.35 0.00 ]
+	}
+};
+
+
+Units:
+{
+	Camera
+	{
+		name:  "Camera"
+		pos:      [  0.000  0.000  -4000.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		target:   [  0.000  0.000  0.000  ]
+		near:  10.00
+		far:   6000.00
+		fov:   10.00
+	};
+
+
+
+	DirLight
+	{
+		name:  "DirLight"
+		pos:      [  0.000  100.000  -250.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		multiplier: 1.00
+		diffuse: on
+		specular: off
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "CenterBlue"
+		pos:      [  382.107  259.346  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  1.000  1.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 11
+		mesh:  "Resources\Scenes\Scores\CenterBlue.msh"
+		texture:  "Resources\Scenes\Scores\Blue.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		SurfaceElements:
+		{
+			Element:
+			{	text:  "Команда1"
+				font: [  win_name: "Arial"  win_height: 12  weight: 700  ]
+				align: center    case: mixed    text_width: 300
+				pos: [ 146 11 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+			}
+
+			Element:
+			{	text:  "Команда2"
+				font: [  win_name: "Arial"  win_height: 12  weight: 700  ]
+				align: center    case: mixed    text_width: 300
+				pos: [ 146 31 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+			}
+
+		};
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "LeftBlack"
+		pos:      [  -78.213  0.000  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  1.000  1.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		master:   [  name: "CenterBlue"  ]
+		render_queue: 12
+		mesh:  "Resources\Scenes\Scores\LeftBlack.msh"
+		texture:  "Resources\Scenes\Scores\Blue.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "RightBlack"
+		pos:      [  61.794  0.000  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  1.000  1.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		master:   [  name: "CenterBlue"  ]
+		render_queue: 13
+		mesh:  "Resources\Scenes\Scores\RightBlack.msh"
+		texture:  "Resources\Scenes\Scores\Blue.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		SurfaceElements:
+		{
+			Element:
+			{	text:  "0"
+				font: [  win_name: "Arial"  win_height: 14  weight: 700  ]
+				align: left    case: mixed    text_width: 300
+				pos: [ 215 9 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+			}
+
+			Element:
+			{	text:  "0"
+				font: [  win_name: "Arial"  win_height: 14  weight: 700  ]
+				align: left    case: mixed    text_width: 300
+				pos: [ 215 30 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+			}
+
+		};
+
+		animation:  "Rotate"
+		{
+			Version:  7
+			AnimationType:  FrameAnimation
+			Frames:     2
+			Objects:    1
+			StartTime:  0.00
+			Duration:   0.50
+			FPS:        0
+			Frame1Bind:  255
+			Frame2Bind:  255
+			SmoothFactor: 0.50
+			Options:  [  Orient  Relative  ]
+
+			Frames:
+		                           OrientX    OrientY    OrientZ
+
+			Frame_0  0.000      0.000      0.000          
+			Frame_1  0.000      -360.000   0.000          
+		};
+	};
+};

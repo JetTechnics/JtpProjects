@@ -1,0 +1,179 @@
+
+SceneDeclarations:
+{
+	Version: 3.0
+	Name: "ScoreTop"
+
+	Features:  [  ]
+
+	EditCamPoses:
+	{	Top [ -235.59 2263.04 40.00 0.40 ]    Bottom [ -235.59 103.91 40.00 1.00 ]    Left [ -443.33 210.00 40.00 1.00 ]    Right [ -27.85 210.00 40.00 1.00 ]    
+		Front [ -235.59 210.00 -2013.28 0.40 ]    Back [ -235.59 210.00 146.09 1.00 ]    Perspective [ -358.00 233.14 -210.09 1.00 ]     [ -235.59 210.00 40.00 ]
+	}
+};
+
+
+Units:
+{
+	Camera
+	{
+		name:  "Camera"
+		pos:      [  0.000  0.000  -800.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		target:   [  0.000  0.000  0.000  ]
+		near:  50.00
+		far:   2000.00
+		fov:   48.00
+	};
+
+
+
+	DirLight
+	{
+		name:  "SunLight_01"
+		pos:      [  0.000  0.000  -2400.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		color:    [  0.898  0.898  0.898  1.000  ]
+
+		multiplier: 1.00
+		diffuse: on
+		specular: off
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "LeftBlack"
+		pos:      [  -300.000  210.000  40.000  ]
+		orient:   [  -5901.465  0.000  0.000  ]
+		size:     [  1.000  1.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 11
+		mesh:  "Resources\ScoreTop\LeftBlack.msh"
+		texture:  "Resources\ScoreTop\Blue.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		SurfaceElements:
+		{
+			Element:
+			{	text:  "00:00"
+				font: [  win_name: "HeliosCond"  win_height: 16  weight: 400  ]
+				align: left    case: mixed    text_width: 200
+				pos: [ 29 19 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0xFF000000
+				tex_index: 0
+			}
+		};
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "CenterBlue"
+		pos:      [  -223.000  210.000  40.000  ]
+		orient:   [  -5844.169  0.000  0.000  ]
+		size:     [  1.000  1.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 12
+		mesh:  "Resources\ScoreTop\CenterBlue.msh"
+		texture:  "Resources\ScoreTop\Blue.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		SurfaceElements:
+		{
+			Element:
+			{	text:  "√¿«Ãﬂ—"
+				font: [  win_name: "HeliosCond"  win_height: 16  weight: 700  ]
+				align: center    case: upper    text_width: 90
+				pos: [ 146 10 ]     color: 0xFFD2D2FF
+				shadow_pos: [ 0 0 ]    shadow_color: 0xFF000000
+				tex_index: 0
+			}
+
+			Element:
+			{	text:  "÷— ¿"
+				font: [  win_name: "HeliosCond"  win_height: 16  weight: 700  ]
+				align: center    case: mixed    text_width: 90
+				pos: [ 146 30 ]     color: 0xFFD2D2FF
+				shadow_pos: [ 0 0 ]    shadow_color: 0xFF000000
+				tex_index: 0
+			}
+
+		};
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "RightBlack"
+		pos:      [  -161.000  210.000  40.000  ]
+		orient:   [  -5844.169  5156.620  5156.620  ]
+		size:     [  1.000  1.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 13
+		mesh:  "Resources\ScoreTop\RightBlack.msh"
+		texture:  "Resources\ScoreTop\Blue.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		SurfaceElements:
+		{
+			Element:
+			{	text:  "0"
+				font: [  win_name: "HeliosCond"  win_height: 18  weight: 400  ]
+				align: center    case: mixed    text_width: 30
+				pos: [ 221 6 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0xFF000000
+				tex_index: 0
+			}
+
+			Element:
+			{	text:  "0"
+				font: [  win_name: "HeliosCond"  win_height: 18  weight: 400  ]
+				align: center    case: mixed    text_width: 200
+				pos: [ 221 28 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0xFF000000
+				tex_index: 0
+			}
+
+		};
+	};
+};

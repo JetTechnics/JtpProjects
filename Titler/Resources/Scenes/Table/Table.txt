@@ -1,0 +1,284 @@
+
+SceneDeclarations:
+{
+	Version: 3.0
+	Name: "Table"
+
+	Features:  [  ]
+
+	EditCamPoses:
+	{	Top [ -19.31 2090.14 0.00 0.35 ]    Bottom [ 0.00 -53.09 0.00 1.00 ]    Left [ -53.09 0.00 0.00 1.00 ]    Right [ 53.09 0.00 0.00 1.00 ]    
+		Front [ -19.31 0.00 -2090.15 0.35 ]    Back [ 0.00 0.00 53.09 1.00 ]    Perspective [ -127.60 76.77 -308.70 1.00 ]     [ -19.31 0.00 0.00 ]
+	}
+};
+
+
+Units:
+{
+	Camera
+	{
+		name:  "Camera01"
+		pos:      [  0.000  0.000  -200.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		target:   [  0.000  0.000  0.000  ]
+		near:  5.00
+		far:   1000.00
+		fov:   45.00
+	};
+
+
+
+	DirLight
+	{
+		name:  "FDirect01"
+		pos:      [  -5.028  71.822  -144.837  ]
+		orient:   [  -31.438  0.000  0.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		multiplier: 1.00
+		diffuse: on
+		specular: on
+	};
+
+
+
+	DirLight
+	{
+		name:  "FlashLight"
+		pos:      [  0.000  0.000  -200.000  ]
+		orient:   [  -45.000  0.000  0.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		multiplier: 1.00
+		diffuse: off
+		specular: on
+	};
+
+
+
+	JtpPlane3D
+	{
+		name:  "JtpPlane3D"
+		pos:      [  -124.199  -40.264  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  22.000  22.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 13
+		texture:  "Resources\Scenes\Time\Pic.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		QuadAlign: 0
+	};
+
+
+
+	UnitGroup
+	{
+		name:  "UnitGroup"
+		pos:      [  0.000  0.000  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  1.000  1.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		Units:
+		{
+			"Table"    "String1"    
+		};
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "Table"
+		pos:      [  0.000  0.000  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  150.000  100.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 11
+		mesh:  "Resources\ShareMeshes\Rect1x1.msh"
+		texture:  "Resources\Scenes\Table\Table.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		SurfaceElements:
+		{
+			Element:
+			{	text:  "Таблица"
+				font: [  win_name: "Arial"  win_height: 16  weight: 700  ]
+				align: center    case: mixed    text_width: 300
+				pos: [ 262 1 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 2 2 ]    shadow_color: 0x66000000
+				tex_index: 0
+			}
+		};
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "String1"
+		pos:      [  0.000  26.545  -6.426  ]
+		orient:   [  -90.000  0.000  0.000  ]
+		size:     [  100.000  8.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 12
+		mesh:  "Resources\ShareMeshes\Rect1x1.msh"
+		texture:  "Resources\Scenes\Table\String.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		SurfaceElements:
+		{
+			Element:
+			{	text:  "1. Фамилия"
+				font: [  win_name: "Arial"  win_height: 20  weight: 700  ]
+				align: left    case: mixed    text_width: 300
+				pos: [ 20 5 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 2 2 ]    shadow_color: 0x66000000
+				tex_index: 0
+			}
+		};
+
+		animation:  "Rotate"
+		{
+			Version:  7
+			AnimationType:  FrameAnimation
+			Frames:     2
+			Objects:    1
+			StartTime:  0.00
+			Duration:   0.30
+			FPS:        0
+			Frame1Bind:  255
+			Frame2Bind:  255
+			SmoothType:   InvParabolic
+			SmoothFactor: 0.50
+			Options:  [  Orient  Relative  ]
+
+			Frames:
+		                           OrientX    OrientY    OrientZ
+
+			Frame_0  0.000      0.000      0.000          
+			Frame_1  90.000     0.000      0.000          
+		};
+
+		animation:  "Flash"
+		{
+			Version:  7
+			AnimationType:  FrameAnimation
+			Frames:     3
+			Objects:    1
+			StartTime:  0.10
+			Duration:   0.16
+			FPS:        0
+			Frame1Bind:  255
+			Frame2Bind:  255
+			SmoothFactor: 0.50
+			Options:  [  Color  Absolute  ]
+
+			Frames:
+		                       ColorR  ColorG  ColorB
+
+			Frame_0  1.00    1.00    1.00               
+			Frame_1  9.00    9.00    9.00               
+			Frame_2  1.00    1.00    1.00               
+		};
+	};
+
+
+
+	JtpPlane3D
+	{
+		name:  "TexSeq"
+		pos:      [  -107.862  19.139  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  22.000  22.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 13
+		texture:  "Resources\Scenes\Time\Pic.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		animation:  "TexAnimation"
+		{
+			Version:  7
+			AnimationType:  FrameAnimation
+			Frames:     3
+			Objects:    1
+			StartTime:  0.00
+			Duration:   1.00
+			FPS:        0
+			Frame1Bind:  0
+			Frame2Bind:  255
+			SmoothFactor: 0.50
+			Options:  [  Discrete  Texture  Absolute  ]
+			FirstTextureFile:  "C:\ALEXBASE\Development\JTPProjects\Titler\Resources\Fotos\Foto1.jpg"
+		};
+
+		QuadAlign: 0
+	};
+};
+
+
+
+Scenaries:
+{
+	Scenario:  "NewScenario01"
+	{
+		animation:
+		{	anim: "Rotate"    unit: "String1"
+		}
+
+		animation:
+		{	anim: "Flash"    unit: "String1"
+		}
+
+		Type:  FadeIN      Delay: 0.00
+	};
+};

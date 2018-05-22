@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{03B5F42A-C6DA-42AF-AB46-E1BD8C8DA30B}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="VideoSettings\VideoSettings.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Titler\Titler.dproj">
+            <Dependencies>VideoSettings\VideoSettings.dproj</Dependencies>
+        </Projects>
+        <Projects Include="TankBiathlon\TankBiathlon.dproj">
+            <Dependencies>VideoSettings\VideoSettings.dproj</Dependencies>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="VideoSettings">
+        <MSBuild Projects="VideoSettings\VideoSettings.dproj"/>
+    </Target>
+    <Target Name="VideoSettings:Clean">
+        <MSBuild Projects="VideoSettings\VideoSettings.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="VideoSettings:Make">
+        <MSBuild Projects="VideoSettings\VideoSettings.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Titler" DependsOnTargets="VideoSettings">
+        <MSBuild Projects="Titler\Titler.dproj"/>
+    </Target>
+    <Target Name="Titler:Clean" DependsOnTargets="VideoSettings:Clean">
+        <MSBuild Projects="Titler\Titler.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Titler:Make" DependsOnTargets="VideoSettings:Make">
+        <MSBuild Projects="Titler\Titler.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TankBiathlon" DependsOnTargets="VideoSettings">
+        <MSBuild Projects="TankBiathlon\TankBiathlon.dproj"/>
+    </Target>
+    <Target Name="TankBiathlon:Clean" DependsOnTargets="VideoSettings:Clean">
+        <MSBuild Projects="TankBiathlon\TankBiathlon.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TankBiathlon:Make" DependsOnTargets="VideoSettings:Make">
+        <MSBuild Projects="TankBiathlon\TankBiathlon.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="VideoSettings;Titler;TankBiathlon"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="VideoSettings:Clean;Titler:Clean;TankBiathlon:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="VideoSettings:Make;Titler:Make;TankBiathlon:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

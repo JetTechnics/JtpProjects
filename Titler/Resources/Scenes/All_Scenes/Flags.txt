@@ -1,0 +1,270 @@
+
+SceneDeclarations:
+{
+	Version: 3.0
+	Name: "Flags"
+
+	Features:  [  ]
+
+	EditCamPoses:
+	{	Top [ -92.40 2371.80 13.88 1.03 ]    Bottom [ 0.00 -891.39 0.00 1.00 ]    Left [ -891.39 0.00 0.00 1.00 ]    Right [ 891.39 0.00 0.00 1.00 ]    
+		Front [ -92.40 24.11 -2251.46 1.35 ]    Back [ 0.00 0.00 891.39 1.00 ]    Perspective [ -31.00 -71.21 -1109.59 1.00 ]     [ -92.40 24.11 13.88 ]
+	}
+};
+
+
+Units:
+{
+	Camera
+	{
+		name:  "Camera"
+		pos:      [  0.000  -50.000  -1000.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		target:   [  0.000  -50.000  0.000  ]
+		near:  250.00
+		far:   5000.00
+		fov:   40.11
+	};
+
+
+
+	DirLight
+	{
+		name:  "SunLight_01"
+		pos:      [  0.000  200.000  -400.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		multiplier: 1.00
+		diffuse: on
+		specular: off
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "Flag2"
+		pos:      [  180.000  -41.920  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  1.000  1.000  1.000  ]
+		color:    [  0.500  0.500  0.500  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 11
+		mesh:  "Resources\Flag\0.msh"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "Text3D"
+		pos:      [  -364.800  279.680  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  20.025  20.025  20.025  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 12
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "Teapot"
+		pos:      [  -377.200  -134.320  -60.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  3.000  3.000  3.000  ]
+		color:    [  1.200  0.800  0.700  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 13
+		mesh:  "Resources\Meshes\Teapot.msh"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "Yellow"
+		pos:      [  0.000  260.000  20.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  200.000  100.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 14
+		mesh:  "Resources\Meshes\Rect1x1.msh"
+		texture:  "Resources\Textures\Yellow.bmp"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+	};
+
+
+
+	UnitGroup
+	{
+		name:  "GroupAA105"
+		pos:      [  0.000  0.000  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  1.000  1.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		Units:
+		{
+			"Blue"    "Flag1"    "Flag1_child"    
+		};
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "Blue"
+		pos:      [  0.000  -62.621  13.875  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  1.050  1.200  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 15
+		mesh:  "Resources\Meshes\Blue.msh"
+		texture:  "Resources\Textures\Blue.TGA"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		SurfaceElements:
+		{
+			Element:
+			{
+				pos: [ 500 66 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0xFF000000
+				tex_index: 0
+			}
+
+			Element:
+			{	text:  "אבגדהויצםנדנ"
+				font: [  win_name: "Arial"  win_height: 16  weight: 700  ]
+				align: left    case: mixed    text_width: 800
+				pos: [ 220 63 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0xFF000020
+				tex_index: 0
+			}
+
+			Element:
+			{	image: "Resources\Textures\Protivogas.tga"
+				image_align: 4    image_size: 150
+				pos: [ 400 70 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x55000000
+				tex_index: 0
+			}
+
+		};
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "Flag1"
+		pos:      [  -180.000  -35.840  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  1.000  1.000  1.000  ]
+		color:    [  0.500  0.500  0.500  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 16
+		mesh:  "Resources\Flag\0.msh"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+	};
+
+
+
+	JtpUnit
+	{
+		name:  "Flag1_child"
+		pos:      [  -60.000  0.000  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  10.000  10.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		master:   [  name: "Flag1"  ]
+		render_queue: 17
+		mesh:  "Resources\Meshes\Rect1x1.msh"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+	};
+};
