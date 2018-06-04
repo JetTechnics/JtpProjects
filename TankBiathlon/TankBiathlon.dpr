@@ -11,7 +11,8 @@ uses
   Poligon2D in 'Poligon2D.pas',
   Vehicle in 'Vehicle.pas',
   Vector in '..\JtpStudio\Vector.pas',
-  GpsConnection in 'GpsConnection.pas';
+  GpsConnection in 'GpsConnection.pas',
+  Titers in 'Titers.pas';
 
 {$R *.res}
 

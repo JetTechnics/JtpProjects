@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   JTPStudio, VideoSetsHeader, TypesJTP, PluginJTP, Vector,
-  Poligon2D, GpsConnection, Vehicle;
+  Poligon2D, GpsConnection, Vehicle, Titers;
 
 type
   TMainForm = class(TForm)
@@ -23,6 +23,21 @@ type
     GpsBox: TCheckBox;
     ClosePoligonButton: TButton;
     DirectCamButton1: TButton;
+    CrewButton: TButton;
+    CloseCrewButton: TButton;
+    TankBox1: TCheckBox;
+    TankBox2: TCheckBox;
+    TankBox3: TCheckBox;
+    TankBox4: TCheckBox;
+    Tank1Edit: TEdit;
+    Tank2Edit: TEdit;
+    Tank3Edit: TEdit;
+    Tank4Edit: TEdit;
+    Label1: TLabel;
+    OtsechkaButton: TButton;
+    CloseOtsechkaButton: TButton;
+    DirectCamButton2: TButton;
+    CommonViewButton: TButton;
     procedure StartButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ShowButtonClick(Sender: TObject);
@@ -30,7 +45,14 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    function  GetSelectedTanks() : integer;
     procedure DirectCamButton1Click(Sender: TObject);
+    procedure CrewButtonClick(Sender: TObject);
+    procedure CloseCrewButtonClick(Sender: TObject);
+    procedure OtsechkaButtonClick(Sender: TObject);
+    procedure CloseOtsechkaButtonClick(Sender: TObject);
+    procedure DirectCamButton2Click(Sender: TObject);
+    procedure CommonViewButtonClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -43,6 +65,7 @@ var
   VideoTrunk : integer = -1;
 
   MyVersion : integer = 1;
+
 
 implementation
 
@@ -78,66 +101,6 @@ End;
 
 
 
-
-procedure TMainForm.ClosePoligonButtonClick(Sender: TObject);
-var i : integer;
-begin
-	OpenRecords( 0, nil );
-
-  for i := 1 to MaxOneVehicles do begin
-    Vehicles[i].Reset();
-  end;
-
-  CloseRecords( 0, nil );
-end;
-
-
-
-procedure TMainForm.DirectCamButton1Click(Sender: TObject);
-begin
-  CameraSpeed := 10.0;
-
-  CamViewDir.VSet( 0.0, 1.0, -0.001 );     CamViewLen := 1000.0;
-
-  CameraMoving := CAM_MOVE_TO_TANKS;
-end;
-
-
-
-procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  CloseEngine(0);
-end;
-
-
-
-procedure TMainForm.FormCreate(Sender: TObject);
-begin
-  //  Для x64 нет FPU команд. Отключим FPU исключения.
-  SetMXCSR($1F80);
-end;
-
-
-
-procedure TMainForm.FormMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
-begin
-  GWheelDelta := WheelDelta;
-end;
-
-
-
-procedure TMainForm.ShowButtonClick(Sender: TObject);
-begin
-  OpenRecords( 0, nil );
-
-  //  Покажем полигон и все танки.
-  ShowPoligon2D( 16, VideoTrunk );
-
-  CloseRecords( 0, nil );
-end;
-
-
-
 //  Закрыли видео настройки.
 //  Загрузим проект. Загрузим плагин для таскания танчиков по полю.
 
@@ -155,7 +118,15 @@ begin
   VideoTrunk := VideoSets.Trunk1;
 
   //  Пути к картинкам.
-  Textures[0].Text := '';
+  Textures[0].Text := 'Resources/Flags/AGO.tga';
+  Textures[1].Text := 'Resources/Flags/ARM.tga';
+  Textures[2].Text := 'Resources/Flags/BLR.tga';
+  Textures[3].Text := 'Resources/Flags/CHN.tga';
+  // ...
+  Textures[4].Text := 'Resources/Color_Tank/Blue.tga';
+  Textures[5].Text := 'Resources/Color_Tank/Green.tga';
+  // ...
+  Textures[6].Text[0] := #0;
 
   //  Проект
   ProjectPath[0].text := 'C:/_TankBiathlon2018/Resources/TankBiathlon.prj';
@@ -270,5 +241,157 @@ begin
 
   end;
 end;
+
+
+
+procedure TMainForm.ClosePoligonButtonClick(Sender: TObject);
+var i : integer;
+begin
+	ShowButton.Enabled := true;
+  ClosePoligonButton.Enabled := false;
+
+	OpenRecords( 0, nil );
+
+  for i := 1 to MaxOneVehicles do begin
+    Vehicles[i].Reset();
+  end;
+
+  CloseScene( @PoligonSceneName, 0.0, nil );
+
+  CloseRecords( 0, nil );
+end;
+
+
+
+
+
+////////////////   ЭКИПАЖ   ////////////////
+procedure TMainForm.CrewButtonClick(Sender: TObject);
+begin
+  ShowCrew( VideoTrunk );
+end;
+
+procedure TMainForm.CloseCrewButtonClick(Sender: TObject);
+begin
+  CloseCrew();
+end;
+//////////////////////////////////////////////
+
+
+
+
+////////////////   ОТСЕЧКА   ////////////////
+procedure TMainForm.OtsechkaButtonClick(Sender: TObject);
+begin
+  ShowOtsechka( VideoTrunk );
+end;
+
+
+procedure TMainForm.CloseOtsechkaButtonClick(Sender: TObject);
+begin
+  CloseOtsechka();
+end;
+//////////////////////////////////////////////
+
+
+
+function TMainForm.GetSelectedTanks() : integer;
+var
+  i, j : integer;
+  Box : TCheckBox;
+  str : string;
+begin
+  // Из CheckBox-ов определим, за какими танками будем вести камеру.
+  j := 0;
+  for i := 1 to MaxOneVehicles do begin
+    str := 'TankBox' + IntToStr(i);
+    Box := TCheckBox( ZabegGroupBox.FindChildControl( str ) );
+    if( Box.Checked ) then begin
+      ViewTanks[j] := i;
+      inc(j);
+    end;
+  end;
+  ViewTanks[j] := 0;
+  GetSelectedTanks := j;
+end;
+
+procedure TMainForm.DirectCamButton1Click(Sender: TObject);
+var
+  Count : integer;
+begin
+
+  Count := GetSelectedTanks();
+  if( Count <> 0 ) then
+    NewCameraMoving := CAM_MOVE_TO_TANKS or CAM_MOVE_TARGET_MED_POINT or CAM_MOVE_POS_OVER_TARGET;
+
+end;
+
+
+
+procedure TMainForm.DirectCamButton2Click(Sender: TObject);
+var
+  Count : integer;
+begin
+
+  Count := GetSelectedTanks();
+	if( Count <> 0 ) then
+	 NewCameraMoving := CAM_MOVE_TO_TANKS or CAM_MOVE_TARGET_MED_POINT or CAM_MOVE_POS_INCLINE;
+end;
+
+
+
+procedure TMainForm.CommonViewButtonClick(Sender: TObject);
+begin
+  NewCameraMoving := CAM_MOVE_COMMON or CAM_MOVE_TARGET_MED_POINT or CAM_MOVE_POS_OVER_TARGET;
+end;
+
+
+
+procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  CloseEngine(0);
+end;
+
+
+
+procedure TMainForm.FormCreate(Sender: TObject);
+begin
+  //  Для x64 нет FPU команд. Отключим FPU исключения.
+  SetMXCSR($1F80);
+end;
+
+
+
+procedure TMainForm.FormMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+begin
+  GWheelDelta := WheelDelta;
+end;
+
+
+procedure TMainForm.ShowButtonClick(Sender: TObject);
+var
+  Ids : TIdArray;
+  i : integer;
+  str : string;
+  Edit : TEdit;
+begin
+	ShowButton.Enabled := false;
+  ClosePoligonButton.Enabled := true;
+
+  OpenRecords( 0, nil );
+
+  for i := 1 to MaxOneVehicles do begin
+    str := 'Tank' + IntToStr(i) + 'Edit';
+    Edit := TEdit( ZabegGroupBox.FindChildControl( str ) );
+    Ids[i] := StrToInt( Edit.Text );
+  end;
+
+  //  Покажем полигон и все танки.
+  ShowPoligon2D( 16, VideoTrunk, @Ids );
+
+  CloseRecords( 0, nil );
+end;
+
+
 
 end.

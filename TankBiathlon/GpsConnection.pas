@@ -91,8 +91,9 @@ begin
     pVehicle := @Vehicles[TestCt];
 
     pVehicle.TestTime := pVehicle.TestTime + FrameTime * 4; // четыре танка
+pVehicle.TestTime := pVehicle.TestTime * 5.0; // ускорение времени
     if( pVehicle.TestTime > GpsInterval ) then begin
-      pVehicle.TestTime := 0.0; //-0.2 + Random*0.4;
+      pVehicle.TestTime := 0; //-0.2 + Random() * 0.5;
 
 //if( Random < 0.5 ) then TestTime := 1.0;
 
@@ -101,7 +102,8 @@ begin
       GpsData.VehicleId := TestCt;
 
       Inc( pVehicle.CtRt );
-      if( pVehicle.CtRt >= MaxRoute )  then pVehicle.CtRt := 0;
+      if( pVehicle.CtRt >= MaxRoute )
+        then pVehicle.CtRt := 0;
 
       GetGpsPacket := 0;
     end;

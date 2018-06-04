@@ -9,7 +9,7 @@ const MAX_VCOORD = 7;
 
 const MAX_VEHICLES = 32;
 
-const MAX_ROUTE_PNTS = 302;
+const MAX_ROUTE_PNTS = 2500; //302;
 
 const MAX_FIX_POINTS = 4;     //  —колько одинаковых точек будем выбрасывать
 
@@ -115,7 +115,8 @@ Type  TVehicle = record     //  ѕодвижное средство
   procedure StopForSimulation();
   procedure SetSelectFrame( Alpha : single );
   procedure SetBubble( Alpha : single );
-  procedure SetSizeColor( S : single; NewColor : TColor );
+  procedure SetSize( NewSize : single );
+  procedure SetColor( NewColor : TColor );
   procedure GetNewCoord( Coord: TVector;  hr, min, sec, ms: integer;  Speed, Distance : single );
   procedure PushNewCoord();
   procedure DoFocusPos( Skip : integer );
@@ -152,7 +153,7 @@ Var
   VehicleName  : PAnsiChar;
   MaxVehicles  : integer = 0;
 
-  var VColors  : array[0..MAX_VEHICLES-1] of TVector;
+//  var VColors  : array[0..MAX_VEHICLES-1] of TVector;
 
   //VehiclesStarted : integer = 0;          //  сцена запущена
 
@@ -188,9 +189,6 @@ begin
 
   if( VehicleName <> nil ) then StrCopy( Name.text, VehicleName )
   else  Name.text[0] := #0;
-
-  if( TEST <> 0 ) then
-    Id := ArrayIndex;
 
   TestTime := 0.0;
 
@@ -404,13 +402,22 @@ end;
 
 
 
-procedure TVehicle.SetSizeColor( S : single; NewColor : TColor );
+procedure TVehicle.SetSize( NewSize : single );
 var Size : TVector;
 begin
-    Size.VSet(S,S,S);
-    Color := NewColor;
-    if( ModelName.text[0] <> #0 ) then
-        SetObjectSpace( @PoligonSceneName, @ModelName, nil, nil, @Size, nil, nil, @Color, 0.0, JTP_ABSOLUTE, nil );
+  Size.VSet( NewSize, NewSize, NewSize );
+
+  if( ModelName.text[0] <> #0 ) then
+      SetObjectSpace( @PoligonSceneName, @ModelName, nil, nil, @Size, nil, nil, nil, 0.0, JTP_ABSOLUTE, nil );
+end;
+
+
+procedure TVehicle.SetColor( NewColor : TColor );
+begin
+  Color := NewColor;
+
+  if( ModelName.text[0] <> #0 ) then
+      SetObjectSpace( @PoligonSceneName, @ModelName, nil, nil, nil, nil, nil, @Color, 0.0, JTP_ABSOLUTE, nil );
 end;
 
 
@@ -425,6 +432,7 @@ begin
     //  пересчитаем GPS координаты в наши
     Coord2.x := Coord.z * lon_f1 - lon_f2;
     Coord2.z := Coord.x * lat_f1 - lat_f2;
+
 //    Coord2.x := (Coord.z * 100.0 - 3690.0) * 1010.0 - 2335.0;
 //    Coord2.z := (Coord.x * 100.0 - 5553.0) * 1760.0 - 1350.0;
 
