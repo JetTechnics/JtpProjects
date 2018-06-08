@@ -112,10 +112,15 @@ function  VecLengthNormalize( var V: TVector ) : single;     //  Вычисляет длину
 var Len: single;
 begin
     Len := Sqrt( V.x*V.x + V.y*V.y + V.z*V.z );
+    if( Len < 0.00001 ) then
+      Len := 0
+    else begin
+      V.x := V.x / Len;
+      V.y := V.y / Len;
+      V.z := V.z / Len;
+    end;
+
     VecLengthNormalize := Len;
-    V.x := V.x / Len;
-    V.y := V.y / Len;
-    V.z := V.z / Len;
 end;
 
 

@@ -105,6 +105,7 @@ type TJtpEvent = record
     Flags       : integer;
     SceneName   : PAnsiChar;
     ObjectName  : PAnsiChar;
+    PointXY     : TPoint;
 end;
 type PJtpEvent = ^TJtpEvent;
 
@@ -204,10 +205,11 @@ function PlayScene( SceneName: PAnsiChar;  Delay: single;  Mode: dword;  TrunkIn
     PPlaySceneData = ^TPlaySceneData;
 
 
-function CloseScene( SceneName: PAnsiChar;  Delay: single;  pPlaySceneData : PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
+function CloseScene( SceneName: PAnsiChar;  Delay: single;  pCloseSceneData : PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
 //  Закрывает сцену.
     //  SceneName  - имя сцены.
 		//  Delay - задержка на закрытие сцены. Если FLT_UNDEF - задержка берётся из данных сцены.
+    //  pCloseSceneData - укзатель на TJtpFuncData.
 
 
 type
@@ -328,18 +330,18 @@ function PlayAnimationSmooth( SceneName, UnitName : PAnsiChar;  Delay: single;  
 
 
 
-function PlayScenario( SceneName, ScenarioName : PAnsiChar;  Delay: single;  Flags: dword;  pPlayScenarioData: PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
+function PlayScenario( SceneName, ScenarioName : PAnsiChar;  Delay: single;  Flags: dword;  pPlayScenario: PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
 //  Проиграть сценарий сцены.
 		//  SceneName - именя сцены.
     //  ScenarioName - имя сценария.
     //  Delay - задержка на проигрывание. Если FLT_UNDEF, задержка берётся из сцены.
     //  Flags - не используется.
-    //  pPlayScenarioData - указатель на TJtpFuncData.
+    //  pPlayScenario - указатель на TJtpFuncData.
 
 
 
 function SetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize, pDir, pTarget : PVector;  pColor : PColor;  Delay: single;
-												 Flags: dword;  pSetObjectSpaceData: pointer ) : UInt64;   stdcall; external JTPStudioDLL;
+												 Flags: dword;  pSetObjectSpace: PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
 //  Установить пространственные коор-ты объекта. Это позиция, ориентация, размер, направление, цвет.
 		//  SceneName, ObjectName - имена сцены и объекта.
     //  pPos, pOrient, pSize - позиция, ориентация и размер соответственно. Если nil, то вектор не учитывается.
@@ -351,14 +353,25 @@ function SetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize
     //  pColor - цвет объекта. Если nil, то цвет не учитывается. Если компонент цвета равен FLT_UNDEF, то не учитывается.
     //  Delay - задержка на установку координат или цвета.
     //  Flags - JTP_RELATIVE или JTP_ABSOLUTE - коор-ты относительные или абсолютные.
-    //  pSetObjectSpaceData - указатель на TJtpFuncData.
+    //  pSetObjectSpace - указатель на TJtpFuncData.
 
 
 function GetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize, pDir, pTarget : PVector;  pColor : PColor;
-												 Flags: dword;  pGetObjectSpaceData: pointer ) : UInt64;   stdcall; external JTPStudioDLL;
+												 Flags: dword;  pGetObjectSpaceData: PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
 //  Получить пространственные коор-ты объекта.
     //  Параметры как в SetObjectSpace.
 
+
+
+function SetObjectTexture( SceneName, ObjectName: PAnsiChar;  TexturePath: PPath;  TexIndex : integer;  Delay: single;
+                           Flags: dword;  pSetObjectTexture: PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
+//  Установить объекту новую текстуру.
+    //  SceneName, ObjectName - имена сцены и объекта.
+    //  TexturePath - путь к текстуре. Если текстура не загружена, она загрузится с диска.
+    //  TexIndex - номер текстуры внутри объекта. Используектся только 1.
+    //  Delay - задержка на установку текстуры.
+    //  Flags - не используется.
+    //  pSetObjectTexture - указатель на TJtpFuncData.
 
 
 

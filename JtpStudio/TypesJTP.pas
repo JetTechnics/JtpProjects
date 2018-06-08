@@ -120,10 +120,32 @@ type TRect = record
 end;
 
 
+//  Точка на экране
+type TPoint = record
+  x, y : integer;
+
+  class operator Add( A, B: TPoint ) : TPoint;
+  class operator Subtract( A, B: TPoint ) : TPoint;
+end;
+
+
 
 
 implementation
 
 
+class operator TPoint.Add( A, B: TPoint): TPoint;
+begin
+  Result.x := A.x + B.x;
+  Result.y := A.y + B.y;
+end;
+
+
+
+class operator TPoint.Subtract( A, B: TPoint): TPoint;
+begin
+  Result.x := A.x - B.x;
+  Result.y := A.y - B.y;
+end;
 
 end.

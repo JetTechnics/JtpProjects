@@ -50,11 +50,18 @@ object MainForm: TMainForm
   end
   object ZabegGroupBox: TGroupBox
     Left = 8
-    Top = 120
+    Top = 128
     Width = 265
-    Height = 353
+    Height = 257
     Caption = #1047#1072#1073#1077#1075
     TabOrder = 3
+    object Label1: TLabel
+      Left = 13
+      Top = 69
+      Width = 45
+      Height = 13
+      Caption = #1058#1072#1085#1082#1080' ...'
+    end
     object ShowButton: TButton
       Left = 3
       Top = 24
@@ -70,18 +77,114 @@ object MainForm: TMainForm
       Width = 75
       Height = 25
       Caption = #1047#1072#1082#1088#1099#1090#1100
+      Enabled = False
       TabOrder = 1
       OnClick = ClosePoligonButtonClick
     end
     object DirectCamButton1: TButton
       Left = 3
-      Top = 301
+      Top = 213
       Width = 57
       Height = 35
       Caption = #1053#1072#1074#1077#1089#1090#1080' '#1082#1072#1084#1077#1088#1091' 1'
       TabOrder = 2
       WordWrap = True
       OnClick = DirectCamButton1Click
+    end
+    object TankBox1: TCheckBox
+      Left = 9
+      Top = 89
+      Width = 14
+      Height = 17
+      Ctl3D = False
+      ParentCtl3D = False
+      TabOrder = 3
+    end
+    object TankBox2: TCheckBox
+      Left = 9
+      Top = 115
+      Width = 14
+      Height = 17
+      TabOrder = 4
+    end
+    object TankBox3: TCheckBox
+      Left = 9
+      Top = 141
+      Width = 14
+      Height = 17
+      TabOrder = 5
+    end
+    object TankBox4: TCheckBox
+      Left = 9
+      Top = 168
+      Width = 14
+      Height = 17
+      Color = clHighlight
+      ParentColor = False
+      TabOrder = 6
+    end
+    object Tank1Edit: TEdit
+      Tag = 1
+      Left = 26
+      Top = 90
+      Width = 24
+      Height = 19
+      Ctl3D = False
+      ParentCtl3D = False
+      TabOrder = 7
+      Text = '5'
+    end
+    object Tank2Edit: TEdit
+      Tag = 2
+      Left = 26
+      Top = 116
+      Width = 24
+      Height = 19
+      Ctl3D = False
+      ParentCtl3D = False
+      TabOrder = 8
+      Text = '6'
+    end
+    object Tank3Edit: TEdit
+      Tag = 3
+      Left = 26
+      Top = 142
+      Width = 24
+      Height = 19
+      Ctl3D = False
+      ParentCtl3D = False
+      TabOrder = 9
+      Text = '7'
+    end
+    object Tank4Edit: TEdit
+      Tag = 4
+      Left = 26
+      Top = 167
+      Width = 24
+      Height = 19
+      Ctl3D = False
+      ParentCtl3D = False
+      TabOrder = 10
+      Text = '8'
+    end
+    object DirectCamButton2: TButton
+      Left = 73
+      Top = 213
+      Width = 57
+      Height = 35
+      Caption = #1053#1072#1074#1077#1089#1090#1080' '#1082#1072#1084#1077#1088#1091' 2'
+      TabOrder = 11
+      WordWrap = True
+      OnClick = DirectCamButton2Click
+    end
+    object CommonViewButton: TButton
+      Left = 142
+      Top = 213
+      Width = 75
+      Height = 35
+      Caption = #1054#1073#1097#1080#1081' '#1087#1083#1072#1085
+      TabOrder = 12
+      OnClick = CommonViewButtonClick
     end
   end
   object GroupBox2: TGroupBox
@@ -136,5 +239,41 @@ object MainForm: TMainForm
       Caption = 'Broadcast GPS address'
       TabOrder = 0
     end
+  end
+  object CrewButton: TButton
+    Left = 8
+    Top = 441
+    Width = 60
+    Height = 25
+    Caption = #1069#1082#1080#1087#1072#1078
+    TabOrder = 5
+    OnClick = CrewButtonClick
+  end
+  object CloseCrewButton: TButton
+    Left = 70
+    Top = 441
+    Width = 59
+    Height = 25
+    Caption = #1047#1072#1082#1088#1099#1090#1100
+    TabOrder = 6
+    OnClick = CloseCrewButtonClick
+  end
+  object OtsechkaButton: TButton
+    Left = 8
+    Top = 496
+    Width = 60
+    Height = 25
+    Caption = #1054#1090#1089#1077#1095#1082#1072
+    TabOrder = 7
+    OnClick = OtsechkaButtonClick
+  end
+  object CloseOtsechkaButton: TButton
+    Left = 70
+    Top = 496
+    Width = 59
+    Height = 25
+    Caption = #1047#1072#1082#1088#1099#1090#1100
+    TabOrder = 8
+    OnClick = CloseOtsechkaButtonClick
   end
 end
