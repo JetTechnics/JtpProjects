@@ -342,7 +342,9 @@ end;
 
 procedure TMainForm.CommonViewButtonClick(Sender: TObject);
 begin
+
   ViewTanks[0] := 0;
+
   NewCameraMoving := CAM_MOVE_COMMON or CAM_MOVE_TARGET_MED_POINT or CAM_MOVE_POS_OVER_TARGET;
 end;
 

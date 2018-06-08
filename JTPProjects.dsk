@@ -1,19 +1,20 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'c:\program files (x86)\embarcadero\rad studio\12.0\SOURCE\VCL\Vcl.Controls.pas',0,1,10019,1,10041,0,0,,
-File_1=TSourceModule,'c:\program files (x86)\embarcadero\rad studio\12.0\SOURCE\VCL\Vcl.Forms.pas',0,1,6133,1,6155,0,0,{{1709,4}
-File_2=TSourceModule,'c:\program files (x86)\embarcadero\rad studio\12.0\SOURCE\VCL\Vcl.StdCtrls.pas',0,1,5129,1,5151,0,0,{{1650,4}
-File_3=TSourceModule,'C:\ALEXBASE\Development\JtpProjects\Titler\TitlerUnit.pas',0,1,98,3,117,0,0,,
-File_4=TSourceModule,'C:\ALEXBASE\Development\JtpProjects\VideoSettings\VideoSetsHeader.pas',0,1,1,126,30,0,0,,
-File_5=TSourceModule,'C:\ALEXBASE\Development\JtpProjects\JtpStudio\PluginJTP.pas',0,1,1,1,1,0,0,,
-File_6=TSourceModule,'C:\ALEXBASE\Development\JtpProjects\VideoSettings\Decklink.pas',0,1,7,76,27,0,0,,
-File_7=TSourceModule,'C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Vector.pas',0,1,1,1,1,0,0,,
-File_8=TSourceModule,'C:\ALEXBASE\Development\VirtualStudio\Delphi\JTPStudio.pas',0,1,38,3,59,0,0,,
-File_9=TSourceModule,'C:\ALEXBASE\Development\VirtualStudio\Delphi\Vector.pas',0,1,106,1,1,0,0,,
-File_10=TSourceModule,'C:\ALEXBASE\Development\VirtualStudio\Delphi\TypesJTP.pas',0,1,1,1,1,0,0,,
+File_0=TSourceModule,'C:\ALEXBASE\Development\JTPProjects\TankBiathlon\MainUnit.pas',0,1,372,6,391,0,0,,
+File_1=TSourceModule,'c:\program files (x86)\embarcadero\rad studio\12.0\SOURCE\VCL\Vcl.Controls.pas',0,1,10019,1,10041,0,0,,
+File_2=TSourceModule,'c:\program files (x86)\embarcadero\rad studio\12.0\SOURCE\VCL\Vcl.Forms.pas',0,1,6133,1,6155,0,0,{{1709,4}
+File_3=TSourceModule,'c:\program files (x86)\embarcadero\rad studio\12.0\SOURCE\VCL\Vcl.StdCtrls.pas',0,1,5129,1,5151,0,0,{{1650,4}
+File_4=TSourceModule,'C:\ALEXBASE\Development\JtpProjects\Titler\TitlerUnit.pas',0,1,98,3,117,0,0,,
+File_5=TSourceModule,'C:\ALEXBASE\Development\JtpProjects\VideoSettings\VideoSetsHeader.pas',0,1,1,126,30,0,0,,
+File_6=TSourceModule,'C:\ALEXBASE\Development\JtpProjects\JtpStudio\PluginJTP.pas',0,1,1,1,1,0,0,,
+File_7=TSourceModule,'C:\ALEXBASE\Development\JtpProjects\VideoSettings\Decklink.pas',0,1,7,76,27,0,0,,
+File_8=TSourceModule,'C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Vector.pas',0,1,1,1,1,0,0,,
+File_9=TSourceModule,'C:\ALEXBASE\Development\VirtualStudio\Delphi\JTPStudio.pas',0,1,38,3,59,0,0,,
+File_10=TSourceModule,'C:\ALEXBASE\Development\VirtualStudio\Delphi\Vector.pas',0,1,106,1,1,0,0,,
+File_11=TSourceModule,'C:\ALEXBASE\Development\VirtualStudio\Delphi\TypesJTP.pas',0,1,1,1,1,0,0,,
 
 [Modules]
-Module0=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Poligon2D.pas
-Module1=C:\ALEXBASE\Development\JTPProjects\TankBiathlon\MainUnit.pas
+Module0=default.htm
+Module1=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Poligon2D.pas
 Module2=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Vehicle.pas
 Module3=C:\ALEXBASE\Development\JtpProjects\JTPStudio\TypesJTP.pas
 Module4=C:\ALEXBASE\Development\JtpProjects\JTPStudio\JTPStudio.pas
@@ -21,18 +22,15 @@ Module5=C:\ALEXBASE\Development\JtpProjects\JtpStudio\Vector.pas
 Module6=C:\ALEXBASE\Development\JtpProjects\VideoSettings\SettingsUnit.pas
 Module7=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\GpsConnection.pas
 Module8=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Titers.pas
-Module9=default.htm
-Count=10
+Count=9
 EditWindowCount=1
+
+[default.htm]
+ModuleType=TURLModule
 
 [C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Poligon2D.pas]
 ModuleType=TSourceModule
 FormState=0
-FormOnTop=0
-
-[C:\ALEXBASE\Development\JTPProjects\TankBiathlon\MainUnit.pas]
-ModuleType=TSourceModule
-FormState=1
 FormOnTop=0
 
 [C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Vehicle.pas]
@@ -70,12 +68,9 @@ ModuleType=TSourceModule
 FormState=0
 FormOnTop=0
 
-[default.htm]
-ModuleType=TURLModule
-
 [EditWindow0]
-ViewCount=10
-CurrentEditView=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Poligon2D.pas
+ViewCount=9
+CurrentView=0
 View0=0
 View1=1
 View2=2
@@ -85,7 +80,6 @@ View5=5
 View6=6
 View7=7
 View8=8
-View9=9
 PercentageSizes=1
 Create=1
 Visible=1
@@ -102,12 +96,12 @@ ClientHeight=9276
 DockedToMainForm=1
 BorlandEditorCodeExplorer=BorlandEditorCodeExplorer@EditWindow0
 TopPanelSize=0
-LeftPanelSize=1474
+LeftPanelSize=1896
 LeftPanelClients=PropertyInspector,DockSite3
-LeftPanelData=0000080001010100000009000000446F636B5369746533661000000000000001C2050000000000000100000000271D00001100000050726F7065727479496E73706563746F72FFFFFFFF
-RightPanelSize=1443
+LeftPanelData=00000800010100000000661000000000000001680700000000000001000000005C0E000009000000446F636B53697465330100000000271D00001100000050726F7065727479496E73706563746F72FFFFFFFF
+RightPanelSize=2000
 RightPanelClients=DockSite2,DockSite4
-RightPanelData=00000800010100000000661000000000000001A30500000000000001000000004412000009000000446F636B53697465320100000000271D000009000000446F636B5369746534FFFFFFFF
+RightPanelData=00000800010100000000661000000000000001D00700000000000001000000004412000009000000446F636B53697465320100000000271D000009000000446F636B5369746534FFFFFFFF
 BottomPanelSize=1528
 BottomPanelClients=DockSite1,MessageView
 BottomPanelData=0000080001020100000009000000446F636B5369746531724500000000000002F8050000000000000100000000724500000F0000004D65737361676556696577466F726DFFFFFFFF
@@ -121,27 +115,16 @@ WelcomePageURL=bds:/default.htm
 
 [View1]
 CustomEditViewType=TEditView
-Module=C:\ALEXBASE\Development\JTPProjects\TankBiathlon\MainUnit.pas
-CursorX=6
-CursorY=391
-TopLine=372
-LeftCol=1
-Elisions=
-Bookmarks=
-EditViewName=C:\ALEXBASE\Development\JTPProjects\TankBiathlon\MainUnit.pas
-
-[View2]
-CustomEditViewType=TEditView
 Module=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Poligon2D.pas
-CursorX=19
-CursorY=90
-TopLine=58
+CursorX=5
+CursorY=365
+TopLine=127
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Poligon2D.pas
 
-[View3]
+[View2]
 CustomEditViewType=TEditView
 Module=C:\ALEXBASE\Development\JtpProjects\JtpStudio\Vector.pas
 CursorX=57
@@ -152,7 +135,7 @@ Elisions=
 Bookmarks=
 EditViewName=C:\ALEXBASE\Development\JtpProjects\JtpStudio\Vector.pas
 
-[View4]
+[View3]
 CustomEditViewType=TEditView
 Module=C:\ALEXBASE\Development\JtpProjects\JTPStudio\TypesJTP.pas
 CursorX=20
@@ -163,7 +146,7 @@ Elisions=
 Bookmarks=
 EditViewName=C:\ALEXBASE\Development\JtpProjects\JTPStudio\TypesJTP.pas
 
-[View5]
+[View4]
 CustomEditViewType=TEditView
 Module=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Titers.pas
 CursorX=9
@@ -174,7 +157,7 @@ Elisions={{66,22},{77,3},{''}}
 Bookmarks=
 EditViewName=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Titers.pas
 
-[View6]
+[View5]
 CustomEditViewType=TEditView
 Module=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Vehicle.pas
 CursorX=23
@@ -185,7 +168,7 @@ Elisions=
 Bookmarks=
 EditViewName=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\Vehicle.pas
 
-[View7]
+[View6]
 CustomEditViewType=TEditView
 Module=C:\ALEXBASE\Development\JtpProjects\JTPStudio\JTPStudio.pas
 CursorX=5
@@ -196,7 +179,7 @@ Elisions=
 Bookmarks=
 EditViewName=C:\ALEXBASE\Development\JtpProjects\JTPStudio\JTPStudio.pas
 
-[View8]
+[View7]
 CustomEditViewType=TEditView
 Module=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\GpsConnection.pas
 CursorX=22
@@ -207,7 +190,7 @@ Elisions={{48,31},{76,3},{''}}
 Bookmarks=
 EditViewName=C:\ALEXBASE\Development\JtpProjects\TankBiathlon\GpsConnection.pas
 
-[View9]
+[View8]
 CustomEditViewType=TEditView
 Module=C:\ALEXBASE\Development\JtpProjects\VideoSettings\SettingsUnit.pas
 CursorX=1
@@ -287,11 +270,11 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=1443
+Width=2000
 Height=4314
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1443
+ClientWidth=2000
 ClientHeight=4314
 TBDockHeight=5895
 LRDockWidth=2349
@@ -325,11 +308,11 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=1443
+Width=2000
 Height=2648
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1443
+ClientWidth=2000
 ClientHeight=2648
 TBDockHeight=7152
 LRDockWidth=2000
@@ -343,23 +326,18 @@ Visible=1
 Docked=1
 State=0
 Left=0
-Top=23
-Width=1474
-Height=7457
+Top=420
+Width=1896
+Height=3676
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1474
-ClientHeight=7457
-TBDockHeight=9038
-LRDockWidth=1474
+ClientWidth=1896
+ClientHeight=3676
+TBDockHeight=7057
+LRDockWidth=1896
 Dockable=1
 StayOnTop=0
 SplitPos=111
-
-[PropInspDesignerSelection]
-ArrangeBy=Name
-SelectedItem=Caption,
-ExpandedItems=Anchors=0,Constraints=0,Font=0,ImageMargins=0,LiveBindings=0,Margins=0
 
 [TFileExplorerForm]
 PercentageSizes=1
@@ -591,8 +569,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=-76
+Left=-182
+Top=-99
 Width=1844
 Height=3143
 MaxLeft=-1
@@ -677,11 +655,11 @@ State=0
 Left=0
 Top=0
 Width=1896
-Height=9038
+Height=3524
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1896
-ClientHeight=9038
+ClientHeight=3524
 TBDockHeight=3676
 LRDockWidth=1896
 Dockable=1
@@ -767,14 +745,14 @@ Docked=1
 State=0
 Left=0
 Top=23
-Width=1443
+Width=2000
 Height=4552
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1443
+ClientWidth=2000
 ClientHeight=4552
 TBDockHeight=7057
-LRDockWidth=1443
+LRDockWidth=2000
 Dockable=1
 StayOnTop=0
 TabPosition=1
@@ -786,18 +764,18 @@ HostDockSite=DockLeftPanel
 DockSiteType=1
 PercentageSizes=1
 Create=1
-Visible=0
+Visible=1
 Docked=1
 State=0
 Left=0
-Top=0
+Top=23
 Width=1896
-Height=9038
+Height=3524
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1896
-ClientHeight=9038
-TBDockHeight=9038
+ClientHeight=3524
+TBDockHeight=7057
 LRDockWidth=1896
 Dockable=1
 StayOnTop=0
@@ -815,14 +793,14 @@ Docked=1
 State=0
 Left=0
 Top=528
-Width=1443
+Width=2000
 Height=2648
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1443
+ClientWidth=2000
 ClientHeight=2648
 TBDockHeight=7057
-LRDockWidth=1443
+LRDockWidth=2000
 Dockable=1
 StayOnTop=0
 TabPosition=1

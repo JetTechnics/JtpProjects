@@ -21,6 +21,7 @@ Var
   CameraScroll : dword = 0;     //  состо€ние скроллировани€ (перемещение в плоскости горизонта) камеры.
   StartScrollTarget : TVector;
   StartScrollMouse : TPoint;
+
   const
     CAM_MOVE_TO_TANKS          : dword = $00000001;  // камера движетс€ за такнками
     CAM_MOVE_TARGET_MED_POINT  : dword = $00000002;  // таргет камеры сначала стремитс€ к точке между танками
@@ -35,6 +36,9 @@ Var
 Type TIdArray = array[0..MaxOneVehicles] of integer;
 Type PIdArray = ^TIdArray;
 
+
+// Public.
+procedure  ShowPoligon2D( NumTanks: integer; VideoTrunk: integer;  Ids : PIdArray );
 
 // Public.
 procedure  ShowPoligon2D( NumTanks: integer; VideoTrunk: integer;  Ids : PIdArray );
@@ -80,7 +84,7 @@ begin
     for i := 1 to MaxOneVehicles do begin
       if( TEST <> 0 ) then begin
         Vehicles[i].Id := i;
-        Vehicles[i].CtRt := 50*i;//Random(200);
+        Vehicles[i].CtRt := Random(200);
       end
       else
         Vehicles[i].Id := Ids[i];
@@ -165,6 +169,11 @@ begin
 
         end else
           CameraScroll := 0;
+
+        if( ( pEvent.Flags and EM_RBUTTON_CLICK ) <> 0 ) then begin
+          CameraMoving := 0;
+          NewCameraMoving := 0;
+        end;
       end;
 
       Inc( pEvent );
@@ -227,8 +236,8 @@ begin
       Vehicles[ViewTanks[i]].SetSelectFrame( 0.7 );
       inc(i);
     end;
-
   end;
+
   if( CameraMoving <> 0 ) then begin
     MoveCameraToTanks( FrameTime );
   end;
@@ -250,6 +259,7 @@ begin
   // ќпределим мин.макс. коор-ты таков, дл€ расчЄта средней точки и высоты камеры над ландшафтом.
   vMin.VSet(99999,0,99999);
   vMax.VSet(-99999,0,-99999);
+
   if( ( CameraMoving and CAM_MOVE_TO_TANKS ) <> 0 ) then begin
 
     tank := 0;
@@ -359,7 +369,6 @@ begin
     Pos.z := Target.z-10.0;
 
   SetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @Target, nil, 0.0, JTP_ABSOLUTE, nil );
-
 end;
 
 end.
