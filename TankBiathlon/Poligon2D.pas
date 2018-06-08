@@ -40,9 +40,6 @@ Type PIdArray = ^TIdArray;
 // Public.
 procedure  ShowPoligon2D( NumTanks: integer; VideoTrunk: integer;  Ids : PIdArray );
 
-// Public.
-procedure  ShowPoligon2D( NumTanks: integer; VideoTrunk: integer;  Ids : PIdArray );
-
 function UpdateTankPoligon( SceneName: PAnsiChar;  Flags: dword;  pEvents: PJtpEvent;  FrameTime: single;  pReserve: pointer ) : UInt64;  stdcall;
 
 // Private.
