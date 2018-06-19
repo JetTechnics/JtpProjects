@@ -115,7 +115,7 @@ type PPath = PStr256;
 
 
 //  Прямоугольник на экране
-type TRect = record
+type TJtpRect = record
   x1, y1, x2, y2 : integer;
 end;
 

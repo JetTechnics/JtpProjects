@@ -26,3 +26,8 @@ JTPProjects.dsk
 >>>>>>> 67cd7d995c2d54afbf6b61e843ef656fd51dfb44
 *.local
 *.local
+JTPProjects.groupproj.local
+*.~9~
+*.~8~
+*.~7~
+*.~10~

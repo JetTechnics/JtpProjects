@@ -54,7 +54,7 @@ var
   i : integer;
   PlaySceneData : TPlaySceneData;
   CloneObjectData : TCloneObjectData;
-  Color : TColor;
+  Color : TJtpColor;
 begin
   PlaySceneData.Create();
 
@@ -108,7 +108,7 @@ var
   fsize, Len, fx, fz : single;
   pEvent : PJtpEvent;
   Delta, CamLen, F, t : single;
-  Color : TColor;
+  Color : TJtpColor;
   MouseDelta : TPoint;
 begin
 

@@ -72,7 +72,7 @@ Type  TVehicle = record     //  Подвижное средство
   Pos     : TVector;        //  текущая координата
   NewPos  : TVector;        //  вновь полученная координата
   Orient  : TVector;        //  текущая ориентация
-  Color   : TColor;         //  цвет танка
+  Color   : TJtpColor;      //  цвет танка
   NewTime : TGpsTime;       //  её время
   Speed   : single;         //  текущая скорость
   SpeedFactor : single;     //  правка скорости, если отстаём/опрежаем
@@ -116,7 +116,7 @@ Type  TVehicle = record     //  Подвижное средство
   procedure SetSelectFrame( Alpha : single );
   procedure SetBubble( Alpha : single );
   procedure SetSize( NewSize : single );
-  procedure SetColor( NewColor : TColor );
+  procedure SetColor( NewColor : TJtpColor );
   procedure GetNewCoord( Coord: TVector;  hr, min, sec, ms: integer;  Speed, Distance : single );
   procedure PushNewCoord();
   procedure DoFocusPos( Skip : integer );
@@ -367,7 +367,7 @@ end;
 procedure TVehicle.SetSelectFrame( Alpha : single );
 var
   TempName : AnsiString;
-  VColor: TColor;
+  VColor: TJtpColor;
   SetObjectSpaceData : TJtpFuncData;
   PlayAnimationData : TJtpFuncData;
   Res : UInt64;
@@ -392,7 +392,7 @@ end;
 procedure TVehicle.SetBubble( Alpha : single );
 var
   TempName : AnsiString;
-  VColor: TColor;
+  VColor: TJtpColor;
   SetObjectSpaceData : TJtpFuncData;
   Res : UInt64;
 begin
@@ -418,7 +418,7 @@ begin
 end;
 
 
-procedure TVehicle.SetColor( NewColor : TColor );
+procedure TVehicle.SetColor( NewColor : TJtpColor );
 begin
   Color := NewColor;
 

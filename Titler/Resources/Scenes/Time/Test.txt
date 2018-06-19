@@ -1,0 +1,72 @@
+
+SceneDeclarations:
+{
+	Version: 3.0
+	Name: "Test"
+
+	Features:  [  ]
+
+	EditCamPoses:
+	{	Top [ 0.00 150.00 0.00 1.00 ]    Bottom [ 0.00 -50.00 0.00 1.00 ]    Left [ -200.00 50.00 0.00 1.00 ]    Right [ 200.00 50.00 0.00 1.00 ]    
+		Front [ 0.00 50.00 -200.00 1.00 ]    Back [ 0.00 50.00 200.00 1.00 ]    Perspective [ -300.00 350.00 -300.00 1.00 ]     [ 0.00 50.00 0.00 ]
+	}
+
+	EditCamPerspectiveNearFar: [  Near: 10.000  Far: 5000.000  ]
+};
+
+
+Units:
+{
+	Camera
+	{
+		name:  "Camera"
+		pos:      [  0.000  0.000  -5000.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		target:   [  0.000  0.000  0.000  ]
+		near:  10.00
+		far:   6000.00
+		fov:   14.00
+	};
+
+
+
+	DirLight
+	{
+		name:  "DirLight"
+		pos:      [  0.000  100.000  -250.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		multiplier: 1.00
+		diffuse: on
+		specular: off
+	};
+
+
+
+	JtpPlane3D
+	{
+		name:  "JtpPlane3D"
+		pos:      [  0.000  0.000  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  1.000  1.000  1.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 11
+		texture:  "C:\ALEXBASE\Development\JtpProjects\Titler\Resources\Scenes\Time\Pic.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		QuadAlign: 4
+	};
+};
