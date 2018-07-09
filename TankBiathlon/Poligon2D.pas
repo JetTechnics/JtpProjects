@@ -17,11 +17,7 @@ Var
   //CamViewLen : single;        //  дистанция камеры
   CamViewDir : TVector;         //  направление
   CameraMoving : dword = 0;     //  флаги состояние движения камеры
-  NewCameraMoving : dword = 0;  //  флаги нового состояния движения камеры
-  CameraScroll : dword = 0;     //  состояние скроллирования (перемещение в плоскости горизонта) камеры.
-  StartScrollTarget : TVector;
-  StartScrollMouse : TPoint;
-
+  NewCameraMoving : dword = 0;  //  новые флаги состояние движения камеры
   const
     CAM_MOVE_TO_TANKS          : dword = $00000001;  // камера движется за такнками
     CAM_MOVE_TARGET_MED_POINT  : dword = $00000002;  // таргет камеры сначала стремится к точке между танками
@@ -47,6 +43,8 @@ procedure MoveCameraToTanks( FrameTime: single );
 
 implementation
 
+uses
+  MainUnit;
 
 procedure ShowPoligon2D( NumTanks: integer; VideoTrunk: integer;  Ids : PIdArray );
 var
@@ -54,7 +52,7 @@ var
   i : integer;
   PlaySceneData : TPlaySceneData;
   CloneObjectData : TCloneObjectData;
-  Color : TJtpColor;
+  Color : TJTPColor;
 begin
   PlaySceneData.Create();
 
@@ -88,10 +86,10 @@ begin
     end;
 
     //  закрасим танки
-    Color.VSet(0,2,0,1);    Vehicles[1].SetColor( Color );
-    Color.VSet(2,0,0,1);    Vehicles[2].SetColor( Color );
-    Color.VSet(0,1,2,1);    Vehicles[3].SetColor( Color );
-    Color.VSet(2,1.5,1,1);    Vehicles[4].SetColor( Color );
+    Color.VSet(1,0,0,1);    Vehicles[1].SetColor(Color); // Vehicles[1].SetColor( Vehicles[1].Color );
+    Color.VSet(0,1,0,1);    Vehicles[2].SetColor(Color); // Vehicles[2].SetColor( Vehicles[2].Color );
+    Color.VSet(0,0,1,1);    Vehicles[3].SetColor(Color); // Vehicles[3].SetColor( Vehicles[3].Color );
+    Color.VSet(1,1,0,1);    Vehicles[4].SetColor(Color); // Vehicles[4].SetColor( Vehicles[4].Color );
   end;
 
   SetSceneProcessCallback( @PoligonSceneName, @UpdateTankPoligon, 0, nil );
@@ -101,15 +99,17 @@ end;
 
 
 function UpdateTankPoligon( SceneName: PAnsiChar;  Flags: dword;  pEvents: PJtpEvent;  FrameTime: single;  pReserve: pointer ) : UInt64;  stdcall;
+const
+  MaxPacketNum = 10;
 var
   res, i : integer;
+  kk: integer;
   GpsData : TGpsData;
   Pos, Dir, Target : TVector;
-  fsize, Len, fx, fz : single;
+  fsize : single;
   pEvent : PJtpEvent;
   Delta, CamLen, F, t : single;
-  Color : TJtpColor;
-  MouseDelta : TPoint;
+  Color : TJTPColor;
 begin
 
   OpenRecords( 0, nil );
@@ -121,51 +121,9 @@ begin
 
       if( pEvent.EventType = EVENT_MOUSE ) then begin
 
-        // Клик левой клавишей.
         if( ( pEvent.Flags and EM_LBUTTON_CLICK ) <> 0 ) then begin
 
         end;
-
-        // Клик правой клавишей.
-        if( ( pEvent.Flags and EM_RBUTTON_CLICK ) <> 0 ) then begin
-          CameraMoving := 0;                      // останов камеры
-          NewCameraMoving := 0;
-
-          for i := 1 to MaxOneVehicles do begin   // скроем рамки танков
-			    	Vehicles[i].SetSelectFrame( 0.0 );
-    			end;
-        end;
-
-        // Удерживаем центральеую клавишу.
-        if( ( pEvent.Flags and EM_MBUTTON_DOWN ) <> 0 ) then begin
-
-          if( CameraScroll = 0 ) then begin
-            CameraScroll := 1;
-
-            StartScrollMouse := pEvent.PointXY;
-            GetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @StartScrollTarget, nil, 0, nil );
-          end;
-
-          if( CameraScroll = 1 ) then begin
-
-            GetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @Target, nil, 0, nil );
-            Dir := Target - Pos;
-            Len := VecLengthNormalize( Dir );
-
-            MouseDelta := pEvent.PointXY - StartScrollMouse;
-            fx := MouseDelta.x;
-            fz := MouseDelta.y;
-
-            Target.x := StartScrollTarget.x - fx * Len/900.0; // 900 подобрал под данный фокус камеры, он не меняется.
-            Target.z := StartScrollTarget.z + fz * Len/900.0;
-
-            Pos := Target - Dir * Len;
-
-            SetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @Target, nil, 0.0, JTP_ABSOLUTE, nil );
-          end;
-
-        end else
-          CameraScroll := 0;
 
         if( ( pEvent.Flags and EM_RBUTTON_CLICK ) <> 0 ) then begin
           CameraMoving := 0;
@@ -187,25 +145,33 @@ begin
     Dir := VecNormalize( Pos - Target ) * Delta;
     Pos := Pos + Dir;
 
-    SetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, nil, nil, 0.0, JTP_ABSOLUTE, nil );
+    SetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, nil, nil, 0.0, 0, nil );
 
     GWheelDelta := 0;
   end;
 
-  // Получим пакет с GPS.
-  res := GetGpsPacket( @GpsData, FrameTime );
-  if( res = 0 ) then begin
-
-    // Найдём танк с нужным id.
-    for i := 1 to MaxOneVehicles do begin
-      if( Vehicles[i].Id = GpsData.VehicleId ) then begin
-        Pos.x := GpsData.Latitude;
-        Pos.z := GpsData.Longitude;
-        Pos.y := VehiclesHeight;
-        Vehicles[GpsData.VehicleId].GetNewCoord( Pos,  0, 0, 0, 0, 0, 0 );
-      end;
+  // Получим пакеты с GPS.
+  for kk:=1 to MaxPacketNum do
+    try
+      res := GetGpsPacket( @GpsData, FrameTime );
+      if res = 0 then
+        begin
+          // MainForm.AddLogGpsData(GpsData.VehicleId, GpsData.Latitude, GpsData.Longitude);
+          // Найдём танк с нужным id.
+          for i := 1 to MaxOneVehicles do begin
+            if( Vehicles[i].Id = GpsData.VehicleId ) then begin
+              Pos.x := GpsData.Latitude;
+              Pos.z := GpsData.Longitude;
+              Pos.y := VehiclesHeight;
+              //Vehicles[GpsData.VehicleId].GetNewCoord( Pos,  0, 0, 0, 0, 0, 0 );
+              Vehicles[i].GetNewCoord( Pos,  0, 0, 0, 0, 0, 0 );
+              break;
+            end;
+          end;
+        end
+                 else break;
+    except
     end;
-  end;
 
   fsize := 3.0;
 
@@ -223,18 +189,7 @@ begin
   if( NewCameraMoving <> 0 ) then begin
     CameraMoving := NewCameraMoving;
     NewCameraMoving := 0;
-
-    for i := 1 to MaxOneVehicles do begin   // скроем рамки танков
-	    Vehicles[i].SetSelectFrame( 0.0 );
-    end;
-
-    i := 0;                              // покажем рамки выделенных танков
-    while( ViewTanks[i] <> 0 ) do begin
-      Vehicles[ViewTanks[i]].SetSelectFrame( 0.7 );
-      inc(i);
-    end;
   end;
-
   if( CameraMoving <> 0 ) then begin
     MoveCameraToTanks( FrameTime );
   end;
@@ -256,10 +211,9 @@ begin
   // Определим мин.макс. коор-ты таков, для расчёта средней точки и высоты камеры над ландшафтом.
   vMin.VSet(99999,0,99999);
   vMax.VSet(-99999,0,-99999);
-
   if( ( CameraMoving and CAM_MOVE_TO_TANKS ) <> 0 ) then begin
 
-    tank := 0;
+    tank := 0;    //ftanks := 0.0;    MedTarget.VSet(0,0,0);
     while( ViewTanks[tank] <> 0 ) do begin
       pVehicle := @Vehicles[ViewTanks[tank]];
 
@@ -358,14 +312,11 @@ begin
     Pos := MedPos;
   end;
 
-  // Если двигались к общему плану и остальные флаги уже сброшены, сбрасываем состояние камеры.
-  if( CameraMoving = CAM_MOVE_COMMON ) then
-    CameraMoving := 0;
-
   if( Pos.z > (Target.z-10.0) ) then
     Pos.z := Target.z-10.0;
 
-  SetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @Target, nil, 0.0, JTP_ABSOLUTE, nil );
+  SetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @Target, nil, 0.0, 0, nil );
+
 end;
 
 end.

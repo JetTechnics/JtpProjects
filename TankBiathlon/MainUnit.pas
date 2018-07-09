@@ -3,41 +3,44 @@ unit MainUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  Winapi.Windows, Winapi.Messages, Winapi.WinSock,
+  System.SysUtils, System.Variants, System.Classes, System.AnsiStrings,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   JTPStudio, VideoSetsHeader, TypesJTP, PluginJTP, Vector,
-  Poligon2D, GpsConnection, Vehicle, Titers;
+  Poligon2D, GpsConnection, Vehicle, Titers,
+  frGPSServerConnect;
 
 type
   TMainForm = class(TForm)
     StartButton: TButton;
     OutVideoPanel: TPanel;
     LogListBox: TListBox;
-    ZabegGroupBox: TGroupBox;
+    Poligon2DGroupBox: TGroupBox;
     ShowButton: TButton;
-    GroupBox2: TGroupBox;
-    GpsAddrLabel: TLabel;
-    GpsPortLabel: TLabel;
-    GpsAddrEdit: TEdit;
-    GpsPortEdit: TEdit;
-    GpsBox: TCheckBox;
     ClosePoligonButton: TButton;
     DirectCamButton1: TButton;
     CrewButton: TButton;
     CloseCrewButton: TButton;
-    TankBox1: TCheckBox;
-    TankBox2: TCheckBox;
-    TankBox3: TCheckBox;
-    TankBox4: TCheckBox;
-    Tank1Edit: TEdit;
-    Tank2Edit: TEdit;
-    Tank3Edit: TEdit;
-    Tank4Edit: TEdit;
     Label1: TLabel;
     OtsechkaButton: TButton;
     CloseOtsechkaButton: TButton;
     DirectCamButton2: TButton;
     CommonViewButton: TButton;
+    TankNumsEdit: TEdit;
+    Tank1Panel: TPanel;
+    Tank2Panel: TPanel;
+    Tank3Panel: TPanel;
+    Tank4Panel: TPanel;
+    btnTelemetry: TButton;
+    TankBox1: TCheckBox;
+    Tank1Edit: TEdit;
+    TankBox2: TCheckBox;
+    Tank2Edit: TEdit;
+    TankBox3: TCheckBox;
+    Tank3Edit: TEdit;
+    TankBox4: TCheckBox;
+    Tank4Edit: TEdit;
+    GPSServerConnectFrame1: TGPSServerConnectFrame;
     procedure StartButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ShowButtonClick(Sender: TObject);
@@ -53,10 +56,10 @@ type
     procedure CloseOtsechkaButtonClick(Sender: TObject);
     procedure DirectCamButton2Click(Sender: TObject);
     procedure CommonViewButtonClick(Sender: TObject);
-  private
-    { Private declarations }
+    procedure btnTelemetryClick(Sender: TObject);
   public
-    { Public declarations }
+    procedure AddLogString(const AStr: string);
+    procedure AddLogGpsData(TankId: integer; Lat, Lon: single);
   end;
 
 var
@@ -69,6 +72,9 @@ var
 
 implementation
 
+uses
+  GPSTelemetry;
+
 {$R *.dfm}
 
 
@@ -79,7 +85,7 @@ begin
 
   while( pErrors[0] <> #0 ) do begin
 	  MainForm.LogListBox.Items.Add( String(pErrors) );
-    L := StrLen( pErrors );
+    L := System.AnsiStrings.StrLen( pErrors );
     pErrors := pErrors + L + 1;
   end;
 end;
@@ -91,7 +97,7 @@ function  ErrorsFunctionCB( pErrors : PAnsiChar;  pReserved : pointer ) : DWORD;
 var L : integer;
 Begin
 	while( pErrors[0] <> #0 ) do begin
-    L := StrLen( pErrors );
+    L := System.AnsiStrings.StrLen( pErrors );
     pErrors := pErrors + L + 1;
   end;
 
@@ -175,8 +181,10 @@ begin
   StartButton.Enabled := false;
 
   //  Адрес GPS сервера
-  StrCopy( GPSAddress, PAnsiChar( AnsiString(GpsAddrEdit.Text) ) );
+  {
+  System.AnsiStrings.StrCopy( GPSAddress, PAnsiChar( AnsiString(GpsAddrEdit.Text) ) );
   GPSPort := StrToInt( GPSPortEdit.Text );
+  }
 
   //  прочитаем трек для тестов.
   if( TEST <> 0 ) then begin
@@ -264,7 +272,6 @@ end;
 
 
 
-
 ////////////////   ЭКИПАЖ   ////////////////
 procedure TMainForm.CrewButtonClick(Sender: TObject);
 begin
@@ -286,7 +293,6 @@ begin
   ShowOtsechka( VideoTrunk );
 end;
 
-
 procedure TMainForm.CloseOtsechkaButtonClick(Sender: TObject);
 begin
   CloseOtsechka();
@@ -305,7 +311,7 @@ begin
   j := 0;
   for i := 1 to MaxOneVehicles do begin
     str := 'TankBox' + IntToStr(i);
-    Box := TCheckBox( ZabegGroupBox.FindChildControl( str ) );
+    Box := TCheckBox( Poligon2DGroupBox.FindChildControl( str ) );
     if( Box.Checked ) then begin
       ViewTanks[j] := i;
       inc(j);
@@ -342,9 +348,6 @@ end;
 
 procedure TMainForm.CommonViewButtonClick(Sender: TObject);
 begin
-
-  ViewTanks[0] := 0;
-
   NewCameraMoving := CAM_MOVE_COMMON or CAM_MOVE_TARGET_MED_POINT or CAM_MOVE_POS_OVER_TARGET;
 end;
 
@@ -358,11 +361,16 @@ end;
 
 
 procedure TMainForm.FormCreate(Sender: TObject);
+var
+  WSAData: TWSAData;
 begin
   //  Для x64 нет FPU команд. Отключим FPU исключения.
   SetMXCSR($1F80);
-end;
 
+  WSAStartup(MakeWord(2,2), WSAData);
+
+  GPSServerConnectFrame1.UpdateUI;
+end;
 
 
 procedure TMainForm.FormMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
@@ -376,16 +384,22 @@ var
   Ids : TIdArray;
   i : integer;
   str : string;
+  Panel : TPanel;
   Edit : TEdit;
 begin
 	ShowButton.Enabled := false;
   ClosePoligonButton.Enabled := true;
+  if not ((TEST <> 0) or (GPSServerConnectFrame1.ConnectState <> csDisconnected))
+    then GPSServerConnectFrame1.btnConnectClick(nil);
+
+  LogListBox.Items.Clear;
 
   OpenRecords( 0, nil );
 
   for i := 1 to MaxOneVehicles do begin
     str := 'Tank' + IntToStr(i) + 'Edit';
-    Edit := TEdit( ZabegGroupBox.FindChildControl( str ) );
+    Edit := TEdit( Poligon2DGroupBox.FindChildControl( str ) );
+    if not Assigned(Edit) then Continue;
     Ids[i] := StrToInt( Edit.Text );
   end;
 
@@ -395,6 +409,49 @@ begin
   CloseRecords( 0, nil );
 end;
 
+procedure TMainForm.AddLogGpsData(TankId: integer; Lat, Lon: single);
+begin
+  TThread.Queue(nil,
+      procedure
+      var
+        i: integer;
+        id: integer;
+        s: string;
+        pkts: string;
+      begin
+        pkts := Format('%d%20.5f%20.5f', [TankId, Lat, Lon]);
+        try
+          for i:=0 to LogListBox.Items.Count-1 do
+            begin
+              s := LogListBox.Items[i];
+              id := StrToInt(System.Copy(s, 1, Pos(' ', s)-1));
+              if id = TankId then
+                begin
+                  LogListBox.Items[i] := pkts;
+                  Exit;
+                end;
+            end;
+          LogListBox.Items.Add(pkts);
+        except
+          LogListBox.Items.Add(pkts);
+        end;
+      end
+    );
+end;
 
+procedure TMainForm.AddLogString(const AStr: string);
+begin
+  TThread.Queue(nil,
+      procedure
+      begin
+        LogListBox.Items.Add(AStr);
+      end
+    );
+end;
+
+procedure TMainForm.btnTelemetryClick(Sender: TObject);
+begin
+  // _GPSTelemetry.Show;
+end;
 
 end.

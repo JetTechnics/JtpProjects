@@ -29,11 +29,11 @@ function  VecLerp( V1, V2 : TVector;  F: single ) : TVector;       //  Интерполя
 
 
 //  Цвет.
-type TJtpColor = record
+type TJTPColor = record
      r, g, b, a :  single;
      procedure VSet( r_, g_, b_, a_ : single );
 end;
-type PJtpColor = ^TJtpColor;
+type PJTPColor = ^TJTPColor;
 
 
 
@@ -143,7 +143,7 @@ end;
 
 
 
-procedure TJtpColor.VSet( r_, g_, b_, a_ : single );
+procedure TJTPColor.VSet( r_, g_, b_, a_ : single );
 begin
   r := r_;    g := g_;    b := b_;    a := a_;
 end;

@@ -12,6 +12,9 @@
         <Projects Include="TankBiathlon\TankBiathlon.dproj">
             <Dependencies>VideoSettings\VideoSettings.dproj</Dependencies>
         </Projects>
+        <Projects Include="..\..\TXTtoGPX\txt_to_gpx.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -47,14 +50,23 @@
     <Target Name="TankBiathlon:Make" DependsOnTargets="VideoSettings:Make">
         <MSBuild Projects="TankBiathlon\TankBiathlon.dproj" Targets="Make"/>
     </Target>
+    <Target Name="txt_to_gpx">
+        <MSBuild Projects="..\..\TXTtoGPX\txt_to_gpx.dproj"/>
+    </Target>
+    <Target Name="txt_to_gpx:Clean">
+        <MSBuild Projects="..\..\TXTtoGPX\txt_to_gpx.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="txt_to_gpx:Make">
+        <MSBuild Projects="..\..\TXTtoGPX\txt_to_gpx.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="VideoSettings;Titler;TankBiathlon"/>
+        <CallTarget Targets="VideoSettings;Titler;TankBiathlon;txt_to_gpx"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="VideoSettings:Clean;Titler:Clean;TankBiathlon:Clean"/>
+        <CallTarget Targets="VideoSettings:Clean;Titler:Clean;TankBiathlon:Clean;txt_to_gpx:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="VideoSettings:Make;Titler:Make;TankBiathlon:Make"/>
+        <CallTarget Targets="VideoSettings:Make;Titler:Make;TankBiathlon:Make;txt_to_gpx:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

@@ -72,7 +72,7 @@ Type  TVehicle = record     //  Подвижное средство
   Pos     : TVector;        //  текущая координата
   NewPos  : TVector;        //  вновь полученная координата
   Orient  : TVector;        //  текущая ориентация
-  Color   : TJtpColor;      //  цвет танка
+  Color   : TJTPColor;         //  цвет танка
   NewTime : TGpsTime;       //  её время
   Speed   : single;         //  текущая скорость
   SpeedFactor : single;     //  правка скорости, если отстаём/опрежаем
@@ -116,7 +116,7 @@ Type  TVehicle = record     //  Подвижное средство
   procedure SetSelectFrame( Alpha : single );
   procedure SetBubble( Alpha : single );
   procedure SetSize( NewSize : single );
-  procedure SetColor( NewColor : TJtpColor );
+  procedure SetColor( NewColor : TJTPColor );
   procedure GetNewCoord( Coord: TVector;  hr, min, sec, ms: integer;  Speed, Distance : single );
   procedure PushNewCoord();
   procedure DoFocusPos( Skip : integer );
@@ -163,17 +163,22 @@ Var
   MaxRouteJumpers : integer;
 
   //  Привязка трэка к карте
-  lon_f1 : single = 101000.0;
+  {lon_f1 : single = 101000.0;
   lon_f2 : single = 3729235.0;
   lat_f1 : single = 176000.0;
-  lat_f2 : single = 9774630.0;
+  lat_f2 : single = 9774630.0;}
+
+  lon_f1 : single = 559848.6357299343;
+  lon_f2 : single = 21055266.16311491735;
+  lat_f1 : single = 991917.7075679647;
+  lat_f2 : single = 55267507.16385011021;
 
   //  Поправка на дистанцию
   DistFactor : single = 1.424;
 
 
 //  Для теста
-TEST : integer = 1;
+TEST : integer = 0;
 
 
 
@@ -202,7 +207,7 @@ begin
 
   Head := -2;    Focus := -1;     CtRt := 0;       Len := 0.0;      Speed := 0.0;     SpeedFactor := 1.0;
 
-  Dir1.VSet(0,0,1);    Dir2.VSet(0,0,1);         Color.VSet(1,0,0,1);
+  Dir1.VSet(0,0,1);    Dir2.VSet(0,0,1);         // Color.VSet(1,0,0,1);
 
   Orient.x := FLT_UNDEF;     Orient.z := FLT_UNDEF;    //  наклоны по карте высот, используем только Orient.y
 
@@ -367,23 +372,17 @@ end;
 procedure TVehicle.SetSelectFrame( Alpha : single );
 var
   TempName : AnsiString;
-  VColor: TJtpColor;
+  VColor: TJTPColor;
   SetObjectSpaceData : TJtpFuncData;
-  PlayAnimationData : TJtpFuncData;
   Res : UInt64;
 begin
   VColor.VSet( FLT_UNDEF, FLT_UNDEF, FLT_UNDEF, Alpha );
-
-  SetObjectSpaceData.Create();
-  PlayAnimationData.Create();
 
   if( Index < 10 )  then TempName := 'TankFrame0'
   else  TempName := 'TankFrame';
   TempName := TempName + IntToStr(Index);
 
   Res := SetObjectSpace( @PoligonSceneName, PAnsiChar(TempName), nil, nil, nil, nil, nil, @VColor, 0.0, JTP_ABSOLUTE, @SetObjectSpaceData );
-
-  Res := PlayAnimation( @PoligonSceneName, PAnsiChar(TempName), 'Rotate', 0.0, 0, @PlayAnimationData );
 
 end;
 
@@ -392,7 +391,7 @@ end;
 procedure TVehicle.SetBubble( Alpha : single );
 var
   TempName : AnsiString;
-  VColor: TJtpColor;
+  VColor: TJTPColor;
   SetObjectSpaceData : TJtpFuncData;
   Res : UInt64;
 begin
@@ -418,7 +417,7 @@ begin
 end;
 
 
-procedure TVehicle.SetColor( NewColor : TJtpColor );
+procedure TVehicle.SetColor( NewColor : TJTPColor );
 begin
   Color := NewColor;
 

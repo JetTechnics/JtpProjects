@@ -61,7 +61,7 @@ Type TVideoTrunk = record
   Reserves     : array [0..127] of integer;   //  Резерв.
 
   FrameWidthFactor   : integer;    //  Не используется.
-  Rect               : TJtpRect;   //  Не используется.
+  Rect               : TJTPRect;      //  Не используется.
   pWindowRender      : pointer;    //  Не используется.
 
   procedure ClearForDecklink();
@@ -105,7 +105,6 @@ type TJtpEvent = record
     Flags       : integer;
     SceneName   : PAnsiChar;
     ObjectName  : PAnsiChar;
-    PointXY     : TPoint;
 end;
 type PJtpEvent = ^TJtpEvent;
 
@@ -270,7 +269,7 @@ function CloneObject( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize, p
 
 
 
-function UpdateSurfaceElement( SceneName, ObjectName: PAnsiChar;  Index, NumTex: integer;  PicturePath : PAnsiChar;  Text: PWideChar;  pColor : PJtpColor;
+function UpdateSurfaceElement( SceneName, ObjectName: PAnsiChar;  Index, NumTex: integer;  PicturePath : PAnsiChar;  Text: PWideChar;  pColor : PJTPColor;
                                X,Y, W,H: integer;  Delay: single;  Flags: dword;   pUpdateSurfElemData : pointer ) : UInt64;   stdcall; external JTPStudioDLL;
 //  Обновить элемент поверхности. Это может быть текст или иконка.
     //  SceneName, ObjectName - имена сцены и объекта.
@@ -340,7 +339,7 @@ function PlayScenario( SceneName, ScenarioName : PAnsiChar;  Delay: single;  Fla
 
 
 
-function SetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize, pDir, pTarget : PVector;  pColor : PJtpColor;  Delay: single;
+function SetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize, pDir, pTarget : PVector;  pColor : PJTPColor;  Delay: single;
 												 Flags: dword;  pSetObjectSpace: PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
 //  Установить пространственные коор-ты объекта. Это позиция, ориентация, размер, направление, цвет.
 		//  SceneName, ObjectName - имена сцены и объекта.
@@ -356,7 +355,7 @@ function SetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize
     //  pSetObjectSpace - указатель на TJtpFuncData.
 
 
-function GetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize, pDir, pTarget : PVector;  pColor : PJtpColor;
+function GetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize, pDir, pTarget : PVector;  pColor : PJTPColor;
 												 Flags: dword;  pGetObjectSpaceData: PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
 //  Получить пространственные коор-ты объекта.
     //  Параметры как в SetObjectSpace.

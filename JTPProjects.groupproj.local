@@ -4,6 +4,6 @@
     <Transaction>1899.12.30 00:00:00.000.922,C:\Users\Alex\Documents\RAD Studio\Projects\ProjectGroup1.groupproj=C:\ALEXBASE\Development\JTPProjects\JTPProjects.groupproj</Transaction>
   </Transactions>
 	<Default.Personality>
-		<Projects ActiveProject="C:\ALEXBASE\Development\JtpProjects\TankBiathlon\TankBiathlon.dproj"/>
+		<Projects ActiveProject="C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\TankBiathlon.dproj"/>
 	</Default.Personality>
 </BorlandProject>

@@ -115,17 +115,8 @@ type PPath = PStr256;
 
 
 //  Прямоугольник на экране
-type TJtpRect = record
+type TJTPRect = record
   x1, y1, x2, y2 : integer;
-end;
-
-
-//  Точка на экране
-type TPoint = record
-  x, y : integer;
-
-  class operator Add( A, B: TPoint ) : TPoint;
-  class operator Subtract( A, B: TPoint ) : TPoint;
 end;
 
 
@@ -134,18 +125,5 @@ end;
 implementation
 
 
-class operator TPoint.Add( A, B: TPoint): TPoint;
-begin
-  Result.x := A.x + B.x;
-  Result.y := A.y + B.y;
-end;
-
-
-
-class operator TPoint.Subtract( A, B: TPoint): TPoint;
-begin
-  Result.x := A.x - B.x;
-  Result.y := A.y - B.y;
-end;
 
 end.
