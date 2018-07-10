@@ -73,7 +73,7 @@ var
 implementation
 
 uses
-  GPSTelemetry;
+  GPSTelemetry, uGPSServerConnect;
 
 {$R *.dfm}
 
@@ -369,7 +369,7 @@ begin
 
   WSAStartup(MakeWord(2,2), WSAData);
 
-  GPSServerConnectFrame1.UpdateUI;
+  GPSServerConnectFrame1.UpdateUI(Self);
 end;
 
 

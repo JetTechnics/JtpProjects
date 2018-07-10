@@ -5,7 +5,6 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.AnsiStrings,
-  System.Generics.Collections,
   GpsConnection;
 
 type
@@ -32,6 +31,10 @@ type
   end;
 
 { Globals }
+const
+  DefPacketQueueSize = 32;
+  DefPacketQueueGap  = 16;
+
 procedure InitializeQueue;
 procedure DeinitializeQueue;
 procedure PushPacket(APacket: TGPSPacket);
@@ -42,14 +45,21 @@ implementation
 type
   TGPSPacketQueue = class(TObject)
   private
-    FQueue: TQueue<TGPSPacket>;
-    procedure QueueNotify(Sender: TObject; const Item: TGPSPacket;
-                          Action: TCollectionNotification);
+    FQueue: TList;
+    FCritSect: TRTLCriticalSection;
+    FSizeLimit: integer;
+    FSizeGap: integer;
+    procedure CheckLimit;
+    procedure SetSizeLimit(const Value: integer);
+    procedure SetSizeGap(const Value: integer);
   public
     constructor Create;
     destructor Destroy; override;
+    procedure Clear;
     procedure PushPacket(APacket: TGPSPacket);
     function PopPacket: TGPSPacket;
+    property SizeLimit: integer read FSizeLimit write SetSizeLimit default DefPacketQueueSize;
+    property SizeGap: integer read FSizeGap write SetSizeGap default DefPacketQueueGap;
   end;
 
 var
@@ -57,50 +67,117 @@ var
 
 { TGPSPacketQueue }
 
+procedure TGPSPacketQueue.CheckLimit;
+var
+  lim: integer;
+  gap: integer;
+begin
+  if FSizeLimit > 1
+    then lim := FSizeLimit
+    else lim := 1;
+  if FSizeGap > 0
+    then gap := FSizeGap
+    else gap := 0;
+  if FQueue.Count > lim+gap then
+    try
+      while FQueue.Count > lim do
+        begin
+          TGPSPacket(FQueue.Items[0]).Free;
+          FQueue.Delete(0);
+        end;
+    except
+    end;
+end;
+
+procedure TGPSPacketQueue.Clear;
+begin
+  EnterCriticalSection(FCritSect);
+  try
+    try
+      while FQueue.Count > 0 do
+        begin
+          TGPSPacket(FQueue.Items[0]).Free;
+          FQueue.Delete(0);
+        end;
+    finally
+      FQueue.Clear;
+    end;
+  except
+  end;
+  LeaveCriticalSection(FCritSect);
+end;
+
 constructor TGPSPacketQueue.Create;
 begin
-  FQueue := TQueue<TGPSPacket>.Create;
-  FQueue.OnNotify := QueueNotify;
+  InitializeCriticalSection(FCritSect);
+  FQueue := TList.Create;
+  FSizeLimit := DefPacketQueueSize;
+  FSizeGap := DefPacketQueueGap;
 end;
 
 destructor TGPSPacketQueue.Destroy;
 begin
-  TMonitor.Enter(Self);
+  EnterCriticalSection(FCritSect);
   try
+    Clear;
     FQueue.Free;
-    FQueue := nil;
   except
   end;
-  TMonitor.Exit(Self);
+  FQueue := nil;
+  LeaveCriticalSection(FCritSect);
+  DeleteCriticalSection(FCritSect);
   inherited Destroy;
 end;
 
 function TGPSPacketQueue.PopPacket: TGPSPacket;
 begin
   Result := nil;
-  TMonitor.Enter(Self);
+  EnterCriticalSection(FCritSect);
   try
-    Result := FQueue.Extract;
+    if FQueue.Count > 0 then
+      begin
+        Result := TGPSPacket(FQueue.Items[0]);
+        FQueue.Delete(0);
+      end;
   except
   end;
-  TMonitor.Exit(Self);
+  LeaveCriticalSection(FCritSect);
 end;
 
 procedure TGPSPacketQueue.PushPacket(APacket: TGPSPacket);
 begin
-  TMonitor.Enter(Self);
-  try
-    FQueue.Enqueue(APacket);
-  finally
-    TMonitor.Exit(Self);
-  end;
+  EnterCriticalSection(FCritSect);
+  if Assigned(APacket) then
+    try
+      FQueue.Add(APacket);
+      CheckLimit;
+    except
+    end;
+  LeaveCriticalSection(FCritSect);
 end;
 
-procedure TGPSPacketQueue.QueueNotify(Sender: TObject; const Item: TGPSPacket;
-  Action: TCollectionNotification);
+procedure TGPSPacketQueue.SetSizeGap(const Value: integer);
 begin
-  if (Action = cnRemoved)
-    then Item.Free;
+  EnterCriticalSection(FCritSect);
+  if Value <> FSizeGap then
+    try
+      FSizeGap := Value;
+      CheckLimit;
+    except
+    end;
+  LeaveCriticalSection(FCritSect);
+end;
+
+procedure TGPSPacketQueue.SetSizeLimit(const Value: integer);
+begin
+  EnterCriticalSection(FCritSect);
+  if Value <> FSizeLimit then
+    try
+      FSizeLimit := Value;
+      CheckLimit;
+    except
+    end;
+  LeaveCriticalSection(FCritSect);
 end;
 
 { TGPSPacket }
@@ -109,14 +186,14 @@ constructor TGPSPacket.Create(const Data: TGpsData);
 begin
   inherited Create;
     try
-      FDevId := Data.VehicleId;
-      // FPacketN := ;
-      FBattery := Data.Battery;
       FLat := Data.Latitude;
       FLon := Data.Longitude;
       FAlt := Data.Distance;
-      FSpeed := Data.Speed;
       FTimeMilli := Data.TimeMilli;
+      FPacketN := Data.PacketNum;
+      FDevId := Data.VehicleId;
+      FBattery := Data.Battery;
+      FSpeed := Data.Speed;
     except
     end;
 end;

@@ -32,7 +32,7 @@ object GPSServerConnectFrame: TGPSServerConnectFrame
       Ctl3D = False
       ParentCtl3D = False
       TabOrder = 0
-      Text = '172.30.34.137'
+      Text = '172.30.34.36'
     end
     object edGpsPort: TEdit
       Left = 194

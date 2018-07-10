@@ -12,6 +12,7 @@ type
     VehicleId : integer;
     Latitude, Longitude, Distance : single;
     TimeMilli: UInt64;
+    PacketNum: integer;
     Battery : integer;
     Speed: single;
   end;
@@ -30,7 +31,6 @@ uses
 
 function GetGpsPacket( GpsData : PGpsData;  FrameTime : single ) : integer;
 var
-  Res : integer;
   pVehicle : ^TVehicle;
   Pkt: TGPSPacket;
 begin

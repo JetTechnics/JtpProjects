@@ -137,6 +137,7 @@
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="uGPSPacketsQueue.pas"/>
+        <DCCReference Include="uGPSServerConnect.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

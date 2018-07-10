@@ -17,7 +17,8 @@ uses
   GPS_dm in 'GpsTankTelemetry\GPS_dm.pas' {_GPS_dm: TDataModule},
   uConsts in 'uConsts.pas',
   frGPSServerConnect in 'frGPSServerConnect.pas' {GPSServerConnectFrame: TFrame},
-  uGPSPacketsQueue in 'uGPSPacketsQueue.pas';
+  uGPSPacketsQueue in 'uGPSPacketsQueue.pas',
+  uGPSServerConnect in 'uGPSServerConnect.pas';
 
 {$R *.res}
 
