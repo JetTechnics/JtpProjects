@@ -105,6 +105,7 @@ type TJtpEvent = record
     Flags       : integer;
     SceneName   : PAnsiChar;
     ObjectName  : PAnsiChar;
+    PointXY     : TJTPPoint;
 end;
 type PJtpEvent = ^TJtpEvent;
 

@@ -15,28 +15,40 @@ File_12=TSourceModule,'C:\_Components_for_10.2\RVMedia\MRVReceiver.pas',0,1,4088
 
 [Modules]
 Module0=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\VideoSettings\SettingsUnit.pas
-Module1=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\MainUnit.pas
-Module2=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\TankBiathlon.dproj
-Module3=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\frGPSServerConnect.pas
-Module4=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\uGPSServerConnect.pas
-Module5=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\Old\2018-07-09\GpsConnection.pas
-Module6=c:\program files (x86)\embarcadero\studio\19.0\source\rtl\win\Winapi.WinSock.pas
-Module7=c:\program files (x86)\embarcadero\studio\19.0\SOURCE\RTL\SYS\System.pas
-Module8=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\uGPSPacketsQueue.pas
-Module9=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\uGPSData.pas
-Module10=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\Poligon2D.pas
-Module11=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JTPStudio\TypesJTP.pas
-Module12=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\GpsTankTelemetry\GPSTelemetry.pas
-Module13=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\GpsTankTelemetry\GPS_dm.pas
-Module14=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\uConsts.pas
-Module15=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\Vehicle.pas
-Module16=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JTPStudio\JTPStudio.pas
-Module17=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\Titers.pas
-Module18=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JtpStudio\Vector.pas
+Module1=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\Poligon2D.pas
+Module2=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JTPStudio\JTPStudio.pas
+Module3=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JTPStudio\TypesJTP.pas
+Module4=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JtpStudio\Vector.pas
+Module5=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\MainUnit.pas
+Module6=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\TankBiathlon.dproj
+Module7=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\frGPSServerConnect.pas
+Module8=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\uGPSServerConnect.pas
+Module9=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\Old\2018-07-09\GpsConnection.pas
+Module10=c:\program files (x86)\embarcadero\studio\19.0\source\rtl\win\Winapi.WinSock.pas
+Module11=c:\program files (x86)\embarcadero\studio\19.0\SOURCE\RTL\SYS\System.pas
+Module12=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\uGPSPacketsQueue.pas
+Module13=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\uGPSData.pas
+Module14=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\GpsTankTelemetry\GPSTelemetry.pas
+Module15=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\GpsTankTelemetry\GPS_dm.pas
+Module16=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\uConsts.pas
+Module17=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\Vehicle.pas
+Module18=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\Titers.pas
 Count=19
 EditWindowCount=1
 
 [C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\VideoSettings\SettingsUnit.pas]
+ModuleType=TSourceModule
+
+[C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\Poligon2D.pas]
+ModuleType=TSourceModule
+
+[C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JTPStudio\JTPStudio.pas]
+ModuleType=TSourceModule
+
+[C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JTPStudio\TypesJTP.pas]
+ModuleType=TSourceModule
+
+[C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JtpStudio\Vector.pas]
 ModuleType=TSourceModule
 
 [C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\MainUnit.pas]
@@ -66,12 +78,6 @@ ModuleType=TSourceModule
 [C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\uGPSData.pas]
 ModuleType=TSourceModule
 
-[C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\Poligon2D.pas]
-ModuleType=TSourceModule
-
-[C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JTPStudio\TypesJTP.pas]
-ModuleType=TSourceModule
-
 [C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\GpsTankTelemetry\GPSTelemetry.pas]
 ModuleType=TSourceModule
 
@@ -84,13 +90,7 @@ ModuleType=TSourceModule
 [C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\Vehicle.pas]
 ModuleType=TSourceModule
 
-[C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JTPStudio\JTPStudio.pas]
-ModuleType=TSourceModule
-
 [C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\Titers.pas]
-ModuleType=TSourceModule
-
-[C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JtpStudio\Vector.pas]
 ModuleType=TSourceModule
 
 [EditWindow0]
@@ -171,11 +171,11 @@ CustomEditViewType=TEditView
 Module=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\VideoSettings\SettingsUnit.pas
 CursorX=1
 CursorY=1
-TopLine=103
+TopLine=115
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=Borland.FormDesignerView
+EditViewName=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\VideoSettings\SettingsUnit.pas
 
 [View3]
 CustomEditViewType=TEditView
@@ -290,9 +290,9 @@ EditViewName=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProje
 [View13]
 CustomEditViewType=TEditView
 Module=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JTPStudio\TypesJTP.pas
-CursorX=1
-CursorY=13
-TopLine=1
+CursorX=46
+CursorY=140
+TopLine=110
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -323,9 +323,9 @@ EditViewName=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProje
 [View16]
 CustomEditViewType=TEditView
 Module=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\Poligon2D.pas
-CursorX=43
-CursorY=8
-TopLine=1
+CursorX=20
+CursorY=117
+TopLine=96
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -345,9 +345,9 @@ EditViewName=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProje
 [View18]
 CustomEditViewType=TEditView
 Module=C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\JTPStudio\JTPStudio.pas
-CursorX=93
-CursorY=122
-TopLine=104
+CursorX=5
+CursorY=108
+TopLine=98
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -373,11 +373,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1183
+Height=1163
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1183
+ClientHeight=1163
 TBDockHeight=212
 LRDockWidth=13604
 Dockable=1
@@ -543,7 +543,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1896
 ClientHeight=3587
-TBDockHeight=7404
+TBDockHeight=6990
 LRDockWidth=1896
 Dockable=1
 StayOnTop=0
@@ -552,7 +552,7 @@ SplitPos=111
 [PropInspDesignerSelection]
 ArrangeBy=Name
 SelectedItem=Checked,
-ExpandedItems=Anchors=0,Constraints=0,Font=0
+ExpandedItems=Anchors=0,BorderIcons=0,Constraints=0
 
 [ClassBrowserTool]
 PercentageSizes=1
@@ -560,8 +560,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-218
-Top=-136
+Left=-182
+Top=-100
 Width=1849
 Height=3144
 MaxLeft=-1
@@ -620,11 +620,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=7163
+Height=6750
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=7163
+ClientHeight=6750
 TBDockHeight=5962
 LRDockWidth=2510
 Dockable=1
@@ -636,8 +636,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-1351
-Top=-136
+Left=-1419
+Top=-13
 Width=2844
 Height=6202
 MaxLeft=-1
@@ -655,8 +655,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-1543
-Top=-136
+Left=-1728
+Top=269
 Width=276
 Height=365
 MaxLeft=-1
@@ -680,11 +680,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1183
+Height=1163
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1183
+ClientHeight=1163
 TBDockHeight=413
 LRDockWidth=4953
 Dockable=1
@@ -699,11 +699,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1183
+Height=1163
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1183
+ClientHeight=1163
 TBDockHeight=212
 LRDockWidth=7406
 Dockable=1
@@ -722,11 +722,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1183
+Height=1163
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1183
+ClientHeight=1163
 TBDockHeight=1538
 LRDockWidth=3484
 Dockable=1
@@ -741,11 +741,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1183
+Height=1163
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1183
+ClientHeight=1163
 TBDockHeight=2067
 LRDockWidth=3484
 Dockable=1
@@ -779,11 +779,11 @@ State=0
 Left=0
 Top=0
 Width=2339
-Height=1240
+Height=1000
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2339
-ClientHeight=1240
+ClientHeight=1000
 TBDockHeight=2317
 LRDockWidth=2823
 Dockable=1
@@ -844,11 +844,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=7163
+Height=6750
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=7163
+ClientHeight=6750
 TBDockHeight=4885
 LRDockWidth=7151
 Dockable=1
@@ -860,8 +860,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=0
+Left=370
+Top=827
 Width=2854
 Height=3212
 MaxLeft=-1
@@ -882,11 +882,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1183
+Height=1163
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1183
+ClientHeight=1163
 TBDockHeight=1548
 LRDockWidth=8740
 Dockable=1
@@ -927,11 +927,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=7163
+Height=6750
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=7163
+ClientHeight=6750
 TBDockHeight=4885
 LRDockWidth=5307
 Dockable=1
@@ -946,11 +946,11 @@ State=0
 Left=0
 Top=0
 Width=948
-Height=7404
+Height=6750
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=948
-ClientHeight=7404
+ClientHeight=6750
 TBDockHeight=3683
 LRDockWidth=1896
 Dockable=1
@@ -1011,14 +1011,14 @@ Visible=0
 Docked=1
 State=0
 Left=0
-Top=0
+Top=18
 Width=3823
-Height=1423
+Height=1404
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1423
-TBDockHeight=1423
+ClientHeight=1404
+TBDockHeight=1404
 LRDockWidth=3823
 Dockable=1
 StayOnTop=0
@@ -1042,7 +1042,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
 ClientHeight=4644
-TBDockHeight=7404
+TBDockHeight=6990
 LRDockWidth=2000
 Dockable=1
 StayOnTop=0
@@ -1066,7 +1066,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1896
 ClientHeight=3606
-TBDockHeight=7404
+TBDockHeight=6990
 LRDockWidth=1896
 Dockable=1
 StayOnTop=0
@@ -1090,7 +1090,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
 ClientHeight=2548
-TBDockHeight=7404
+TBDockHeight=6990
 LRDockWidth=2000
 Dockable=1
 StayOnTop=0
@@ -1099,5 +1099,5 @@ ActiveTabID=ToolForm
 TabDockClients=ToolForm,TemplateView
 
 [ActiveProject]
-ActiveProject=1
+ActiveProject=3
 

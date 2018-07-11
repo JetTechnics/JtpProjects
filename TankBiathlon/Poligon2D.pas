@@ -1,4 +1,4 @@
-unit Poligon2D;
+п»їunit Poligon2D;
 
 interface
 
@@ -10,21 +10,25 @@ uses
 Var
   MaxTanks : integer = 0;
 
-  GWheelDelta : integer = 0; // колесико мыши
+  GWheelDelta : integer = 0; // РєРѕР»РµСЃРёРєРѕ РјС‹С€Рё
 
-  // Данные камеры.
-  CameraSpeed : single;         //  скорость камеры
-  //CamViewLen : single;        //  дистанция камеры
-  CamViewDir : TVector;         //  направление
-  CameraMoving : dword = 0;     //  флаги состояние движения камеры
-  NewCameraMoving : dword = 0;  //  новые флаги состояние движения камеры
+  // Р”Р°РЅРЅС‹Рµ РєР°РјРµСЂС‹.
+  CameraSpeed : single;         //  СЃРєРѕСЂРѕСЃС‚СЊ РєР°РјРµСЂС‹
+  //CamViewLen : single;        //  РґРёСЃС‚Р°РЅС†РёСЏ РєР°РјРµСЂС‹
+  CamViewDir : TVector;         //  РЅР°РїСЂР°РІР»РµРЅРёРµ
+  CameraMoving : dword = 0;     //  С„Р»Р°РіРё СЃРѕСЃС‚РѕСЏРЅРёРµ РґРІРёР¶РµРЅРёСЏ РєР°РјРµСЂС‹
+  NewCameraMoving : dword = 0;  //  РЅРѕРІС‹Рµ С„Р»Р°РіРё СЃРѕСЃС‚РѕСЏРЅРёРµ РґРІРёР¶РµРЅРёСЏ РєР°РјРµСЂС‹
+  CameraScroll : dword = 0;     //  Г±Г®Г±ГІГ®ГїГ­ГЁГҐ Г±ГЄГ°Г®Г«Г«ГЁГ°Г®ГўГ Г­ГЁГї (ГЇГҐГ°ГҐГ¬ГҐГ№ГҐГ­ГЁГҐ Гў ГЇГ«Г®Г±ГЄГ®Г±ГІГЁ ГЈГ®Г°ГЁГ§Г®Г­ГІГ ) ГЄГ Г¬ГҐГ°Г».
+  StartScrollTarget : TVector;
+  StartScrollMouse : TJTPPoint;
+
   const
-    CAM_MOVE_TO_TANKS          : dword = $00000001;  // камера движется за такнками
-    CAM_MOVE_TARGET_MED_POINT  : dword = $00000002;  // таргет камеры сначала стремится к точке между танками
-    CAM_MOVE_POS_OVER_TARGET   : dword = $00000004;  // позиция камеры ставиться над точкой Target.
-    CAM_MOVE_POS_INCLINE       : dword = $00000008;  // позиция камеры ставиться над точкой Target с наклоном.
+    CAM_MOVE_TO_TANKS          : dword = $00000001;  // РєР°РјРµСЂР° РґРІРёР¶РµС‚СЃСЏ Р·Р° С‚Р°РєРЅРєР°РјРё
+    CAM_MOVE_TARGET_MED_POINT  : dword = $00000002;  // С‚Р°СЂРіРµС‚ РєР°РјРµСЂС‹ СЃРЅР°С‡Р°Р»Р° СЃС‚СЂРµРјРёС‚СЃСЏ Рє С‚РѕС‡РєРµ РјРµР¶РґСѓ С‚Р°РЅРєР°РјРё
+    CAM_MOVE_POS_OVER_TARGET   : dword = $00000004;  // РїРѕР·РёС†РёСЏ РєР°РјРµСЂС‹ СЃС‚Р°РІРёС‚СЊСЃСЏ РЅР°Рґ С‚РѕС‡РєРѕР№ Target.
+    CAM_MOVE_POS_INCLINE       : dword = $00000008;  // РїРѕР·РёС†РёСЏ РєР°РјРµСЂС‹ СЃС‚Р°РІРёС‚СЊСЃСЏ РЅР°Рґ С‚РѕС‡РєРѕР№ Target СЃ РЅР°РєР»РѕРЅРѕРј.
     CAM_MOVE_POS : dword = 12; //CAM_MOVE_POS_OVER_TARGET or CAM_MOVE_POS_INCLINE;
-    CAM_MOVE_COMMON            : dword = $00000010;  // камера движется к общему плану
+    CAM_MOVE_COMMON            : dword = $00000010;  // РєР°РјРµСЂР° РґРІРёР¶РµС‚СЃСЏ Рє РѕР±С‰РµРјСѓ РїР»Р°РЅСѓ
 
 Var
   ViewTanks : array[0..MaxOneVehicles] of integer;
@@ -60,7 +64,7 @@ begin
 
   CameraMoving := 0;  NewCameraMoving := 0;
 
-  //  Запускаем показ полигона. Инициируем подвижные средства (танки, катера и т.п.).
+  //  Р—Р°РїСѓСЃРєР°РµРј РїРѕРєР°Р· РїРѕР»РёРіРѕРЅР°. РРЅРёС†РёРёСЂСѓРµРј РїРѕРґРІРёР¶РЅС‹Рµ СЃСЂРµРґСЃС‚РІР° (С‚Р°РЅРєРё, РєР°С‚РµСЂР° Рё С‚.Рї.).
   Res := PlayScene( 'Poligon2D', 0.0, 0, VideoTrunk, @PlaySceneData );
   if( Res = JTP_OK ) then begin
 
@@ -68,7 +72,7 @@ begin
 
     MaxTanks := NumTanks;
 
-    //  Инициализируем подвижные средства
+    //  РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РїРѕРґРІРёР¶РЅС‹Рµ СЃСЂРµРґСЃС‚РІР°
     for i := 1 to MaxTanks do begin
 
       Res := CloneObject( @PoligonSceneName, 'Tank', nil, nil, nil, nil, 0.0, JTP_ABSOLUTE, @CloneObjectData );
@@ -85,7 +89,7 @@ begin
         Vehicles[i].Id := Ids[i];
     end;
 
-    //  закрасим танки
+    //  Р·Р°РєСЂР°СЃРёРј С‚Р°РЅРєРё
     Color.VSet(1,0,0,1);    Vehicles[1].SetColor(Color); // Vehicles[1].SetColor( Vehicles[1].Color );
     Color.VSet(0,1,0,1);    Vehicles[2].SetColor(Color); // Vehicles[2].SetColor( Vehicles[2].Color );
     Color.VSet(0,0,1,1);    Vehicles[3].SetColor(Color); // Vehicles[3].SetColor( Vehicles[3].Color );
@@ -106,15 +110,16 @@ var
   kk: integer;
   GpsData : TGpsData;
   Pos, Dir, Target : TVector;
-  fsize : single;
+  fsize, Len, fx, fz : single;
   pEvent : PJtpEvent;
   Delta, CamLen, F, t : single;
   Color : TJTPColor;
+  MouseDelta : TJTPPoint;
 begin
 
   OpenRecords( 0, nil );
 
-  //  Ловим события от мыши, кроме колеса.
+  //  Р›РѕРІРёРј СЃРѕР±С‹С‚РёСЏ РѕС‚ РјС‹С€Рё, РєСЂРѕРјРµ РєРѕР»РµСЃР°.
   if( pEvents <> nil )  then begin
     pEvent := pEvents;
     while pEvent.EventType <> 0 do begin
@@ -124,6 +129,47 @@ begin
         if( ( pEvent.Flags and EM_LBUTTON_CLICK ) <> 0 ) then begin
 
         end;
+
+        // ГЉГ«ГЁГЄ ГЇГ°Г ГўГ®Г© ГЄГ«Г ГўГЁГёГҐГ©.
+        if( ( pEvent.Flags and EM_RBUTTON_CLICK ) <> 0 ) then begin
+          CameraMoving := 0;                      // Г®Г±ГІГ Г­Г®Гў ГЄГ Г¬ГҐГ°Г»
+          NewCameraMoving := 0;
+
+          for i := 1 to MaxOneVehicles do begin   // Г±ГЄГ°Г®ГҐГ¬ Г°Г Г¬ГЄГЁ ГІГ Г­ГЄГ®Гў
+			    	Vehicles[i].SetSelectFrame( 0.0 );
+    			end;
+        end;
+
+        // Г“Г¤ГҐГ°Г¦ГЁГўГ ГҐГ¬ Г¶ГҐГ­ГІГ°Г Г«ГјГҐГіГѕ ГЄГ«Г ГўГЁГёГі.
+        if( ( pEvent.Flags and EM_MBUTTON_DOWN ) <> 0 ) then begin
+
+          if( CameraScroll = 0 ) then begin
+            CameraScroll := 1;
+
+            StartScrollMouse := pEvent.PointXY;
+            GetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @StartScrollTarget, nil, 0, nil );
+          end;
+
+          if( CameraScroll = 1 ) then begin
+
+            GetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @Target, nil, 0, nil );
+            Dir := Target - Pos;
+            Len := VecLengthNormalize( Dir );
+
+            MouseDelta := pEvent.PointXY - StartScrollMouse;
+            fx := MouseDelta.x;
+            fz := MouseDelta.y;
+
+            Target.x := StartScrollTarget.x - fx * Len/900.0; // 900 ГЇГ®Г¤Г®ГЎГ°Г Г« ГЇГ®Г¤ Г¤Г Г­Г­Г»Г© ГґГ®ГЄГіГ± ГЄГ Г¬ГҐГ°Г», Г®Г­ Г­ГҐ Г¬ГҐГ­ГїГҐГІГ±Гї.
+            Target.z := StartScrollTarget.z + fz * Len/900.0;
+
+            Pos := Target - Dir * Len;
+
+            SetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @Target, nil, 0.0, JTP_ABSOLUTE, nil );
+          end;
+
+        end else
+          CameraScroll := 0;
 
         if( ( pEvent.Flags and EM_RBUTTON_CLICK ) <> 0 ) then begin
           CameraMoving := 0;
@@ -135,7 +181,7 @@ begin
     end;
   end;
 
-  //  Колесо мыши, приближаем/отдаляем камеру
+  //  РљРѕР»РµСЃРѕ РјС‹С€Рё, РїСЂРёР±Р»РёР¶Р°РµРј/РѕС‚РґР°Р»СЏРµРј РєР°РјРµСЂСѓ
   if( GWheelDelta <> 0 )  then begin
 
     if( GWheelDelta > 0 )  then Delta := -150.0
@@ -145,19 +191,19 @@ begin
     Dir := VecNormalize( Pos - Target ) * Delta;
     Pos := Pos + Dir;
 
-    SetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, nil, nil, 0.0, 0, nil );
+    SetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, nil, nil, 0.0, JTP_ABSOLUTE, nil );
 
     GWheelDelta := 0;
   end;
 
-  // Получим пакеты с GPS.
+  // РџРѕР»СѓС‡РёРј РїР°РєРµС‚С‹ СЃ GPS.
   for kk:=1 to MaxPacketNum do
     try
       res := GetGpsPacket( @GpsData, FrameTime );
       if res = 0 then
         begin
           // MainForm.AddLogGpsData(GpsData.VehicleId, GpsData.Latitude, GpsData.Longitude);
-          // Найдём танк с нужным id.
+          // РќР°Р№РґС‘Рј С‚Р°РЅРє СЃ РЅСѓР¶РЅС‹Рј id.
           for i := 1 to MaxOneVehicles do begin
             if( Vehicles[i].Id = GpsData.VehicleId ) then begin
               Pos.x := GpsData.Latitude;
@@ -175,20 +221,29 @@ begin
 
   fsize := 3.0;
 
-  // Танки на забеге.
+  // РўР°РЅРєРё РЅР° Р·Р°Р±РµРіРµ.
   for i := 1 to MaxOneVehicles do begin
     if( ( Vehicles[i].State and VE_ENABLED ) <> 0 ) then begin
       //Vehicles[i].DebugId := i;
       Vehicles[i].Process( FrameTime );
-      //  размер и цвет танков
+      //  СЂР°Р·РјРµСЂ Рё С†РІРµС‚ С‚Р°РЅРєРѕРІ
       Vehicles[i].SetSize( fsize );
     end;
   end;
 
-  // Камера.
+  // РљР°РјРµСЂР°.
   if( NewCameraMoving <> 0 ) then begin
     CameraMoving := NewCameraMoving;
     NewCameraMoving := 0;
+    for i := 1 to MaxOneVehicles do begin   // Г±ГЄГ°Г®ГҐГ¬ Г°Г Г¬ГЄГЁ ГІГ Г­ГЄГ®Гў
+	    Vehicles[i].SetSelectFrame( 0.0 );
+    end;
+
+    i := 0;                              // ГЇГ®ГЄГ Г¦ГҐГ¬ Г°Г Г¬ГЄГЁ ГўГ»Г¤ГҐГ«ГҐГ­Г­Г»Гµ ГІГ Г­ГЄГ®Гў
+    while( ViewTanks[i] <> 0 ) do begin
+      Vehicles[ViewTanks[i]].SetSelectFrame( 0.7 );
+      inc(i);
+    end;
   end;
   if( CameraMoving <> 0 ) then begin
     MoveCameraToTanks( FrameTime );
@@ -207,8 +262,8 @@ var
   Pos, Target, MedPos, MedTarget, Dir, vMin, vMax : TVector;
 begin
 
-  // Камера движеся за танками, расчитаем среднюю точку между ними. Это будет таргет камеры.
-  // Определим мин.макс. коор-ты таков, для расчёта средней точки и высоты камеры над ландшафтом.
+  // РљР°РјРµСЂР° РґРІРёР¶РµСЃСЏ Р·Р° С‚Р°РЅРєР°РјРё, СЂР°СЃС‡РёС‚Р°РµРј СЃСЂРµРґРЅСЋСЋ С‚РѕС‡РєСѓ РјРµР¶РґСѓ РЅРёРјРё. Р­С‚Рѕ Р±СѓРґРµС‚ С‚Р°СЂРіРµС‚ РєР°РјРµСЂС‹.
+  // РћРїСЂРµРґРµР»РёРј РјРёРЅ.РјР°РєСЃ. РєРѕРѕСЂ-С‚С‹ С‚Р°РєРѕРІ, РґР»СЏ СЂР°СЃС‡С‘С‚Р° СЃСЂРµРґРЅРµР№ С‚РѕС‡РєРё Рё РІС‹СЃРѕС‚С‹ РєР°РјРµСЂС‹ РЅР°Рґ Р»Р°РЅРґС€Р°С„С‚РѕРј.
   vMin.VSet(99999,0,99999);
   vMax.VSet(-99999,0,-99999);
   if( ( CameraMoving and CAM_MOVE_TO_TANKS ) <> 0 ) then begin
@@ -217,13 +272,13 @@ begin
     while( ViewTanks[tank] <> 0 ) do begin
       pVehicle := @Vehicles[ViewTanks[tank]];
 
-      // мин/макс коор-та х
+      // РјРёРЅ/РјР°РєСЃ РєРѕРѕСЂ-С‚Р° С…
       if( pVehicle.Pos.x < vMin.x ) then
         vMin.x := pVehicle.Pos.x;
       if( pVehicle.Pos.x > vMax.x ) then
         vMax.x := pVehicle.Pos.x;
 
-      // мин/макс коор-та z
+      // РјРёРЅ/РјР°РєСЃ РєРѕРѕСЂ-С‚Р° z
       if( pVehicle.Pos.z < vMin.z ) then
         vMin.z := pVehicle.Pos.z;
       if( pVehicle.Pos.z > vMax.z ) then
@@ -236,24 +291,24 @@ begin
   end
   else
   if( ( CameraMoving and CAM_MOVE_COMMON ) <> 0 ) then begin
-    MedTarget.VSet( 0.0, 0.0, 150.0 );  // в центр полигона
+    MedTarget.VSet( 0.0, 0.0, 150.0 );  // РІ С†РµРЅС‚СЂ РїРѕР»РёРіРѕРЅР°
   end;
 
   GetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @Target, nil, 0, nil );
 
-  //  Хар-ки камеры.
+  //  РҐР°СЂ-РєРё РєР°РјРµСЂС‹.
   CameraSpeed := 500.0;
 
-  // Двигаем таргет камеры до средней точки.
+  // Р”РІРёРіР°РµРј С‚Р°СЂРіРµС‚ РєР°РјРµСЂС‹ РґРѕ СЃСЂРµРґРЅРµР№ С‚РѕС‡РєРё.
   if( ( CameraMoving and CAM_MOVE_TARGET_MED_POINT ) <> 0 ) then begin
     Dir := MedTarget - Target;
-    Dir.y := 0.0; // считаем в плоскости горизонта (xz)
+    Dir.y := 0.0; // СЃС‡РёС‚Р°РµРј РІ РїР»РѕСЃРєРѕСЃС‚Рё РіРѕСЂРёР·РѕРЅС‚Р° (xz)
     Len := VecLengthNormalize( Dir );
     if( Len > 0.1 ) then begin
 
       Target := Target + Dir * (CameraSpeed * FrameTime);
 
-      // Достигли точки
+      // Р”РѕСЃС‚РёРіР»Рё С‚РѕС‡РєРё
       if( VecDot( MedTarget-Target, Dir ) <= 0.0 ) then begin
         Target := MedTarget;
         CameraMoving := CameraMoving and not CAM_MOVE_TARGET_MED_POINT;
@@ -269,7 +324,7 @@ begin
     FactorY := 2.0;
   end
   else begin
-    // Высота камеры в зависимости от мин/макс коор-ат танков.
+    // Р’С‹СЃРѕС‚Р° РєР°РјРµСЂС‹ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РјРёРЅ/РјР°РєСЃ РєРѕРѕСЂ-Р°С‚ С‚Р°РЅРєРѕРІ.
     Len1 := vMax.x - vMin.x;
     Len2 := vMax.z - vMin.z;
     if( Len1 > Len2 ) then Len := Len1
@@ -282,14 +337,14 @@ begin
 
   if( ( CameraMoving and CAM_MOVE_POS ) <> 0 ) then begin
     if( ( CameraMoving and CAM_MOVE_POS_OVER_TARGET ) <> 0 ) then begin
-      CamViewDir.VSet( 0.0, -1.0, 0.01 );  // над target
+      CamViewDir.VSet( 0.0, -1.0, 0.01 );  // РЅР°Рґ target
     end;
     if( ( CameraMoving and CAM_MOVE_POS_INCLINE ) <> 0 ) then begin
-      CamViewDir.VSet( 0.0, -0.5, 0.5 );   // с наклоном
+      CamViewDir.VSet( 0.0, -0.5, 0.5 );   // СЃ РЅР°РєР»РѕРЅРѕРј
     end;
   end;
 
-  // Двигаем позицию камеры до точки над точкой таргет (смотрим на полигон сверху или с наклоном).
+  // Р”РІРёРіР°РµРј РїРѕР·РёС†РёСЋ РєР°РјРµСЂС‹ РґРѕ С‚РѕС‡РєРё РЅР°Рґ С‚РѕС‡РєРѕР№ С‚Р°СЂРіРµС‚ (СЃРјРѕС‚СЂРёРј РЅР° РїРѕР»РёРіРѕРЅ СЃРІРµСЂС…Сѓ РёР»Рё СЃ РЅР°РєР»РѕРЅРѕРј).
   MedPos := Target - CamViewDir * Len;
 
   if( ( CameraMoving and CAM_MOVE_POS ) <> 0 ) then begin
@@ -301,7 +356,7 @@ begin
       Pos.z := Pos.z + Dir.z * (CameraSpeed * FrameTime);
       Pos.y := Pos.y + Dir.y * (CameraSpeed * FrameTime * FactorY);
 
-      // Достигли точки
+      // Р”РѕСЃС‚РёРіР»Рё С‚РѕС‡РєРё
       if( VecDot( MedPos-Pos, Dir ) <= 0.0 ) then begin
         Pos := MedPos;
         CameraMoving := CameraMoving and not CAM_MOVE_POS;
@@ -312,10 +367,14 @@ begin
     Pos := MedPos;
   end;
 
+  // Г…Г±Г«ГЁ Г¤ГўГЁГЈГ Г«ГЁГ±Гј ГЄ Г®ГЎГ№ГҐГ¬Гі ГЇГ«Г Г­Гі ГЁ Г®Г±ГІГ Г«ГјГ­Г»ГҐ ГґГ«Г ГЈГЁ ГіГ¦ГҐ Г±ГЎГ°Г®ГёГҐГ­Г», Г±ГЎГ°Г Г±Г»ГўГ ГҐГ¬ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ ГЄГ Г¬ГҐГ°Г».
+  if( CameraMoving = CAM_MOVE_COMMON ) then
+    CameraMoving := 0;
+
   if( Pos.z > (Target.z-10.0) ) then
     Pos.z := Target.z-10.0;
 
-  SetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @Target, nil, 0.0, 0, nil );
+  SetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @Target, nil, 0.0, JTP_ABSOLUTE, nil );
 
 end;
 

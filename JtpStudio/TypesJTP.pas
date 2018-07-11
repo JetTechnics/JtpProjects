@@ -1,4 +1,4 @@
-unit TypesJTP;
+п»їunit TypesJTP;
 
 interface
 
@@ -6,124 +6,141 @@ uses
   Windows;
 
 
-//  Значения параметров движка, которые ничего не меняют.
+//  Р—РЅР°С‡РµРЅРёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ РґРІРёР¶РєР°, РєРѕС‚РѕСЂС‹Рµ РЅРёС‡РµРіРѕ РЅРµ РјРµРЅСЏСЋС‚.
 const  FLT_UNDEF    : single  = 3.402823466e+38;
 //const  COLOR_UNDEF  : dword   = $CCCCCCCC;
 const  INT_UNDEF    : integer = $CCCCCCCC;
 
 
-const  JTP_RELATIVE : dword = $00010000; //  флаг относительности координат (анимации, клонирования и т.д.)
-const  JTP_ABSOLUTE : dword = $00000000; //  флаг абсолютности координат (анимации, клонирования и т.д.)
+const  JTP_RELATIVE : dword = $00010000; //  С„Р»Р°Рі РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕСЃС‚Рё РєРѕРѕСЂРґРёРЅР°С‚ (Р°РЅРёРјР°С†РёРё, РєР»РѕРЅРёСЂРѕРІР°РЅРёСЏ Рё С‚.Рґ.)
+const  JTP_ABSOLUTE : dword = $00000000; //  С„Р»Р°Рі Р°Р±СЃРѕР»СЋС‚РЅРѕСЃС‚Рё РєРѕРѕСЂРґРёРЅР°С‚ (Р°РЅРёРјР°С†РёРё, РєР»РѕРЅРёСЂРѕРІР°РЅРёСЏ Рё С‚.Рґ.)
 
 
-//  Коды анимаций. Какое свойство у объекта меняет анимация: позицию, ориентацию и т.д.
+//  РљРѕРґС‹ Р°РЅРёРјР°С†РёР№. РљР°РєРѕРµ СЃРІРѕР№СЃС‚РІРѕ Сѓ РѕР±СЉРµРєС‚Р° РјРµРЅСЏРµС‚ Р°РЅРёРјР°С†РёСЏ: РїРѕР·РёС†РёСЋ, РѕСЂРёРµРЅС‚Р°С†РёСЋ Рё С‚.Рґ.
 const ANIM_POS        : dword = $00000001;
 const ANIM_ORIENT     : dword = $00000002;
-const ANIM_TARGET			: dword = $00000004;  // точка, куда смотрит камера (только для камеры).
+const ANIM_TARGET			: dword = $00000004;  // С‚РѕС‡РєР°, РєСѓРґР° СЃРјРѕС‚СЂРёС‚ РєР°РјРµСЂР° (С‚РѕР»СЊРєРѕ РґР»СЏ РєР°РјРµСЂС‹).
 const ANIM_SIZE       : dword = $00000008;
 const ANIM_COLOR_RGB  : dword = $00000010;
 const ANIM_COLOR_A    : dword = $00000020;
 
-//  Коды мягких ключей анимаций.
-const ANIM_LINEAR		  : dword = 1;    //  просто линейно
-const ANIM_SINUSOID	  : dword = 2;    //  мягкий старт, мягкий стоп
-const ANIM_PARABOLIC  : dword = 3;    //  мягкий старт (ускорение)
-const ANIM_INV_PARAB  : dword = 4;    //  мягкий стоп (замедление)
+//  РљРѕРґС‹ РјСЏРіРєРёС… РєР»СЋС‡РµР№ Р°РЅРёРјР°С†РёР№.
+const ANIM_LINEAR		  : dword = 1;    //  РїСЂРѕСЃС‚Рѕ Р»РёРЅРµР№РЅРѕ
+const ANIM_SINUSOID	  : dword = 2;    //  РјСЏРіРєРёР№ СЃС‚Р°СЂС‚, РјСЏРіРєРёР№ СЃС‚РѕРї
+const ANIM_PARABOLIC  : dword = 3;    //  РјСЏРіРєРёР№ СЃС‚Р°СЂС‚ (СѓСЃРєРѕСЂРµРЅРёРµ)
+const ANIM_INV_PARAB  : dword = 4;    //  РјСЏРіРєРёР№ СЃС‚РѕРї (Р·Р°РјРµРґР»РµРЅРёРµ)
 
 
-//    Типы объектов.
+//    РўРёРїС‹ РѕР±СЉРµРєС‚РѕРІ.
 const JTP_OBJ_CAMERA    : integer = 3;
 const JTP_OBJ_LIGHT     : integer = 18;
 const JTP_OBJ_GEOMETRY  : integer = 20;
 
 
-//  Возвращаемые значения.
-const  JTP_OK                 : UInt64 = $0000000000000000;  //  Успешно.
+//  Р’РѕР·РІСЂР°С‰Р°РµРјС‹Рµ Р·РЅР°С‡РµРЅРёСЏ.
+const  JTP_OK                 : UInt64 = $0000000000000000;  //  РЈСЃРїРµС€РЅРѕ.
 
-const  JTP_UNDEF_SCENE        : UInt64 = $0000000080000000;  //  Не найдена сцена.
-const  JTP_UNDEF_UNIT         : UInt64 = $0000000040000000;  //  Не найден объект (юнит) сцены.
-const  JTP_UNDEF_ANIMATION    : UInt64 = $0000000020000000;  //  Не найдена анимация.
-const  JTP_UNDEF_UNIT_GROUP   : UInt64 = $0000000010000000;  //  Не найдена группа юнитов.
-const  JTP_UNDEF_SCENARIO     : UInt64 = $0000000008000000;  //  Не найден сценарий.
-const  JTP_UNDEF_TEXTURE      : UInt64 = $0000000004000000;  //  Не найдена текстура.
-const  JTP_UNDEF_MESH         : UInt64 = $0000000002000000;  //  Не найден меш.
-const  JTP_UNDEF_SURF_ELEMENT : UInt64 = $0000000001000000;  //  Неправильный индекс елемента или текстуры.
+const  JTP_UNDEF_SCENE        : UInt64 = $0000000080000000;  //  РќРµ РЅР°Р№РґРµРЅР° СЃС†РµРЅР°.
+const  JTP_UNDEF_UNIT         : UInt64 = $0000000040000000;  //  РќРµ РЅР°Р№РґРµРЅ РѕР±СЉРµРєС‚ (СЋРЅРёС‚) СЃС†РµРЅС‹.
+const  JTP_UNDEF_ANIMATION    : UInt64 = $0000000020000000;  //  РќРµ РЅР°Р№РґРµРЅР° Р°РЅРёРјР°С†РёСЏ.
+const  JTP_UNDEF_UNIT_GROUP   : UInt64 = $0000000010000000;  //  РќРµ РЅР°Р№РґРµРЅР° РіСЂСѓРїРїР° СЋРЅРёС‚РѕРІ.
+const  JTP_UNDEF_SCENARIO     : UInt64 = $0000000008000000;  //  РќРµ РЅР°Р№РґРµРЅ СЃС†РµРЅР°СЂРёР№.
+const  JTP_UNDEF_TEXTURE      : UInt64 = $0000000004000000;  //  РќРµ РЅР°Р№РґРµРЅР° С‚РµРєСЃС‚СѓСЂР°.
+const  JTP_UNDEF_MESH         : UInt64 = $0000000002000000;  //  РќРµ РЅР°Р№РґРµРЅ РјРµС€.
+const  JTP_UNDEF_SURF_ELEMENT : UInt64 = $0000000001000000;  //  РќРµРїСЂР°РІРёР»СЊРЅС‹Р№ РёРЅРґРµРєСЃ РµР»РµРјРµРЅС‚Р° РёР»Рё С‚РµРєСЃС‚СѓСЂС‹.
 
-const  JTP_FILE_NOT_FOUND			: UInt64 = $0000000000000001;  //  Файл не найден.
-const  JTP_FILE_INVALID_DATA	: UInt64 = $0000000000000002;  //  Неизвестные данные в файле.
-const  JTP_LIMIT					    : UInt64 = $0000000000000004;  //  Переполнение.
-const  JTP_MEMORY				    	: UInt64 = $0000000000000008;  //  Ошибка выделения памяти.
-const  JTP_INVALID_DATA			  : UInt64 = $0000000000000010;  //  Невалидные данные.
-const  JTP_LATER					    : UInt64 = $0000000000000020;  //  Операция произойдёт позже.
-const  JTP_INTERNAL_ERROR			: UInt64 = $0000000000000040;  //  Внутренняя ошибка API, SDK и т.д.
-const  JTP_TIMEOUT				    : UInt64 = $0000000000000080;  //  Время ожидания вышло.
-const  JTP_NOT_FOUND				  : UInt64 = $0000000000000100;  //  Данные не найдены.
-const  JTP_UNINITIALIZED			: UInt64 = $0000000000000200;  //  Данные не инициализированы.
-const  JTP_ALREADY				    : UInt64 = $0000000000000400;  //  Данные уже инициализированы.
-const  JTP_INVALID_PARAMS			: UInt64 = $0000000000000800;  //  Неправильные входные параметры.
-const  JTP_STILL          		: UInt64 = $0000000000001000;  //  Что-то ещё работает.
-
-
+const  JTP_FILE_NOT_FOUND			: UInt64 = $0000000000000001;  //  Р¤Р°Р№Р» РЅРµ РЅР°Р№РґРµРЅ.
+const  JTP_FILE_INVALID_DATA	: UInt64 = $0000000000000002;  //  РќРµРёР·РІРµСЃС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ РІ С„Р°Р№Р»Рµ.
+const  JTP_LIMIT					    : UInt64 = $0000000000000004;  //  РџРµСЂРµРїРѕР»РЅРµРЅРёРµ.
+const  JTP_MEMORY				    	: UInt64 = $0000000000000008;  //  РћС€РёР±РєР° РІС‹РґРµР»РµРЅРёСЏ РїР°РјСЏС‚Рё.
+const  JTP_INVALID_DATA			  : UInt64 = $0000000000000010;  //  РќРµРІР°Р»РёРґРЅС‹Рµ РґР°РЅРЅС‹Рµ.
+const  JTP_LATER					    : UInt64 = $0000000000000020;  //  РћРїРµСЂР°С†РёСЏ РїСЂРѕРёР·РѕР№РґС‘С‚ РїРѕР·Р¶Рµ.
+const  JTP_INTERNAL_ERROR			: UInt64 = $0000000000000040;  //  Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° API, SDK Рё С‚.Рґ.
+const  JTP_TIMEOUT				    : UInt64 = $0000000000000080;  //  Р’СЂРµРјСЏ РѕР¶РёРґР°РЅРёСЏ РІС‹С€Р»Рѕ.
+const  JTP_NOT_FOUND				  : UInt64 = $0000000000000100;  //  Р”Р°РЅРЅС‹Рµ РЅРµ РЅР°Р№РґРµРЅС‹.
+const  JTP_UNINITIALIZED			: UInt64 = $0000000000000200;  //  Р”Р°РЅРЅС‹Рµ РЅРµ РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°РЅС‹.
+const  JTP_ALREADY				    : UInt64 = $0000000000000400;  //  Р”Р°РЅРЅС‹Рµ СѓР¶Рµ РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°РЅС‹.
+const  JTP_INVALID_PARAMS			: UInt64 = $0000000000000800;  //  РќРµРїСЂР°РІРёР»СЊРЅС‹Рµ РІС…РѕРґРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹.
+const  JTP_STILL          		: UInt64 = $0000000000001000;  //  Р§С‚Рѕ-С‚Рѕ РµС‰С‘ СЂР°Р±РѕС‚Р°РµС‚.
 
 
 
 
 
-//  Фиксированная строка на 64 символов.
+
+
+//  Р¤РёРєСЃРёСЂРѕРІР°РЅРЅР°СЏ СЃС‚СЂРѕРєР° РЅР° 64 СЃРёРјРІРѕР»РѕРІ.
 type Str64 = record
      text : array[0..63] of AnsiChar;
 end;
 type PStr64 = ^Str64;
 
 
-//  Фиксированная строка на 128 символов.
+//  Р¤РёРєСЃРёСЂРѕРІР°РЅРЅР°СЏ СЃС‚СЂРѕРєР° РЅР° 128 СЃРёРјРІРѕР»РѕРІ.
 type Str128 = record
      text : array[0..127] of AnsiChar;
 end;
 type PStr128 = ^Str128;
 
 
-//  Фиксированная строка на 256 символов.
+//  Р¤РёРєСЃРёСЂРѕРІР°РЅРЅР°СЏ СЃС‚СЂРѕРєР° РЅР° 256 СЃРёРјРІРѕР»РѕРІ.
 type Str256 = record
      text : array[0..255] of AnsiChar;
 end;
 type PStr256 = ^Str256;
 
 
-//  Фиксированная строка на 512 символов.
+//  Р¤РёРєСЃРёСЂРѕРІР°РЅРЅР°СЏ СЃС‚СЂРѕРєР° РЅР° 512 СЃРёРјРІРѕР»РѕРІ.
 type Str512 = record
      text : array[0..511] of AnsiChar;
 end;
 type PStr512 = ^Str512;
 
 
-//  Фиксированная строка на 1024 символов.
+//  Р¤РёРєСЃРёСЂРѕРІР°РЅРЅР°СЏ СЃС‚СЂРѕРєР° РЅР° 1024 СЃРёРјРІРѕР»РѕРІ.
 type Str1024 = record
      text : array[0..1023] of AnsiChar;
 end;
 type PStr1024 = ^Str1024;
 
 
-//  Имя объекта, анимации, текстуры и т.д.
+//  РРјСЏ РѕР±СЉРµРєС‚Р°, Р°РЅРёРјР°С†РёРё, С‚РµРєСЃС‚СѓСЂС‹ Рё С‚.Рґ.
 type TName = Str64;
 type PName = PStr64;
 
 
-//  Путь к файлу.
+//  РџСѓС‚СЊ Рє С„Р°Р№Р»Сѓ.
 type TPath = Str256;
 type PPath = PStr256;
 
 
-//  Прямоугольник на экране
+//  РџСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє РЅР° СЌРєСЂР°РЅРµ
 type TJTPRect = record
   x1, y1, x2, y2 : integer;
 end;
 
+//  Г’Г®Г·ГЄГ  Г­Г  ГЅГЄГ°Г Г­ГҐ
+type TJTPPoint = record
+  x, y : integer;
 
-
+  class operator Add( A, B: TJTPPoint ) : TJTPPoint;
+  class operator Subtract( A, B: TJTPPoint ) : TJTPPoint;
+end;
 
 implementation
 
+class operator TJTPPoint.Add( A, B: TJTPPoint): TJTPPoint;
+begin
+  Result.x := A.x + B.x;
+  Result.y := A.y + B.y;
+end;
 
+
+
+class operator TJTPPoint.Subtract( A, B: TJTPPoint): TJTPPoint;
+begin
+  Result.x := A.x - B.x;
+  Result.y := A.y - B.y;
+end;
 
 end.
