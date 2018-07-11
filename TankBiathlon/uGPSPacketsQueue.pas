@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.AnsiStrings,
-  GpsConnection;
+  uGPSData;
 
 type
   TGPSPacket = class(TObject)

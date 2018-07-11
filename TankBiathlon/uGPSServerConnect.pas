@@ -5,12 +5,12 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, Winapi.WinSock,
   System.SysUtils, System.Variants, System.Classes,
-  GpsConnection;
+  uGPSData;
 
 type
-  TConnectState = (csDisconnected, csDisconnecting, csConnecting, csConnected);
-
   TLogGPSDataEvent = procedure(Sender: TObject; const GpsData: TGpsData) of object;
+  TConnectionChangedEvent = procedure(Sender: TObject;
+                              const OldState, NewState: TConnectState) of object;
 
   TGPSServerConnectObj = class(TObject)
   private
@@ -20,6 +20,7 @@ type
     FWorkThread: TThread;
     FOnUpdateUI: TNotifyEvent;
     FOnLogGpsData: TLogGPSDataEvent;
+    FOnConnectionChanged: TConnectionChangedEvent;
     procedure ConnectStateChanged(Sender: TThread;
                 const OldState, NewState: TConnectState);
     procedure DoConnect;
@@ -27,19 +28,41 @@ type
     procedure DoLogGPSData(Sender: TObject; const GpsData: TGpsData);
   protected
     procedure UpdateUI; virtual;
+    procedure DoConnectionChanged(const OldState, NewState: TConnectState); virtual;
   public
-    constructor Create(const ServerIP: string; const Port: integer);
+    constructor Create;
     destructor Destroy; override;
-    procedure ToggleState;
+    procedure ToggleState(const AServerIP: string; const Port: integer);
     property ConnectState: TConnectState read FState write FState;
     property OnUpdateUI: TNotifyEvent read FOnUpdateUI write FOnUpdateUI;
     property OnLogGpsData: TLogGPSDataEvent read FOnLogGpsData write FOnLogGpsData;
+    property OnConnectionChanged: TConnectionChangedEvent
+                                    read FOnConnectionChanged
+                                    write FOnConnectionChanged;
   end;
 
 implementation
 
 uses
-  TypesJTP, uGPSPacketsQueue;
+  uGPSPacketsQueue;
+
+{************ Copy from TypesJTP **********************}
+//  «начени€ параметров движка, которые ничего не мен€ют.
+const  FLT_UNDEF    : single  = 3.402823466e+38;
+//const  COLOR_UNDEF  : dword   = $CCCCCCCC;
+const  INT_UNDEF    : integer = $CCCCCCCC;
+
+var
+  WSAStarted: boolean;
+
+procedure CheckWSAStarted;
+var
+  WSAData: TWSAData;
+begin
+  if WSAStarted then Exit;
+  WSAStartup(MakeWord(2,2), WSAData);
+  WSAStarted := true;
+end;
 
 { TGPSServerConnectThread }
 
@@ -51,6 +74,7 @@ type
   private
     FId: integer;
     FServerIP: string;
+    FServerIPa: array[0..63] of AnsiChar;
     FPort: integer;
     FConnectState: TConnectState;
     FGPSSocket: Int64;
@@ -58,15 +82,21 @@ type
     FGPSLastBeat: UInt64;
     FOnStateChanged: TConnectStateChangedEvent;
     FOnLogGpsData: TLogGPSDataEvent;
+    {$ifndef ver320}
+    FOldState: TConnectState;
+    FNewState: TConnectState;
+    procedure DoStateChanged7;
+    {$endif}
     procedure CheckIncomingData;
     procedure ConnectToGPSServer;
+    procedure SetServerIP(const Value: string);
   protected
     procedure Execute; override;
     procedure DoStateChanged(const OldState, NewState: TConnectState); virtual;
     procedure DoLogGpsData(const GpsData: TGpsData); virtual;
   public
-    constructor Create(const ServerIP: string; const Port: integer); reintroduce;
-    property ServerIP: string read FServerIP;
+    constructor Create(const AServerIP: string; const Port: integer); reintroduce;
+    property ServerIP: string read FServerIP write SetServerIP;
     property Port: integer read FPort;
     property OnStateChanged: TConnectStateChangedEvent read FOnStateChanged
                                                        write FOnStateChanged;
@@ -174,6 +204,8 @@ var
   NotBlock : integer;
   AddrIn: sockaddr_in;
   lId: array[1..9] of integer;
+  SockSet: TFDSet;
+  TimeoutStruct: TTimeVal;
 begin
   Res := 0;
   FGPSLastAccess := Winapi.Windows.GetTickCount64;
@@ -196,10 +228,25 @@ begin
 
   AddrIn.sin_family := AF_INET;
   AddrIn.sin_port := htons(FPort);
-  AddrIn.sin_addr.S_addr := inet_addr(PAnsiChar(AnsiString(FServerIP)));
+  AddrIn.sin_addr.S_addr := inet_addr(FServerIPa);
 
   Res := connect(FGPSSocket, AddrIn, sizeof(AddrIn));
   Res := WSAGetLastError();
+  if Res = WSAEWOULDBLOCK then
+    begin
+      SockSet.fd_count := 1;
+      SockSet.fd_array[0] := FGPSSocket;
+      TimeoutStruct.tv_sec := 3;
+      TimeoutStruct.tv_usec := 0;
+      Res := select(1, nil, @SockSet, nil, @TimeoutStruct);
+      if Res = 1 then Res := WSAEISCONN
+                 else
+        begin
+          WSACleanup();
+          FGPSSocket := INVALID_SOCKET;
+          Exit;
+        end;
+    end;
   if Res = WSAEISCONN then
     begin
       FConnectState := csConnected;
@@ -213,13 +260,13 @@ begin
     end;
 end;
 
-constructor TGPSServerConnectThread.Create(const ServerIP: string;
+constructor TGPSServerConnectThread.Create(const AServerIP: string;
   const Port: integer);
 begin
   inherited Create(true);
   FId := Random(1000);
   FreeOnTerminate := true;
-  SetString(FServerIP, PChar(ServerIP), Length(ServerIP));
+  SetServerIP(AServerIP);
   FPort := Port;
   FConnectState := csDisconnected;
   FGPSSocket  := INVALID_SOCKET;
@@ -237,43 +284,67 @@ procedure TGPSServerConnectThread.DoStateChanged(const OldState,
 begin
   if not Assigned(FOnStateChanged) then Exit;
 
+  {$ifdef ver320}
   TThread.Queue(nil,
       procedure
       begin
         FOnStateChanged(Self, OldState, NewState);
       end
     );
+  {$else}
+  FOldState := OldState;
+  FNewState := NewState;
+  Synchronize(DoStateChanged7);
+  {$endif}
 end;
+
+{$ifndef ver320}
+procedure TGPSServerConnectThread.DoStateChanged7;
+begin
+  FOnStateChanged(Self, FOldState, FNewState);
+end;
+{$endif}
 
 procedure TGPSServerConnectThread.Execute;
 begin
   repeat
     try
       CheckIncomingData;
-      Sleep(200);
+      Sleep(100);
     except
     end;
   until Terminated;
+end;
+
+procedure TGPSServerConnectThread.SetServerIP(const Value: string);
+begin
+  SetString(FServerIP, PChar(Value), Length(Value));
+  StrCopy(FServerIPa, PAnsiChar(AnsiString(FServerIP)));
 end;
 
 { TGPSServerConnectObj }
 
 procedure TGPSServerConnectObj.ConnectStateChanged(Sender: TThread;
   const OldState, NewState: TConnectState);
+var
+  PrevState: TConnectState;
 begin
   if Sender <> FWorkThread then Exit;
 
+  PrevState := FState;
   if NewState = csConnected
     then FState := csConnected
     else FState := csConnecting;
+  DoConnectionChanged(PrevState, FState);
   UpdateUI;
 end;
 
-constructor TGPSServerConnectObj.Create(const ServerIP: string; const Port: integer);
+constructor TGPSServerConnectObj.Create;
 begin
   inherited Create;
-  FServerIP := ServerIP;
-  FPort := Port;
+  CheckWSAStarted;
+  FServerIP := '0.0.0.0';
+  FPort := 0;
   FWorkThread := nil;
   FState := csDisconnected;
   uGPSPacketsQueue.InitializeQueue;
@@ -287,21 +358,34 @@ begin
 end;
 
 procedure TGPSServerConnectObj.DoConnect;
+var
+  PrevState: TConnectState;
 begin
   if Assigned(FWorkThread) then Exit;
 
+  PrevState := FState;
   FState := csConnecting;
 
   FWorkThread := TGPSServerConnectThread.Create(FServerIP, FPort);
   TGPSServerConnectThread(FWorkThread).OnStateChanged := ConnectStateChanged;
   TGPSServerConnectThread(FWorkThread).OnLogGpsData := DoLogGPSData;
   FWorkThread.Start;
+  DoConnectionChanged(PrevState, FState);
   UpdateUI;
+end;
+
+procedure TGPSServerConnectObj.DoConnectionChanged(const OldState,
+  NewState: TConnectState);
+begin
+  if (NewState <> OldState) and
+     Assigned(FOnConnectionChanged)
+    then FOnConnectionChanged(Self, OldState, NewState);
 end;
 
 procedure TGPSServerConnectObj.DoDisconnect;
 var
   Worker: TGPSServerConnectThread;
+  PrevState: TConnectState;
 begin
   Worker := TGPSServerConnectThread(FWorkThread);
   FWorkThread := nil;
@@ -311,7 +395,9 @@ begin
       Worker.OnStateChanged := nil;
       Worker.Terminate;
     end;
+  PrevState := FState;
   FState := csDisconnected;
+  DoConnectionChanged(PrevState, FState);
   UpdateUI;
 end;
 
@@ -322,10 +408,14 @@ begin
     then FOnLogGpsData(Self, GpsData);
 end;
 
-procedure TGPSServerConnectObj.ToggleState;
+procedure TGPSServerConnectObj.ToggleState(const AServerIP: string; const Port: integer);
 begin
   if FState = csDisconnected
-    then DoConnect
+    then begin
+           FServerIP := AServerIP;
+           FPort := Port;
+           DoConnect;
+         end
     else DoDisconnect;
 end;
 
@@ -334,5 +424,8 @@ begin
   if Assigned(FOnUpdateUI)
     then FOnUpdateUI(Self);
 end;
+
+initialization
+  WSAStarted := false;
 
 end.

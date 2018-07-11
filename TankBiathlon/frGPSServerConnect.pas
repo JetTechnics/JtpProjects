@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ExtCtrls, Vcl.Buttons,
-  GpsConnection, uGPSServerConnect;
+  uGPSData, uGPSServerConnect;
 
 resourcestring
   rsGPSLbl = ' GPS Server ';
@@ -30,6 +30,8 @@ type
   private
     FConnectObj: TGPSServerConnectObj;
     procedure LogGPSData(Sender: TObject; const GpsData: TGpsData);
+    procedure ConnectionChanged(Sender: TObject;
+                                const OldState, NewState: TConnectState);
     function GetConnectState: TConnectState;
   public
     constructor Create(AOwner: TComponent); override;
@@ -51,21 +53,30 @@ procedure TGPSServerConnectFrame.btnConnectClick(Sender: TObject);
 begin
   btnConnect.Enabled := false;
   GPSServerGroup.Enabled := false;
-  FConnectObj.ToggleState;
+
+  FConnectObj.ToggleState(edGpsAddr.Text, StrToInt(edGpsPort.Text));
+end;
+
+procedure TGPSServerConnectFrame.ConnectionChanged(Sender: TObject;
+  const OldState, NewState: TConnectState);
+begin
+  if OldState = csDisconnected
+    then MainForm.LogListBox.Clear;
 end;
 
 constructor TGPSServerConnectFrame.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FConnectObj := TGPSServerConnectObj.Create(edGpsAddr.Text,
-                                             StrToInt(edGpsPort.Text));
+  FConnectObj := TGPSServerConnectObj.Create;
   FConnectObj.OnUpdateUI := UpdateUI;
+  FConnectObj.OnConnectionChanged := ConnectionChanged;
   FConnectObj.OnLogGpsData := LogGPSData;
 end;
 
 destructor TGPSServerConnectFrame.Destroy;
 begin
   FConnectObj.OnLogGpsData := nil;
+  FConnectObj.OnConnectionChanged := nil;
   FConnectObj.OnUpdateUI := nil;
   FConnectObj.Free;
   inherited Destroy;
@@ -79,7 +90,8 @@ end;
 procedure TGPSServerConnectFrame.LogGPSData(Sender: TObject;
   const GpsData: TGpsData);
 begin
-  MainForm.AddLogGpsData(GpsData.VehicleId, GpsData.Latitude, GpsData.Longitude);
+  MainForm.AddLogGpsData(GpsData.VehicleId,
+    GpsData.Latitude, GpsData.Longitude, Winapi.Windows.GetTickCount);
 end;
 
 procedure TGPSServerConnectFrame.UpdateUI(Sender: TObject);

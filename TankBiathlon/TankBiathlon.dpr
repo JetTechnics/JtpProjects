@@ -18,7 +18,8 @@ uses
   uConsts in 'uConsts.pas',
   frGPSServerConnect in 'frGPSServerConnect.pas' {GPSServerConnectFrame: TFrame},
   uGPSPacketsQueue in 'uGPSPacketsQueue.pas',
-  uGPSServerConnect in 'uGPSServerConnect.pas';
+  uGPSServerConnect in 'uGPSServerConnect.pas',
+  uGPSData in 'uGPSData.pas';
 
 {$R *.res}
 

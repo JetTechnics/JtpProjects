@@ -3,12 +3,12 @@ unit MainUnit;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, Winapi.WinSock,
+  Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.AnsiStrings,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   JTPStudio, VideoSetsHeader, TypesJTP, PluginJTP, Vector,
-  Poligon2D, GpsConnection, Vehicle, Titers,
-  frGPSServerConnect;
+  Poligon2D, Vehicle, Titers,
+  frGPSServerConnect, uGPSData;
 
 type
   TMainForm = class(TForm)
@@ -59,7 +59,7 @@ type
     procedure btnTelemetryClick(Sender: TObject);
   public
     procedure AddLogString(const AStr: string);
-    procedure AddLogGpsData(TankId: integer; Lat, Lon: single);
+    procedure AddLogGpsData(TankId: integer; Lat, Lon: single; ticks: dword);
   end;
 
 var
@@ -361,13 +361,9 @@ end;
 
 
 procedure TMainForm.FormCreate(Sender: TObject);
-var
-  WSAData: TWSAData;
 begin
   //  Для x64 нет FPU команд. Отключим FPU исключения.
   SetMXCSR($1F80);
-
-  WSAStartup(MakeWord(2,2), WSAData);
 
   GPSServerConnectFrame1.UpdateUI(Self);
 end;
@@ -409,7 +405,7 @@ begin
   CloseRecords( 0, nil );
 end;
 
-procedure TMainForm.AddLogGpsData(TankId: integer; Lat, Lon: single);
+procedure TMainForm.AddLogGpsData(TankId: integer; Lat, Lon: single; ticks: dword);
 begin
   TThread.Queue(nil,
       procedure
@@ -418,22 +414,46 @@ begin
         id: integer;
         s: string;
         pkts: string;
+        tc0: dword;
+        fnd: boolean;
+        fmt: string;
       begin
-        pkts := Format('%d%20.5f%20.5f', [TankId, Lat, Lon]);
-        try
-          for i:=0 to LogListBox.Items.Count-1 do
-            begin
-              s := LogListBox.Items[i];
-              id := StrToInt(System.Copy(s, 1, Pos(' ', s)-1));
-              if id = TankId then
+        fnd := false;
+        LogListBox.Items.BeginUpdate;
+          try
+            fmt := '%5d%20.5f%20.5f%15d | %10d';
+            try
+              for i:=0 to LogListBox.Items.Count-1 do
                 begin
-                  LogListBox.Items[i] := pkts;
-                  Exit;
+                  s := LogListBox.Items[i];
+                  Delete(s, Pos('|',s)+2, 100);
+                  id := StrToInt(Trim(System.Copy(s, 1, 6)));
+                  tc0 := dword(LogListBox.Items.Objects[i]);
+                  if id = TankId then
+                    begin
+                      pkts := Format(fmt, [TankId, Lat, Lon, ticks-tc0, 0]);
+                      LogListBox.Items[i] := pkts;
+                      LogListBox.Items.Objects[i] := TObject(ticks);
+                      fnd := true;
+                    end
+                                 else
+                    begin
+                      pkts := s + Format('%10d', [ticks-tc0]);
+                      LogListBox.Items[i] := pkts;
+                    end;
                 end;
+
+              if fnd then Exit;
+              pkts := Format(fmt, [TankId, Lat, Lon, 0, 0]);
+              LogListBox.Items.Add(pkts);
+              LogListBox.Items.Objects[LogListBox.Items.Count-1] := TObject(ticks);
+            except
+              pkts := Format(fmt, [TankId, Lat, Lon, 0, 0]);
+              LogListBox.Items.Add(pkts);
+              LogListBox.Items.Objects[LogListBox.Items.Count-1] := TObject(ticks);
             end;
-          LogListBox.Items.Add(pkts);
-        except
-          LogListBox.Items.Add(pkts);
+        finally
+          LogListBox.Items.EndUpdate;
         end;
       end
     );

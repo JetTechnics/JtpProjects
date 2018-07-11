@@ -2,7 +2,7 @@ object MainForm: TMainForm
   Left = 200
   Top = 60
   Caption = 'TankBiathlon'
-  ClientHeight = 862
+  ClientHeight = 890
   ClientWidth = 1584
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -36,15 +36,14 @@ object MainForm: TMainForm
   end
   object LogListBox: TListBox
     Left = 8
-    Top = 744
+    Top = 734
     Width = 1568
-    Height = 96
+    Height = 148
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -9
-    Font.Name = 'MS Sans Serif'
+    Font.Height = -13
+    Font.Name = 'Courier New'
     Font.Style = []
-    ItemHeight = 13
     ParentFont = False
     TabOrder = 2
   end
@@ -302,6 +301,9 @@ object MainForm: TMainForm
       Width = 265
       ExplicitLeft = 0
       ExplicitWidth = 265
+      inherited edGpsAddr: TEdit
+        Text = '94.228.243.168'
+      end
     end
   end
 end

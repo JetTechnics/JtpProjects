@@ -5,18 +5,7 @@ interface
 uses
   Windows, WinSock,
   TypesJTP,
-  Vehicle, Vector;
-
-type
-  TGpsData = record
-    VehicleId : integer;
-    Latitude, Longitude, Distance : single;
-    TimeMilli: UInt64;
-    PacketNum: integer;
-    Battery : integer;
-    Speed: single;
-  end;
-  PGpsData = ^TGpsData;
+  Vehicle, Vector, uGPSData;
 
 Var
 //  Для теста

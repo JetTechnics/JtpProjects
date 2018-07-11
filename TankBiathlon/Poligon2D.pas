@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, System.SysUtils,
   JTPStudio, TypesJTP,
-  Vehicle, GpsConnection, Vector;
+  Vehicle, GpsConnection, Vector, uGPSData;
 
 Var
   MaxTanks : integer = 0;
