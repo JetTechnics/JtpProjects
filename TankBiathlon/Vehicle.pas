@@ -163,22 +163,22 @@ Var
   MaxRouteJumpers : integer;
 
   //  Привязка трэка к карте
-  {lon_f1 : single = 101000.0;
+  lon_f1 : single = 101000.0;
   lon_f2 : single = 3729235.0;
   lat_f1 : single = 176000.0;
-  lat_f2 : single = 9774630.0;}
+  lat_f2 : single = 9774630.0;
 
-  lon_f1 : single = 559848.6357299343;
+  {lon_f1 : single = 559848.6357299343;
   lon_f2 : single = 21055266.16311491735;
   lat_f1 : single = 991917.7075679647;
-  lat_f2 : single = 55267507.16385011021;
+  lat_f2 : single = 55267507.16385011021;}
 
   //  Поправка на дистанцию
   DistFactor : single = 1.424;
 
 
 //  Для теста
-TEST : integer = 0;
+TEST : integer = 1;
 
 
 
@@ -399,6 +399,13 @@ begin
 
   if( Index < 10 )  then TempName := 'Bubble0'
   else  TempName := 'Bubble';
+  TempName := TempName + IntToStr(Index);
+
+  Res := SetObjectSpace( @PoligonSceneName, PAnsiChar(TempName), nil, nil, nil, nil, nil, @VColor, 0.0, JTP_ABSOLUTE, @SetObjectSpaceData );
+
+  //  Прицепленная к иконке картинка.
+  if( Index < 10 )  then TempName := 'TankText0'
+  else  TempName := 'TankText';
   TempName := TempName + IntToStr(Index);
 
   Res := SetObjectSpace( @PoligonSceneName, PAnsiChar(TempName), nil, nil, nil, nil, nil, @VColor, 0.0, JTP_ABSOLUTE, @SetObjectSpaceData );
