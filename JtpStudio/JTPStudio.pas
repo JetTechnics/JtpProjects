@@ -340,8 +340,15 @@ function PlayScenario( SceneName, ScenarioName : PAnsiChar;  Delay: single;  Fla
 
 
 
+Type TSetObjectSpace = object(TJtpFuncData)
+  BillboardRingShift : single;  // Сдвиг биллборда по кольцу (В JtpDesigner-е billboarding -> ViewOffset). FLT_UNDEF - не используется.
+  Constructor Create;
+end;
+PSetObjectSpace = ^TSetObjectSpace;
+
+
 function SetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize, pDir, pTarget : PVector;  pColor : PJTPColor;  Delay: single;
-												 Flags: dword;  pSetObjectSpace: PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
+												 Flags: dword;  pSetObjectSpace: PSetObjectSpace ) : UInt64;   stdcall; external JTPStudioDLL;
 //  Установить пространственные коор-ты объекта. Это позиция, ориентация, размер, направление, цвет.
 		//  SceneName, ObjectName - имена сцены и объекта.
     //  pPos, pOrient, pSize - позиция, ориентация и размер соответственно. Если nil, то вектор не учитывается.
@@ -353,7 +360,8 @@ function SetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize
     //  pColor - цвет объекта. Если nil, то цвет не учитывается. Если компонент цвета равен FLT_UNDEF, то не учитывается.
     //  Delay - задержка на установку координат или цвета.
     //  Flags - JTP_RELATIVE или JTP_ABSOLUTE - коор-ты относительные или абсолютные.
-    //  pSetObjectSpace - указатель на TJtpFuncData.
+    //  pSetObjectSpace - указатель на TSetObjectSpace.
+
 
 
 function GetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize, pDir, pTarget : PVector;  pColor : PJTPColor;
@@ -425,6 +433,13 @@ Constructor TSurfElemData.Create;
 begin
   I := 0;
   W := 0;
+end;
+
+
+
+Constructor TSetObjectSpace.Create();
+begin
+  BillboardRingShift := FLT_UNDEF;
 end;
 
 

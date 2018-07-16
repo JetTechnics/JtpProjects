@@ -119,7 +119,7 @@ type TJTPRect = record
   x1, y1, x2, y2 : integer;
 end;
 
-//  Òî÷êà íà ýêðàíå
+//  Точка на экране.
 type TJTPPoint = record
   x, y : integer;
 
