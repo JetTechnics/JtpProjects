@@ -57,6 +57,7 @@ type
     procedure DirectCamButton2Click(Sender: TObject);
     procedure CommonViewButtonClick(Sender: TObject);
     procedure btnTelemetryClick(Sender: TObject);
+    procedure GPSServerConnectFrame1btnConnectClick(Sender: TObject);
   public
     procedure AddLogString(const AStr: string);
     procedure AddLogGpsData(TankId: integer; Lat, Lon: single; ticks: dword);
@@ -319,6 +320,12 @@ begin
   end;
   ViewTanks[j] := 0;
   GetSelectedTanks := j;
+end;
+
+procedure TMainForm.GPSServerConnectFrame1btnConnectClick(Sender: TObject);
+begin
+  GPSServerConnectFrame1.btnConnectClick(Sender);
+
 end;
 
 procedure TMainForm.DirectCamButton1Click(Sender: TObject);

@@ -304,6 +304,9 @@ object MainForm: TMainForm
       inherited edGpsAddr: TEdit
         Text = '94.228.243.168'
       end
+      inherited btnConnect: TButton
+        OnClick = GPSServerConnectFrame1btnConnectClick
+      end
     end
   end
 end

@@ -3,8 +3,8 @@ unit uGPSServerConnect;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, Winapi.WinSock,
-  System.SysUtils, System.Variants, System.Classes,
+  Windows, Messages, WinSock,
+  SysUtils, Variants, Classes,
   uGPSData;
 
 type
@@ -77,9 +77,9 @@ type
     FServerIPa: array[0..63] of AnsiChar;
     FPort: integer;
     FConnectState: TConnectState;
-    FGPSSocket: Int64;
-    FGPSLastAccess: UInt64;
-    FGPSLastBeat: UInt64;
+    FGPSSocket: integer;
+    FGPSLastAccess: integer;
+    FGPSLastBeat: integer;
     FOnStateChanged: TConnectStateChangedEvent;
     FOnLogGpsData: TLogGPSDataEvent;
     {$ifndef ver320}
@@ -114,7 +114,7 @@ var
   Res : integer;
   buff: array[0..255] of dword;
   GpsData: TGpsData;
-  CurrentMills: UInt64;
+  CurrentMills: integer;
   lId: array[1..9] of integer;
 
   function ReceivePacket: integer;
@@ -147,7 +147,7 @@ begin
     // получаем пакеты
     if (FConnectState = csConnected) then
       begin
-        CurrentMills := Winapi.Windows.GetTickCount64;
+        CurrentMills := Windows.GetTickCount;
         if (CurrentMills - FGPSLastBeat > BeatInterval) then
           begin
             lId[1] := FId;
@@ -163,7 +163,7 @@ begin
             Res := ReceivePacket;
             if (Res = GpsPacketLen) then
               begin
-                FGPSLastAccess := Winapi.Windows.GetTickCount64;
+                FGPSLastAccess := Windows.GetTickCount;
 
                 CopyMemory(@GpsData.Latitude, @buff[0], 4);     //  широта
                 CopyMemory(@GpsData.Longitude, @buff[1], 4);    //  долгота
@@ -191,7 +191,7 @@ begin
                    ((Res < 0) and (WSAGetLastError <> WSAEWOULDBLOCK)) or
                    (CurrentMills - FGPSLastAccess > MaxGpsTimeout)
                   then TearConnection;
-                CurrentMills := Winapi.Windows.GetTickCount64;
+                CurrentMills := Windows.GetTickCount;
                 Break;
               end;
           end;
@@ -209,7 +209,7 @@ var
 begin
   Res := 0;
   CheckWSAStarted;
-  FGPSLastAccess := Winapi.Windows.GetTickCount64;
+  FGPSLastAccess := Windows.GetTickCount;
 
   if FGPSSocket = INVALID_SOCKET then
     begin
@@ -264,7 +264,7 @@ begin
       lId[6] := 0; lId[7] := 0; lId[8] := 0; lId[9] := 0;
       Res := send(FGPSSocket, lId, SizeOf(lId), 0);
       if Res = SizeOf(lId)
-        then FGPSLastBeat := Winapi.Windows.GetTickCount64;
+        then FGPSLastBeat := Windows.GetTickCount;
     end;
 end;
 
@@ -278,7 +278,7 @@ begin
   FPort := Port;
   FConnectState := csDisconnected;
   FGPSSocket  := INVALID_SOCKET;
-  FGPSLastAccess := Winapi.Windows.GetTickCount64;
+  FGPSLastAccess := Windows.GetTickCount;
 end;
 
 procedure TGPSServerConnectThread.DoLogGpsData(const GpsData: TGpsData);
@@ -378,7 +378,7 @@ begin
   FWorkThread := TGPSServerConnectThread.Create(FServerIP, FPort);
   TGPSServerConnectThread(FWorkThread).OnStateChanged := ConnectStateChanged;
   TGPSServerConnectThread(FWorkThread).OnLogGpsData := DoLogGPSData;
-  FWorkThread.Start;
+  FWorkThread.Resume;
   DoConnectionChanged(PrevState, FState);
   UpdateUI;
 end;
