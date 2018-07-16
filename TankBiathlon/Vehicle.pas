@@ -69,6 +69,7 @@ Type  TVehicle = record     //  ѕодвижное средство
   Focus   : integer;        //  индекс координаты, к которой едем
   Name    : TName;          //  им€ танка
   ModelName : TName;        //  им€ модели танка
+  PictName : TName;         //  им€ прицепленой картинки к танку
   Pos     : TVector;        //  текуща€ координата
   NewPos  : TVector;        //  вновь полученна€ координата
   Orient  : TVector;        //  текуща€ ориентаци€
@@ -114,7 +115,7 @@ Type  TVehicle = record     //  ѕодвижное средство
   procedure StartForSimulation();
   procedure StopForSimulation();
   procedure SetSelectFrame( Alpha : single );
-  procedure SetBubble( Alpha : single );
+  procedure SetTankPictAlpha( Alpha : single );
   procedure SetSize( NewSize : single );
   procedure SetColor( NewColor : TJTPColor );
   procedure GetNewCoord( Coord: TVector;  hr, min, sec, ms: integer;  Speed, Distance : single );
@@ -178,7 +179,7 @@ Var
 
 
 //  ƒл€ теста
-TEST : integer = 1;
+TEST : integer = 0;
 
 
 
@@ -187,9 +188,10 @@ implementation
 
 procedure TVehicle.Initialize( VehicleName : PAnsiChar; ArrayIndex : integer ); //, ModelName2: PAnsiChar;  State2: integer );
 var Names : array [0..63] of TName;
-    i : integer;
+    i, Res : integer;
     Clr, P : TVector;
     str : ansistring;
+    PlayAnimationData : TJtpFuncData;
 begin
 
   if( VehicleName <> nil ) then StrCopy( Name.text, VehicleName )
@@ -201,6 +203,11 @@ begin
   else  str := 'TankModel';
   str := str + IntToStr(ArrayIndex);
   StrCopy( ModelName.text, PAnsiChar(str) );
+
+  if( ArrayIndex < 10 )  then str := 'TankText0'
+  else  str := 'TankText';
+  str := str + IntToStr(ArrayIndex);
+  StrCopy( PictName.text, PAnsiChar(str) );
 
   //State := 0; //State2;
   State := VE_ENABLED or VE_STARTED;
@@ -221,8 +228,12 @@ begin
 
   MoveDir.VSet(0,0,1);    // смотрит на север, азимут 0.
 
-  SetSelectFrame( 0.0 );    //  скроем рамку
-  SetBubble( 0.0 );         //  и bubble
+  SetSelectFrame( 0.0 );    //  скроем/покажем рамку
+  SetTankPictAlpha( 1.0 );  //  и прикреплЄнную картинку
+
+  // јнимаци€ иконки танка.
+  PlayAnimationData.Create();
+  Res := PlayAnimation( @PoligonSceneName, @ModelName, 'Animation', FLT_UNDEF, 0, @PlayAnimationData );
 
   {if( ModelName2 <> nil ) then begin
       GetChildsNamesByBase( @PoligonSceneName, @Name, ModelName2, @Names, 0, nil );
@@ -341,7 +352,7 @@ begin
 
     SimSpeed := SimPoints[1].SimSpeed;
 
-    SetObjectSpace( @PoligonSceneName, @Name, @Pos, nil, nil, @Dir, nil, nil, 0.0, JTP_ABSOLUTE, nil );
+    SetObjectSpace( @PoligonSceneName, @Name, @Pos, nil, nil, nil{@Dir}, nil, nil, 0.0, JTP_ABSOLUTE, nil );
 
     DoFocusPos(0);
 end;
@@ -364,7 +375,7 @@ begin
 
     Dir := VecNormalize( CoordData[1].Pos - Pos );
 
-    SetObjectSpace( @PoligonSceneName, @Name, @Pos, nil, nil, @Dir, nil, nil, 0.0, JTP_ABSOLUTE, nil );
+    SetObjectSpace( @PoligonSceneName, @Name, @Pos, nil, nil, nil{@Dir}, nil, nil, 0.0, JTP_ABSOLUTE, nil );
 end;
 
 
@@ -373,7 +384,7 @@ procedure TVehicle.SetSelectFrame( Alpha : single );
 var
   TempName : AnsiString;
   VColor: TJTPColor;
-  SetObjectSpaceData : TJtpFuncData;
+  SetObjectSpaceData : TSetObjectSpace;
   Res : UInt64;
 begin
   VColor.VSet( FLT_UNDEF, FLT_UNDEF, FLT_UNDEF, Alpha );
@@ -382,32 +393,35 @@ begin
   else  TempName := 'TankFrame';
   TempName := TempName + IntToStr(Index);
 
+  SetObjectSpaceData.Create();
   Res := SetObjectSpace( @PoligonSceneName, PAnsiChar(TempName), nil, nil, nil, nil, nil, @VColor, 0.0, JTP_ABSOLUTE, @SetObjectSpaceData );
 
 end;
 
 
 
-procedure TVehicle.SetBubble( Alpha : single );
+procedure TVehicle.SetTankPictAlpha( Alpha : single );
 var
   TempName : AnsiString;
   VColor: TJTPColor;
-  SetObjectSpaceData : TJtpFuncData;
+  SetObjectSpaceData : TSetObjectSpace;
   Res : UInt64;
 begin
   VColor.VSet( FLT_UNDEF, FLT_UNDEF, FLT_UNDEF, Alpha );
 
-  if( Index < 10 )  then TempName := 'Bubble0'
+  {if( Index < 10 )  then TempName := 'Bubble0'
   else  TempName := 'Bubble';
   TempName := TempName + IntToStr(Index);
 
-  Res := SetObjectSpace( @PoligonSceneName, PAnsiChar(TempName), nil, nil, nil, nil, nil, @VColor, 0.0, JTP_ABSOLUTE, @SetObjectSpaceData );
+  SetObjectSpaceData.Create();
+  Res := SetObjectSpace( @PoligonSceneName, PAnsiChar(TempName), nil, nil, nil, nil, nil, @VColor, 0.0, JTP_ABSOLUTE, @SetObjectSpaceData );}
 
   //  ѕрицепленна€ к иконке картинка.
   if( Index < 10 )  then TempName := 'TankText0'
   else  TempName := 'TankText';
   TempName := TempName + IntToStr(Index);
 
+  SetObjectSpaceData.Create();
   Res := SetObjectSpace( @PoligonSceneName, PAnsiChar(TempName), nil, nil, nil, nil, nil, @VColor, 0.0, JTP_ABSOLUTE, @SetObjectSpaceData );
 
 end;
@@ -416,12 +430,23 @@ end;
 
 procedure TVehicle.SetSize( NewSize : single );
 var Size : TVector;
+    SetObjectSpaceData : TSetObjectSpace;
+    TempName : AnsiString;
 begin
   Size.VSet( NewSize, NewSize, NewSize );
 
   if( ModelName.text[0] <> #0 ) then
       SetObjectSpace( @PoligonSceneName, @ModelName, nil, nil, @Size, nil, nil, nil, 0.0, JTP_ABSOLUTE, nil );
+
+  // —двиг прицепленной к иконке танка картинки.
+  if( Index < 10 )  then TempName := 'TankText0'
+  else  TempName := 'TankText';
+  TempName := TempName + IntToStr(Index);
+  SetObjectSpaceData.Create();
+  SetObjectSpaceData.BillboardRingShift := -NewSize * 0.45;
+  SetObjectSpace( @PoligonSceneName, PAnsiChar(TempName), nil, nil, nil, nil, nil, nil, 0.0, JTP_ABSOLUTE, @SetObjectSpaceData );
 end;
+
 
 
 procedure TVehicle.SetColor( NewColor : TJTPColor );
@@ -740,7 +765,7 @@ begin
               SpeedFactor := 0.9;
       end;
 
-      SetObjectSpace( @PoligonSceneName, @Name, @Pos, nil, nil, @Dir, nil, nil, 0.0, JTP_ABSOLUTE, nil );
+      SetObjectSpace( @PoligonSceneName, @Name, @Pos, nil, nil, nil{@Dir}, nil, nil, 0.0, JTP_ABSOLUTE, nil );
   end;
 end;
 

@@ -68,7 +68,7 @@ var
 
   VideoTrunk : integer = -1;
 
-  MyVersion : integer = 1;
+  MyVersion : integer = 2;
 
 
 implementation
