@@ -272,8 +272,6 @@ object SettingsForm: TSettingsForm
       Width = 97
       Height = 17
       Caption = #1042#1080#1076#1077#1086' '#1074#1099#1074#1086#1076' 2'
-      Checked = True
-      State = cbChecked
       TabOrder = 5
     end
   end

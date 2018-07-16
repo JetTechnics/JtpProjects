@@ -5,31 +5,16 @@ TankBiathlon/__history/
 *.~dsk
 *.local
 *.identcache
-<<<<<<< HEAD
 *.~1~
 *.~2~
 *.~3~
 *.~4~
 *.~5~
 *.~6~
-=======
-JtpStudio/__history/JTPStudio.pas.~1~
-JtpStudio/__history/JTPStudio.pas.~2~
-JtpStudio/__history/JTPStudio.pas.~3~
-JtpStudio/__history/JTPStudio.pas.~4~
-JtpStudio/__history/JTPStudio.pas.~5~
-JtpStudio/__history/Vector.pas.~1~
-JtpStudio/__history/Vector.pas.~2~
-*.~1~
-*.dsk
-JTPProjects.dsk
->>>>>>> 67cd7d995c2d54afbf6b61e843ef656fd51dfb44
-*.local
-*.local
-JTPProjects.groupproj.local
-*.~9~
-*.~8~
 *.~7~
+*.~8~
+*.~9~
 *.~10~
-JTPProjects.dsk
 *.dsk
+*.local
+
