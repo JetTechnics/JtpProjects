@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.922,C:\Users\Alex\Documents\RAD Studio\Projects\ProjectGroup1.groupproj=C:\ALEXBASE\Development\JTPProjects\JTPProjects.groupproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.922,C:\ALEXBASE\Development\JTPProjects\JTPProjects.groupproj=C:\Users\Alex\Documents\RAD Studio\Projects\ProjectGroup1.groupproj</Transaction>
   </Transactions>
 	<Default.Personality>
-		<Projects ActiveProject="C:\Users\User\Documents\Embarcadero\Studio\Projects\GitNew\JtpProjects\TankBiathlon\TankBiathlon.dproj"/>
+		<Projects ActiveProject="C:\ALEXBASE\Development\JtpProjects\VideoSettings\VideoSettings.dproj"/>
 	</Default.Personality>
 </BorlandProject>
