@@ -26,6 +26,7 @@ type
     edGpsAddr: TEdit;
     edGpsPort: TEdit;
     btnConnect: TButton;
+    GPSCleanEventTimer: TTimer;
     procedure btnConnectClick(Sender: TObject);
   private
     FConnectObj: TGPSServerConnectObj;
@@ -75,6 +76,8 @@ end;
 
 destructor TGPSServerConnectFrame.Destroy;
 begin
+  GPSCleanEventTimer.Enabled := false;
+  GPSCleanEventTimer.OnTimer := nil;
   FConnectObj.OnLogGpsData := nil;
   FConnectObj.OnConnectionChanged := nil;
   FConnectObj.OnUpdateUI := nil;
@@ -100,9 +103,11 @@ var
 begin
   btnConnect.Enabled := true;
   GPSServerGroup.Enabled := true;
+  GPSCleanEventTimer.Enabled := false;
   if FConnectObj.ConnectState = csDisconnected then
     begin
       GPSServerGroup.Caption := rsGPSLbl + rsGPSDisconnected;
+      GPSServerGroup.Color := clBtnFace;
       lblGpsAddr.Enabled := true;
       lblGpsPort.Enabled := true;
       edGpsAddr.Enabled := true;
@@ -114,10 +119,23 @@ begin
                                                else
     begin
       case FConnectObj.ConnectState of
-        csDisconnecting: sLblCaption := rsGPSLbl + rsGPSDisconnecting;
-           csConnecting: sLblCaption := rsGPSLbl + rsGPSConnecting;
-            csConnected: sLblCaption := rsGPSLbl + rsGPSConnected;
-        else sLblCaption := rsGPSLbl + rsGPSDisconnected;
+        csDisconnecting: begin
+                           sLblCaption := rsGPSLbl + rsGPSDisconnecting;
+                           GPSServerGroup.Color := clYellow;
+                         end;
+           csConnecting: begin
+                           sLblCaption := rsGPSLbl + rsGPSConnecting;
+                           GPSServerGroup.Color := clRed;
+                         end;
+            csConnected: begin
+                           sLblCaption := rsGPSLbl + rsGPSConnected;
+                           GPSServerGroup.Color := clGreen;
+                           GPSCleanEventTimer.Enabled := true;
+                         end;
+        else begin
+               sLblCaption := rsGPSLbl + rsGPSDisconnected;
+               GPSServerGroup.Color := clBtnFace;
+             end;
       end;
       GPSServerGroup.Caption := sLblCaption;
       lblGpsAddr.Enabled := false;

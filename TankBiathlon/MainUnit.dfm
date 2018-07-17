@@ -14,6 +14,7 @@ object MainForm: TMainForm
   Position = poDesigned
   OnClose = FormClose
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnMouseWheel = FormMouseWheel
   PixelsPerInch = 96
   TextHeight = 13
@@ -67,6 +68,7 @@ object MainForm: TMainForm
       Width = 118
       Height = 25
       Caption = #1055#1086#1082#1072#1079#1072#1090#1100
+      Enabled = False
       TabOrder = 0
       OnClick = ShowButtonClick
     end
@@ -81,7 +83,7 @@ object MainForm: TMainForm
       OnClick = ClosePoligonButtonClick
     end
     object DirectCamButton1: TButton
-      Left = 13
+      Left = 10
       Top = 173
       Width = 57
       Height = 35
@@ -91,7 +93,7 @@ object MainForm: TMainForm
       OnClick = DirectCamButton1Click
     end
     object DirectCamButton2: TButton
-      Left = 76
+      Left = 73
       Top = 173
       Width = 57
       Height = 35
@@ -101,12 +103,13 @@ object MainForm: TMainForm
       OnClick = DirectCamButton2Click
     end
     object CommonViewButton: TButton
-      Left = 139
+      Left = 136
       Top = 173
-      Width = 75
+      Width = 57
       Height = 35
       Caption = #1054#1073#1097#1080#1081' '#1087#1083#1072#1085
       TabOrder = 4
+      WordWrap = True
       OnClick = CommonViewButtonClick
     end
     object TankNumsEdit: TEdit
@@ -241,6 +244,16 @@ object MainForm: TMainForm
       TabOrder = 17
       Text = '8'
     end
+    object CancelFollowBtn: TButton
+      Left = 199
+      Top = 173
+      Width = 57
+      Height = 35
+      Caption = #1054#1090#1084#1077#1085#1072' '#1089#1083#1077#1078#1077#1085#1080#1103
+      TabOrder = 18
+      WordWrap = True
+      OnClick = CancelFollowBtnClick
+    end
   end
   object CrewButton: TButton
     Left = 8
@@ -289,12 +302,12 @@ object MainForm: TMainForm
   end
   inline GPSServerConnectFrame1: TGPSServerConnectFrame
     Left = 8
-    Top = 39
+    Top = 67
     Width = 265
     Height = 87
     TabOrder = 9
     ExplicitLeft = 8
-    ExplicitTop = 39
+    ExplicitTop = 67
     ExplicitWidth = 265
     inherited GPSServerGroup: TGroupBox
       Left = 0
@@ -307,6 +320,85 @@ object MainForm: TMainForm
       inherited btnConnect: TButton
         OnClick = GPSServerConnectFrame1btnConnectClick
       end
+    end
+  end
+  object chbSimulation: TCheckBox
+    Left = 17
+    Top = 39
+    Width = 97
+    Height = 17
+    Caption = #1069#1084#1091#1083#1103#1090#1086#1088' GPS'
+    TabOrder = 10
+    OnClick = chbSimulationClick
+  end
+  object CaptionsGroupBox: TGroupBox
+    Left = 8
+    Top = 391
+    Width = 265
+    Height = 170
+    Caption = ' '#1058#1080#1090#1088#1099' '
+    TabOrder = 11
+    object btnCaption1: TButton
+      Tag = 1
+      Left = 10
+      Top = 29
+      Width = 57
+      Height = 35
+      Caption = '1'
+      TabOrder = 0
+      WordWrap = True
+      OnClick = btnCaptionNClick
+    end
+    object btnCaption2: TButton
+      Tag = 2
+      Left = 73
+      Top = 29
+      Width = 57
+      Height = 35
+      Caption = '2'
+      TabOrder = 1
+      WordWrap = True
+      OnClick = btnCaptionNClick
+    end
+    object btnCaption3: TButton
+      Tag = 3
+      Left = 136
+      Top = 29
+      Width = 57
+      Height = 35
+      Caption = '3'
+      TabOrder = 2
+      WordWrap = True
+      OnClick = btnCaptionNClick
+    end
+    object btnCaption4: TButton
+      Tag = 4
+      Left = 199
+      Top = 29
+      Width = 57
+      Height = 35
+      Caption = '4'
+      TabOrder = 3
+      WordWrap = True
+      OnClick = btnCaptionNClick
+    end
+    object btnCancelCaption: TButton
+      Left = 10
+      Top = 70
+      Width = 246
+      Height = 35
+      Caption = #1059#1073#1088#1072#1090#1100' '#1090#1080#1090#1088
+      TabOrder = 4
+      OnClick = btnCancelCaptionClick
+    end
+    object btnEditCaptions: TButton
+      Left = 10
+      Top = 118
+      Width = 246
+      Height = 35
+      Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1090#1080#1090#1088#1086#1074
+      TabOrder = 5
+      OnClick = btnEditCaptionsClick
     end
   end
 end

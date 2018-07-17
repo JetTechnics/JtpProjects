@@ -4,8 +4,9 @@ interface
 
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
 
   JTPStudio, TypesJTP, VideoSetsHeader, Decklink;
 
@@ -35,14 +36,19 @@ type
     Out2TrunkCheckBox: TCheckBox;
     procedure VideoSetsButtonOKClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormDestroy(Sender: TObject);
   private
-    { Private declarations }
+    FErrorFlag: integer;
+    procedure CreateSimulators;
   public
     { Public declarations }
   end;
 
 var
   SettingsForm: TSettingsForm;
+
+  DllApp: TApplication = nil;
 
   FirstStart : boolean = true;
 
@@ -64,10 +70,13 @@ implementation
 {$R *.dfm}
 
 
-function VideoStartSets( Flags: integer;  MainForm: TForm;  OutWins: PHwndArray;  pTrunkFlags: PTrunkFlagsArray;  pCloseFunc: TVideoCloseSetsFunc;  pReserve: pointer ) : integer; stdcall;
+function VideoStartSets( Flags: integer;  MainApp: TApplication;  OutWins: PHwndArray;  pTrunkFlags: PTrunkFlagsArray;  pCloseFunc: TVideoCloseSetsFunc;  pReserve: pointer ) : integer; stdcall;
 var trunk : integer;
 begin
-  SettingsForm := TSettingsForm.Create(MainForm);
+  DllApp := Application;
+  Application := MainApp;
+
+  SettingsForm := TSettingsForm.Create(Application.MainForm);
   SettingsForm.Show();
 
   if( OutWins <> nil ) then begin
@@ -92,6 +101,27 @@ begin
 end;
 
 
+procedure TSettingsForm.CreateSimulators;
+var
+  Res: UInt64;
+  EnumParams : dword;
+  DeviceType : dword;
+  EnumDeviceData : TJtpFuncData;
+begin
+  EnumParams := EnumVidDevsNoWarn;
+  DeviceType := SIMULATOR_VIDEO_DEVICE;
+  FillChar(DevicesNames, SizeOf(DevicesNames), #0);
+  Res := EnumerateVideoDevices(DeviceType, @DevicesNames, EnumParams, @EnumDeviceData);
+  if Res <> JTP_OK then
+    begin
+      FErrorFlag := 2;
+      //  Show error.
+      if EnumDeviceData.pErrorsStr <> nil then
+        begin
+        end;
+    end;
+end;
+
 procedure TSettingsForm.FormActivate(Sender: TObject);
 var Res: UInt64;
     trunk, device : integer;
@@ -106,6 +136,7 @@ begin
     exit;
 
   FirstStart := false;
+  FErrorFlag := -1;
 
   EnumParams := 0;
 
@@ -118,10 +149,10 @@ begin
   for trunk := 0 to LAST_VIDEO_TRUNK do
     VideoTrunks[trunk].ClearForDecklink();
 
-  if( SimOutBox.Checked ) then begin
-    EnumParams := EnumParams or EnumVidDevsNoWarn;
-    DeviceType := SIMULATOR_VIDEO_DEVICE;
-  end;
+  // if( SimOutBox.Checked ) then begin
+  //   EnumParams := EnumParams or EnumVidDevsNoWarn;
+  //   DeviceType := SIMULATOR_VIDEO_DEVICE;
+  // end;
 
   //  Найдём видео девайсы.
   Res := EnumerateVideoDevices( DeviceType, @DevicesNames, EnumParams, @EnumDeviceData );
@@ -151,6 +182,7 @@ begin
       end;
     end;
   end else begin
+    FErrorFlag := 1;
     //  Show error.
     if( EnumDeviceData.pErrorsStr <> nil ) then begin
 
@@ -158,6 +190,22 @@ begin
   end;
 end;
 
+
+procedure TSettingsForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := caFree;
+  try
+    if( Pointer(@gpCloseFunc) <> nil ) then
+      gpCloseFunc( FErrorFlag, @VideoSets );
+  except
+  end;
+end;
+
+procedure TSettingsForm.FormDestroy(Sender: TObject);
+begin
+  if Assigned(DllApp) then Application := DllApp;
+  SettingsForm := nil;
+end;
 
 procedure TSettingsForm.VideoSetsButtonOKClick(Sender: TObject);
 var Res: UInt64;
@@ -174,6 +222,8 @@ var Res: UInt64;
     ind : integer;
     InitVideoDesc : TInitVideoDesc;
 begin
+
+  if SimOutBox.Checked then CreateSimulators;
 
   //  Проходим по стволам.
   for trunk := 1 to MAX_VIDEO_TRUNKS do begin
@@ -234,18 +284,26 @@ begin
           pTrunk.ScreensVertical := 0;
         end;
 
-        //  Проходим по девайсам в стволе.
-        ind := 0;
-        for device := 1 to MAX_VIDEO_DEVICES do begin
-          if( DevicesNames[device-1].text[0] <> #0 )  then begin
-            str := 'Out' + IntToStr(trunk) + 'Device' + IntToStr(device) + 'Button';
-            DeviceButton := TRadioButton( TrunkGrBox.FindChildControl(str) );
-            if( (DeviceButton <> nil) and (DeviceButton.Checked) ) then begin
-              pTrunk.OutDevices[ind] := device;
-              Inc(ind);
+        if SimOutBox.Checked then
+          begin
+            if (trunk = 1) or (trunk = 2)
+              then pTrunk.OutDevices[0] := trunk;
+          end
+                             else
+          begin
+            //  Проходим по девайсам в стволе.
+            ind := 0;
+            for device := 1 to MAX_VIDEO_DEVICES do begin
+              if( DevicesNames[device-1].text[0] <> #0 )  then begin
+                str := 'Out' + IntToStr(trunk) + 'Device' + IntToStr(device) + 'Button';
+                DeviceButton := TRadioButton( TrunkGrBox.FindChildControl(str) );
+                if( (DeviceButton <> nil) and (DeviceButton.Checked) ) then begin
+                  pTrunk.OutDevices[ind] := device;
+                  Inc(ind);
+                end;
+              end;
             end;
           end;
-        end;
       end;
   end;
 
@@ -265,19 +323,20 @@ begin
     if( Out2TrunkCheckBox.Checked ) then
       VideoSets.Trunk2 := 2;
 
-    //if( gpCloseFunc <> 0 ) then begin
-      gpCloseFunc( 0, @VideoSets );
-    //end;
+    FErrorFlag := 0;
+    // if( gpCloseFunc <> nil ) then
+      // gpCloseFunc( 0, @VideoSets );
+    // end;
   end else begin
+    FErrorFlag := 3;
     //  Show error.
     if( InitVideoDesc.pErrorsStr <> nil ) then begin
     end;
   end;
 
   SettingsForm.Close();
-  SettingsForm.Destroy();
-  SettingsForm := nil;
-
+  // SettingsForm.Destroy();
+  // SettingsForm := nil;
 end;
 
 

@@ -8,7 +8,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   JTPStudio, VideoSetsHeader, TypesJTP, PluginJTP, Vector,
   Poligon2D, Vehicle, Titers,
-  frGPSServerConnect, uGPSData;
+  frGPSServerConnect, uGPSData, uConsts,
+  uCaptionSettingsKeys, uCaptionSettings;
 
 type
   TMainForm = class(TForm)
@@ -41,6 +42,15 @@ type
     TankBox4: TCheckBox;
     Tank4Edit: TEdit;
     GPSServerConnectFrame1: TGPSServerConnectFrame;
+    CancelFollowBtn: TButton;
+    chbSimulation: TCheckBox;
+    CaptionsGroupBox: TGroupBox;
+    btnCaption1: TButton;
+    btnCaption2: TButton;
+    btnCaption3: TButton;
+    btnCaption4: TButton;
+    btnCancelCaption: TButton;
+    btnEditCaptions: TButton;
     procedure StartButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ShowButtonClick(Sender: TObject);
@@ -49,7 +59,6 @@ type
     procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
     function  GetSelectedTanks() : integer;
-    procedure DirectCamButton1Click(Sender: TObject);
     procedure CrewButtonClick(Sender: TObject);
     procedure CloseCrewButtonClick(Sender: TObject);
     procedure OtsechkaButtonClick(Sender: TObject);
@@ -58,6 +67,18 @@ type
     procedure CommonViewButtonClick(Sender: TObject);
     procedure btnTelemetryClick(Sender: TObject);
     procedure GPSServerConnectFrame1btnConnectClick(Sender: TObject);
+    procedure CancelFollowBtnClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure chbSimulationClick(Sender: TObject);
+    procedure DirectCamButton1Click(Sender: TObject);
+    procedure btnCaptionNClick(Sender: TObject);
+    procedure btnCancelCaptionClick(Sender: TObject);
+    procedure btnEditCaptionsClick(Sender: TObject);
+  private
+    FRunning: boolean;
+    FSettings: TCaptionSettings;
+    procedure CheckSimOption;
+    procedure CleanGPSUnitsEvent(Sender: TObject);
   public
     procedure AddLogString(const AStr: string);
     procedure AddLogGpsData(TankId: integer; Lat, Lon: single; ticks: dword);
@@ -122,6 +143,12 @@ var
   StartEngineData : TJtpFuncData;
 begin
 
+  if Flags <> 0 then
+    begin
+      MessageDlg('Ошибка инициализации видео.', mtError, [mbOk], 0);
+      Exit;
+    end;
+
   VideoTrunk := VideoSets.Trunk1;
 
   //  Пути к картинкам.
@@ -142,12 +169,18 @@ begin
   Res := LoadProject( @ProjectPath, @Textures, 0, @LoadProjectData );
   if( Res <> JTP_OK ) then begin
   	AddErrorStrings( LoadProjectData.pErrorsStr );
+    MessageDlg('Ошибка при загрузке проекта.', mtError, [mbOk], 0);
+    Exit;
   end;
 
   Res := StartEngine( MyVersion, 0, ErrorsFunctionCB, @StartEngineData );
   if( Res <> JTP_OK ) then begin
     AddErrorStrings( StartEngineData.pErrorsStr );
+    MessageDlg('Ошибка запуска графического движка.', mtError, [mbOk], 0);
+    Exit;
   end;
+
+  MainForm.ShowButton.Enabled := true;
 {
   OpenRecords( 0, nil );
 
@@ -172,12 +205,6 @@ Var
   OutWindows : array [0..LAST_VIDEO_TRUNK] of HWND;
   TrunkFlags : array [0..LAST_VIDEO_TRUNK] of integer;
   EngineVersion : integer;
-  TrackPath : string;
-  hCoordReaderDll : HMODULE;
-  NumCoords, Ver : integer;
-  DynArray, pf: ^single;
-  Vec: TVector;
-  pReadFunc : function ( pNumCoords, pVer, pCoords, pJumps : pointer; pFilePath: PAnsiChar ) : dword; stdcall;
 begin
   StartButton.Enabled := false;
 
@@ -186,47 +213,6 @@ begin
   System.AnsiStrings.StrCopy( GPSAddress, PAnsiChar( AnsiString(GpsAddrEdit.Text) ) );
   GPSPort := StrToInt( GPSPortEdit.Text );
   }
-
-  //  прочитаем трек для тестов.
-  if( TEST <> 0 ) then begin
-    TrackPath := GetCurrentDir() + '\' + 'Resources\FullTrack.txt';
-    hCoordReaderDll := LoadLibrary( 'GpsCoordReader.dll' );
-    if( hCoordReaderDll<>0 ) then begin
-
-      @pReadFunc := GetProcAddress( hCoordReaderDll, 'ReadGpsCoords' );
-      if( @pReadFunc <> nil )  then begin
-
-          Res := pReadFunc( @NumCoords, @Ver, nil, nil, PAnsiChar(AnsiString(TrackPath)) );
-          if( NumCoords > 1 )  then begin
-            GetMem( DynArray, NumCoords*3*4 );
-            Res := pReadFunc( @NumCoords, @Ver, DynArray, nil, PAnsiChar(AnsiString(TrackPath)) );
-            pf := DynArray;
-            for i:=0 to (NumCoords-1) do begin
-              CopyMemory( @Vec, pf, 12 );
-              if( Ver = 1 )  then begin
-                Routes[i].GpsPos.x := Vec.x;
-                Routes[i].GpsPos.z := Vec.y;
-              end;
-              if( Ver = 2 )  then begin
-                Routes[i].GpsPos.x := Vec.y;
-                Routes[i].GpsPos.z := Vec.x;
-              end;
-              Routes[i].GpsPos.y := Vec.z;
-
-              Routes[i].Pos.x := Routes[i].GpsPos.z * lon_f1 - lon_f2;
-              Routes[i].Pos.z := Routes[i].GpsPos.x * lat_f1 - lat_f2;
-              //Routes[i].Pos.y := Height2d;
-
-              Inc(pf,3);
-            end;
-
-            FreeMem( DynArray );
-
-            MaxRoute := NumCoords;
-          end;
-      end;
-    end;
-  end;
 
   for i := 0 to LAST_VIDEO_TRUNK do begin
     OutWindows[i] := 0;
@@ -245,7 +231,7 @@ begin
 
       TrunkFlags[0] := TrunkVideo_ProcessMouse;
 
-      Res := pStartFunc( 0, self, @OutWindows, @TrunkFlags, VideoCloseSetsFunc, nil );
+      Res := pStartFunc( 0, Application, @OutWindows, @TrunkFlags, VideoCloseSetsFunc, nil );
     end;
 
   end;
@@ -270,8 +256,62 @@ begin
   CloseRecords( 0, nil );
 end;
 
+procedure TMainForm.CleanGPSUnitsEvent(Sender: TObject);
+var
+  i: integer;
+  ticks: dword;
+  tc0: dword;
+begin
+  ticks := Winapi.Windows.GetTickCount;
+  LogListBox.Items.BeginUpdate;
+  try
+    try
+      i := 0;
+      while i < LogListBox.Items.Count do
+        begin
+          tc0 := dword(LogListBox.Items.Objects[i]);
+          if ticks-tc0 > GPSUnitsCleanInterval
+            then LogListBox.Items.Delete(i)
+            else Inc(i);
+        end;
+    except
+    end;
+  finally
+    LogListBox.Items.EndUpdate;
+  end;
+end;
+
+//////////////// Captions //////////////////
+procedure TMainForm.btnCancelCaptionClick(Sender: TObject);
+begin
+  CloseGlobalScene;
+end;
+
+procedure TMainForm.btnCaptionNClick(Sender: TObject);
+var
+  btn: TButton absolute Sender;
+  lData: TStrings;
+begin
+  if ShowButton.Enabled or
+     (not (Assigned(Sender) and (Sender is TButton) and
+       (btn.Tag >= 1) and (btn.Tag <= iCaptionsNum)))
+    then Exit;
+
+  lData := TStringList.Create;
+  try
+    FSettings.GetCaptionData(btn.Tag, lData);
+    ShowGlobalScene(VideoTrunk, lData);
+  finally
+    lData.Free;
+  end;
+end;
 
 
+procedure TMainForm.btnEditCaptionsClick(Sender: TObject);
+begin
+  FSettings.Edit;
+end;
+///////////////////////////////////////////
 
 ////////////////   ЭКИПАЖ   ////////////////
 procedure TMainForm.CrewButtonClick(Sender: TObject);
@@ -324,8 +364,15 @@ end;
 
 procedure TMainForm.GPSServerConnectFrame1btnConnectClick(Sender: TObject);
 begin
+  try
+    FSettings.WriteString(sGPSServerSect, sGPSServerIP_key,
+                          GPSServerConnectFrame1.edGpsAddr.Text);
+    FSettings.WriteString(sGPSServerSect, sGPSServerPort_key,
+                          GPSServerConnectFrame1.edGpsPort.Text);
+    FSettings.UpdateFile;
+  except
+  end;
   GPSServerConnectFrame1.btnConnectClick(Sender);
-
 end;
 
 procedure TMainForm.DirectCamButton1Click(Sender: TObject);
@@ -336,10 +383,7 @@ begin
   Count := GetSelectedTanks();
   if( Count <> 0 ) then
     NewCameraMoving := CAM_MOVE_TO_TANKS or CAM_MOVE_TARGET_MED_POINT or CAM_MOVE_POS_OVER_TARGET;
-
 end;
-
-
 
 procedure TMainForm.DirectCamButton2Click(Sender: TObject);
 var
@@ -348,17 +392,92 @@ begin
 
   Count := GetSelectedTanks();
 	if( Count <> 0 ) then
-	 NewCameraMoving := CAM_MOVE_TO_TANKS or CAM_MOVE_TARGET_MED_POINT or CAM_MOVE_POS_INCLINE;
+	  NewCameraMoving := CAM_MOVE_TO_TANKS or CAM_MOVE_TARGET_MED_POINT or CAM_MOVE_POS_INCLINE;
 end;
-
-
 
 procedure TMainForm.CommonViewButtonClick(Sender: TObject);
 begin
   NewCameraMoving := CAM_MOVE_COMMON or CAM_MOVE_TARGET_MED_POINT or CAM_MOVE_POS_OVER_TARGET;
 end;
 
+procedure TMainForm.CancelFollowBtnClick(Sender: TObject);
+begin
+  CancelCamera := true;
+end;
 
+procedure TMainForm.chbSimulationClick(Sender: TObject);
+begin
+  if FRunning then
+    begin
+      if chbSimulation.Checked
+        then FSettings.WriteInteger(sGPSServerSect, sTestOpt_key, 1)
+        else FSettings.WriteInteger(sGPSServerSect, sTestOpt_key, 0);
+
+      if FSettings.Modified
+        then FSettings.UpdateFile;
+    end;
+end;
+
+procedure TMainForm.CheckSimOption;
+Var
+  Res, i : integer;
+  TrackPath : string;
+  hCoordReaderDll : HMODULE;
+  NumCoords, Ver : integer;
+  DynArray, pf: ^single;
+  Vec: TVector;
+  pReadFunc : function ( pNumCoords, pVer, pCoords, pJumps : pointer; pFilePath: PAnsiChar ) : dword; stdcall;
+
+  procedure DisableSimOption;
+  begin
+    chbSimulation.Checked := false;
+    chbSimulation.Enabled := false;
+  end;
+
+begin
+  //  прочитаем трек для тестов.
+  try
+    TrackPath := GetCurrentDir() + '\' + 'Resources\FullTrack.txt';
+    if not FileExists(TrackPath) then System.SysUtils.Abort;
+    hCoordReaderDll := LoadLibrary( 'GpsCoordReader.dll' );
+    if hCoordReaderDll = 0 then System.SysUtils.Abort;
+
+    @pReadFunc := GetProcAddress( hCoordReaderDll, 'ReadGpsCoords' );
+    if @pReadFunc = nil then System.SysUtils.Abort;
+
+    Res := pReadFunc( @NumCoords, @Ver, nil, nil, PAnsiChar(AnsiString(TrackPath)) );
+    if NumCoords <= 1 then System.SysUtils.Abort;
+
+    GetMem( DynArray, NumCoords*3*4 );
+    try
+      Res := pReadFunc( @NumCoords, @Ver, DynArray, nil, PAnsiChar(AnsiString(TrackPath)) );
+      pf := DynArray;
+      for i:=0 to (NumCoords-1) do begin
+        CopyMemory( @Vec, pf, 12 );
+        if( Ver = 1 )  then begin
+          Routes[i].GpsPos.x := Vec.x;
+          Routes[i].GpsPos.z := Vec.y;
+        end;
+        if( Ver = 2 )  then begin
+          Routes[i].GpsPos.x := Vec.y;
+          Routes[i].GpsPos.z := Vec.x;
+        end;
+        Routes[i].GpsPos.y := Vec.z;
+
+        Routes[i].Pos.x := Routes[i].GpsPos.z * lon_f1 - lon_f2;
+        Routes[i].Pos.z := Routes[i].GpsPos.x * lat_f1 - lat_f2;
+        //Routes[i].Pos.y := Height2d;
+
+        Inc(pf,3);
+      end;
+    finally
+      FreeMem( DynArray );
+    end;
+    MaxRoute := NumCoords;
+  except
+    on EAbort do DisableSimOption;
+  end;
+end;
 
 procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -372,9 +491,35 @@ begin
   //  Для x64 нет FPU команд. Отключим FPU исключения.
   SetMXCSR($1F80);
 
-  GPSServerConnectFrame1.UpdateUI(Self);
+  FRunning := false;
+  try
+    FSettings :=
+        TCaptionSettings.Create(ChangeFileExt(Application.ExeName,'.cfg'),
+                                TEncoding.UTF8, false);
+    chbSimulation.Checked :=
+      (FSettings.ReadInteger(sGPSServerSect, sTestOpt_key, iTestOpt_def) <> 0);
+    GPSServerConnectFrame1.edGpsAddr.Text :=
+        FSettings.ReadString(sGPSServerSect, sGPSServerIP_key, sGPSServerIP_def);
+    GPSServerConnectFrame1.edGpsPort.Text :=
+        FSettings.ReadString(sGPSServerSect, sGPSServerPort_key, sGPSServerPort_def);
+
+    GPSServerConnectFrame1.GPSCleanEventTimer.Interval := GPSUnitsCleanInterval;
+    GPSServerConnectFrame1.GPSCleanEventTimer.OnTimer := CleanGPSUnitsEvent;
+    GPSServerConnectFrame1.UpdateUI(Self);
+
+    CheckSimOption;
+  finally
+    FRunning := true;
+  end;
 end;
 
+
+procedure TMainForm.FormDestroy(Sender: TObject);
+begin
+  if FSettings.Modified
+    then FSettings.UpdateFile;
+  FSettings.Free;
+end;
 
 procedure TMainForm.FormMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
 begin
@@ -392,6 +537,11 @@ var
 begin
 	ShowButton.Enabled := false;
   ClosePoligonButton.Enabled := true;
+
+  if chbSimulation.Checked
+    then TEST := 1
+    else TEST := 0;
+
   if not ((TEST <> 0) or (GPSServerConnectFrame1.ConnectState <> csDisconnected))
     then GPSServerConnectFrame1.btnConnectClick(nil);
 
@@ -427,38 +577,47 @@ begin
       begin
         fnd := false;
         LogListBox.Items.BeginUpdate;
+        try
+          fmt := '%5d%20.5f%20.5f%15d | %10d';
           try
-            fmt := '%5d%20.5f%20.5f%15d | %10d';
-            try
-              for i:=0 to LogListBox.Items.Count-1 do
-                begin
-                  s := LogListBox.Items[i];
-                  Delete(s, Pos('|',s)+2, 100);
-                  id := StrToInt(Trim(System.Copy(s, 1, 6)));
-                  tc0 := dword(LogListBox.Items.Objects[i]);
-                  if id = TankId then
-                    begin
-                      pkts := Format(fmt, [TankId, Lat, Lon, ticks-tc0, 0]);
-                      LogListBox.Items[i] := pkts;
-                      LogListBox.Items.Objects[i] := TObject(ticks);
-                      fnd := true;
-                    end
-                                 else
-                    begin
-                      pkts := s + Format('%10d', [ticks-tc0]);
-                      LogListBox.Items[i] := pkts;
-                    end;
-                end;
+            for i:=0 to LogListBox.Items.Count-1 do
+              begin
+                s := LogListBox.Items[i];
+                Delete(s, Pos('|',s)+2, 100);
+                id := StrToInt(Trim(System.Copy(s, 1, 6)));
+                tc0 := dword(LogListBox.Items.Objects[i]);
+                if id = TankId then
+                  begin
+                    pkts := Format(fmt, [TankId, Lat, Lon, ticks-tc0, 0]);
+                    LogListBox.Items[i] := pkts;
+                    LogListBox.Items.Objects[i] := TObject(ticks);
+                    fnd := true;
+                  end
+                               else
+                  begin
+                    pkts := s + Format('%10d', [ticks-tc0]);
+                    LogListBox.Items[i] := pkts;
+                  end;
+              end;
 
-              if fnd then Exit;
-              pkts := Format(fmt, [TankId, Lat, Lon, 0, 0]);
-              LogListBox.Items.Add(pkts);
-              LogListBox.Items.Objects[LogListBox.Items.Count-1] := TObject(ticks);
-            except
-              pkts := Format(fmt, [TankId, Lat, Lon, 0, 0]);
-              LogListBox.Items.Add(pkts);
-              LogListBox.Items.Objects[LogListBox.Items.Count-1] := TObject(ticks);
-            end;
+            i := 0;
+            while i < LogListBox.Items.Count do
+              begin
+                tc0 := dword(LogListBox.Items.Objects[i]);
+                if ticks-tc0 > GPSUnitsCleanInterval
+                  then LogListBox.Items.Delete(i)
+                  else Inc(i);
+              end;
+
+            if fnd then Exit;
+            pkts := Format(fmt, [TankId, Lat, Lon, 0, 0]);
+            LogListBox.Items.Add(pkts);
+            LogListBox.Items.Objects[LogListBox.Items.Count-1] := TObject(ticks);
+          except
+            pkts := Format(fmt, [TankId, Lat, Lon, 0, 0]);
+            LogListBox.Items.Add(pkts);
+            LogListBox.Items.Objects[LogListBox.Items.Count-1] := TObject(ticks);
+          end;
         finally
           LogListBox.Items.EndUpdate;
         end;

@@ -9,6 +9,9 @@ object GPSServerConnectFrame: TGPSServerConnectFrame
     Top = 3
     Width = 255
     Height = 78
+    Color = clBtnFace
+    ParentBackground = False
+    ParentColor = False
     TabOrder = 0
     object lblGpsAddr: TLabel
       Left = 9
@@ -52,5 +55,10 @@ object GPSServerConnectFrame: TGPSServerConnectFrame
       TabOrder = 2
       OnClick = btnConnectClick
     end
+  end
+  object GPSCleanEventTimer: TTimer
+    Enabled = False
+    Left = 35
+    Top = 43
   end
 end

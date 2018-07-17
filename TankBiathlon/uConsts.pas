@@ -39,6 +39,17 @@ Var
 
     UserSpeedFactors : array [1..4] of single = (1,1,1,1);
 
+const
+  sGPSServerSect: string = 'GPSServer';
+
+  sTestOpt_key: string = 'test_mode';
+  sGPSServerIP_key: string = 'gps_server_addr';
+  sGPSServerPort_key: string = 'gps_server_port';
+
+  iTestOpt_def: integer = 0;
+  sGPSServerIP_def: string = '94.228.243.168';
+  sGPSServerPort_def: string = '9876';
+
 implementation
 
 end.

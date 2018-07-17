@@ -19,7 +19,10 @@ uses
   frGPSServerConnect in 'frGPSServerConnect.pas' {GPSServerConnectFrame: TFrame},
   uGPSPacketsQueue in 'uGPSPacketsQueue.pas',
   uGPSServerConnect in 'uGPSServerConnect.pas',
-  uGPSData in 'uGPSData.pas';
+  uGPSData in 'uGPSData.pas',
+  fCaptionSettings in 'fCaptionSettings.pas' {frmCaptionSettings},
+  uCaptionSettings in 'uCaptionSettings.pas',
+  uCaptionSettingsKeys in 'uCaptionSettingsKeys.pas';
 
 {$R *.res}
 

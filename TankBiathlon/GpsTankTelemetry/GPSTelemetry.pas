@@ -8,7 +8,7 @@ uses
   Vcl.StdCtrls, IniFiles, Data.DB, Data.Win.ADODB, Vcl.Mask, Vcl.DBCtrls,
   Vcl.DBGrids, Math, System.StrUtils, JTPStudio, TypesJTP, Vector, Vehicle,
   Vcl.Samples.Spin, Vcl.DBCGrids, System.DateUtils, Vcl.ComCtrls, Poligon2D,
-  uConsts;
+  uConsts, uGPSData;
 
 const
   cShootingRubegQty = 10;

@@ -16,6 +16,7 @@ Var
   CameraSpeed : single;         //  скорость камеры
   //CamViewLen : single;        //  дистанция камеры
   CamViewDir : TVector;         //  направление
+  CancelCamera : boolean = false; // отмена движения камеры (эквивалентно щелчку правой кнопкой)
   CameraMoving : dword = 0;     //  флаги состояние движения камеры
   NewCameraMoving : dword = 0;  //  новые флаги состояние движения камеры
   CameraScroll : dword = 0;     //  ñîñòîÿíèå ñêðîëëèðîâàíèÿ (ïåðåìåùåíèå â ïëîñêîñòè ãîðèçîíòà) êàìåðû.
@@ -119,6 +120,17 @@ begin
 
   OpenRecords( 0, nil );
 
+  if CancelCamera then
+    begin
+      CancelCamera := false;
+      CameraMoving := 0;                      // îñòàíîâ êàìåðû
+      NewCameraMoving := 0;
+
+      for i := 1 to MaxOneVehicles do begin   // ñêðîåì ðàìêè òàíêîâ
+        Vehicles[i].SetSelectFrame( 0.0 );
+      end;
+    end;
+
   //  Ловим события от мыши, кроме колеса.
   if( pEvents <> nil )  then begin
     pEvent := pEvents;
@@ -131,7 +143,7 @@ begin
         end;
 
         // Êëèê ïðàâîé êëàâèøåé.
-        if( ( pEvent.Flags and EM_RBUTTON_CLICK ) <> 0 ) then begin
+        if( ( pEvent.Flags and EM_RBUTTON_CLICK) <> 0 ) then begin
           CameraMoving := 0;                      // îñòàíîâ êàìåðû
           NewCameraMoving := 0;
 

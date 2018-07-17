@@ -27,7 +27,7 @@ type
   TVideoCloseSetsFunc = function ( Flags: integer;  VideoSets: PVideoSets ) : integer;  stdcall;
 
   //  Функция показа формы видео настроек.
-  TVideoStartSetsFunc = function ( Flags: integer;  MainForm: TForm;  OutWindows: PHwndArray;  pTrunkFlags: PTrunkFlagsArray;  pCloseFunc: TVideoCloseSetsFunc;  pReserve: pointer ) : integer; stdcall;
+  TVideoStartSetsFunc = function ( Flags: integer;  MainApp: TApplication;  OutWindows: PHwndArray;  pTrunkFlags: PTrunkFlagsArray;  pCloseFunc: TVideoCloseSetsFunc;  pReserve: pointer ) : integer; stdcall;
 
 implementation
 

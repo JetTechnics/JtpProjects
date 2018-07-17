@@ -112,8 +112,8 @@ Type  TVehicle = record     //  Подвижное средство
   procedure Initialize( VehicleName : PAnsiChar;  ArrayIndex : integer ); //, ModelName2: PAnsiChar;  State2: integer );
   procedure Reset();
   procedure ShowSimPoints( Alpha : single );
-  procedure StartForSimulation();
-  procedure StopForSimulation();
+  {procedure StartForSimulation();
+  procedure StopForSimulation();}
   procedure SetSelectFrame( Alpha : single );
   procedure SetTankPictAlpha( Alpha : single );
   procedure SetSize( NewSize : single );
@@ -177,14 +177,7 @@ Var
   //  Поправка на дистанцию
   DistFactor : single = 1.424;
 
-
-//  Для теста
-TEST : integer = 0;
-
-
-
 implementation
-
 
 procedure TVehicle.Initialize( VehicleName : PAnsiChar; ArrayIndex : integer ); //, ModelName2: PAnsiChar;  State2: integer );
 var Names : array [0..63] of TName;
@@ -297,7 +290,7 @@ begin
 end;
 
 
-
+(*
 procedure TVehicle.StartForSimulation();
 var Dir : TVector;
     i, k, pnt, NextRt, Rt, Rt2 : integer;
@@ -377,7 +370,7 @@ begin
 
     SetObjectSpace( @PoligonSceneName, @Name, @Pos, nil, nil, nil{@Dir}, nil, nil, 0.0, JTP_ABSOLUTE, nil );
 end;
-
+*)
 
 
 procedure TVehicle.SetSelectFrame( Alpha : single );

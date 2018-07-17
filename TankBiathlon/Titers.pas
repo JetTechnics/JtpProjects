@@ -3,14 +3,19 @@ unit Titers;
 interface
 
 uses
- Windows, System.SysUtils,
+ Winapi.Windows,
+ System.SysUtils, System.Classes,
  JTPStudio, TypesJTP;
 
 var
+  GlobalScene: TName;
+
+procedure ShowGlobalScene(VideoTrunk: integer; const SceneData: TStrings);
+procedure CloseGlobalScene;
+
+var
   EkipagScene : TName;
-
   OtsechkaScene : TName;
-
 
 procedure ShowCrew( VideoTrunk : integer );
 procedure CloseCrew();
@@ -18,11 +23,65 @@ procedure CloseCrew();
 procedure ShowOtsechka( VideoTrunk : integer );
 procedure CloseOtsechka();
 
-
-
-
 implementation
 
+//////////////// GLOBAL ////////////////////
+
+procedure ShowGlobalScene(VideoTrunk: integer; const SceneData: TStrings);
+var
+  Res : UInt64;
+  PlaySceneData : TPlaySceneData;
+  SurfElemData : TSurfElemData;
+  FilePath : TPath;
+  s: WideString;
+  i, k: integer;
+begin
+  PlaySceneData.Create;
+  SurfElemData.Create;
+
+  OpenRecords(0, nil);
+
+  if GlobalScene.text[0] <> #0 then
+    begin
+      CloseScene(@GlobalScene, FLT_UNDEF, nil);
+      GlobalScene.text[0] := #0;
+    end;
+
+  Res := PlayScene('Ekipag', 0.0, 0, VideoTrunk, @PlaySceneData);
+  if Res = JTP_OK then
+    begin
+      StrCopy(GlobalScene.text, PlaySceneData.SceneName.text);
+
+      for i:=0 to SceneData.Count-1 do
+        begin
+          k := StrToIntDef(SceneData.Names[i], 0);
+          if k <= 0 then Continue;
+          s := SceneData.ValueFromIndex[i];
+          Res := UpdateSurfaceElement(@GlobalScene, 'Status', k, 1, nil, PWideChar(s), nil,
+				    							            INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData);
+          if( Res <> JTP_OK ) then begin
+            //AddErrorStrings( SurfElemData.pErrorsStr );
+          end;
+        end;
+  end;
+
+  CloseRecords(0, nil);
+end;
+
+procedure CloseGlobalScene;
+begin
+  if GlobalScene.text[0] <> #0 then
+    begin
+      OpenRecords(0, nil);
+
+      CloseScene(@GlobalScene, FLT_UNDEF, nil);
+      GlobalScene.text[0] := #0;
+
+      CloseRecords(0, nil);
+  end;
+end;
+
+////////////////////////////////////////////
 
 ////////////////   › »œ¿∆   ////////////////
 

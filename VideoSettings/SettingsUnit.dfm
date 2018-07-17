@@ -13,6 +13,8 @@ object SettingsForm: TSettingsForm
   OldCreateOrder = False
   Visible = True
   OnActivate = FormActivate
+  OnClose = FormClose
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object Out1TrunkBox: TGroupBox
@@ -180,8 +182,6 @@ object SettingsForm: TSettingsForm
     Width = 121
     Height = 17
     Caption = #1057#1080#1084#1091#1083#1103#1090#1086#1088' '#1074#1099#1074#1086#1076#1072
-    Checked = True
-    State = cbChecked
     TabOrder = 3
   end
   object SimInputBox: TCheckBox
