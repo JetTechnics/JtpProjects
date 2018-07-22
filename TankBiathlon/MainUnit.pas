@@ -9,7 +9,7 @@ uses
   JTPStudio, VideoSetsHeader, TypesJTP, PluginJTP, Vector,
   Poligon2D, Vehicle, Titers,
   frGPSServerConnect, uGPSData, uConsts,
-  uCaptionSettingsKeys, uCaptionSettings;
+  uCaptionSettingsKeys, uCaptionSettings, uParamStorage;
 
 type
   TMainForm = class(TForm)
@@ -82,6 +82,8 @@ type
   public
     procedure AddLogString(const AStr: string);
     procedure AddLogGpsData(TankId: integer; Lat, Lon: single; ticks: dword);
+    procedure OnParamValueChanged(Descr: TParamDescr;
+                const OldValue, NewValue, OldValueFmt, NewValueFmt: string);
   end;
 
 var
@@ -181,6 +183,13 @@ begin
   end;
 
   MainForm.ShowButton.Enabled := true;
+  MainForm.btnCaption1.Enabled := true;
+  MainForm.btnCaption2.Enabled := true;
+  MainForm.btnCaption3.Enabled := true;
+  MainForm.btnCaption4.Enabled := true;
+  MainForm.btnCancelCaption.Enabled := true;
+
+  CaptionParamStorage.OnParamChanged := MainForm.OnParamValueChanged;
 {
   OpenRecords( 0, nil );
 
@@ -261,7 +270,19 @@ var
   i: integer;
   ticks: dword;
   tc0: dword;
+  Descr: TParamDescr;
 begin
+  Descr := TParamDescr.Create('N');
+  try
+    for i:=1 to iTanksNum do
+      begin
+        Descr.SetTankIdAndName(i, asCaptionParams[cpiSpeed]);
+        CaptionParamStorage.SetParamDataV(Descr, Random(100));
+      end;
+  finally
+    Descr.Free;
+  end;
+
   ticks := Winapi.Windows.GetTickCount;
   LogListBox.Items.BeginUpdate;
   try
@@ -292,7 +313,7 @@ var
   btn: TButton absolute Sender;
   lData: TStrings;
 begin
-  if ShowButton.Enabled or
+  if StartButton.Enabled or
      (not (Assigned(Sender) and (Sender is TButton) and
        (btn.Tag >= 1) and (btn.Tag <= iCaptionsNum)))
     then Exit;
@@ -306,6 +327,22 @@ begin
   end;
 end;
 
+procedure TMainForm.OnParamValueChanged(Descr: TParamDescr;
+  const OldValue, NewValue, OldValueFmt, NewValueFmt: string);
+var
+  lData: TStrings;
+  CaptionIdx: integer;
+begin
+  lData := TStringList.Create;
+  try
+    CaptionIdx := Titers.GetCaptionIndex;
+    if CaptionIdx = -1 then Exit;
+    FSettings.GetCaption1DescrData(Descr, NewValueFmt, CaptionIdx, lData);
+    UpdateGlobalScene(lData);
+  finally
+    lData.Free;
+  end;
+end;
 
 procedure TMainForm.btnEditCaptionsClick(Sender: TObject);
 begin
@@ -516,6 +553,7 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
+  CaptionParamStorage.OnParamChanged := nil;
   if FSettings.Modified
     then FSettings.UpdateFile;
   FSettings.Free;

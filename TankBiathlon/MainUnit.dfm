@@ -11,7 +11,7 @@ object MainForm: TMainForm
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  Position = poDesigned
+  Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -262,6 +262,7 @@ object MainForm: TMainForm
     Height = 25
     Caption = #1069#1082#1080#1087#1072#1078
     TabOrder = 4
+    Visible = False
     OnClick = CrewButtonClick
   end
   object CloseCrewButton: TButton
@@ -271,6 +272,7 @@ object MainForm: TMainForm
     Height = 25
     Caption = #1047#1072#1082#1088#1099#1090#1100
     TabOrder = 5
+    Visible = False
     OnClick = CloseCrewButtonClick
   end
   object OtsechkaButton: TButton
@@ -280,6 +282,7 @@ object MainForm: TMainForm
     Height = 25
     Caption = #1054#1090#1089#1077#1095#1082#1072
     TabOrder = 6
+    Visible = False
     OnClick = OtsechkaButtonClick
   end
   object CloseOtsechkaButton: TButton
@@ -289,6 +292,7 @@ object MainForm: TMainForm
     Height = 25
     Caption = #1047#1072#1082#1088#1099#1090#1100
     TabOrder = 7
+    Visible = False
     OnClick = CloseOtsechkaButtonClick
   end
   object btnTelemetry: TButton
@@ -345,6 +349,7 @@ object MainForm: TMainForm
       Width = 57
       Height = 35
       Caption = '1'
+      Enabled = False
       TabOrder = 0
       WordWrap = True
       OnClick = btnCaptionNClick
@@ -356,6 +361,7 @@ object MainForm: TMainForm
       Width = 57
       Height = 35
       Caption = '2'
+      Enabled = False
       TabOrder = 1
       WordWrap = True
       OnClick = btnCaptionNClick
@@ -367,6 +373,7 @@ object MainForm: TMainForm
       Width = 57
       Height = 35
       Caption = '3'
+      Enabled = False
       TabOrder = 2
       WordWrap = True
       OnClick = btnCaptionNClick
@@ -378,6 +385,7 @@ object MainForm: TMainForm
       Width = 57
       Height = 35
       Caption = '4'
+      Enabled = False
       TabOrder = 3
       WordWrap = True
       OnClick = btnCaptionNClick
@@ -388,6 +396,7 @@ object MainForm: TMainForm
       Width = 246
       Height = 35
       Caption = #1059#1073#1088#1072#1090#1100' '#1090#1080#1090#1088
+      Enabled = False
       TabOrder = 4
       OnClick = btnCancelCaptionClick
     end

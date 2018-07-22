@@ -24,6 +24,8 @@ type
     vleCaptions2: TValueListEditor;
     vleCaptions3: TValueListEditor;
     vleCaptions4: TValueListEditor;
+    pgScenes: TTabSheet;
+    vleScenes: TValueListEditor;
     procedure FormCreate(Sender: TObject);
     procedure vleCaptionStringsValidate(Sender: TObject; ACol, ARow: Integer;
       const KeyName, KeyValue: string);
@@ -36,9 +38,11 @@ type
     procedure GetCaptionsPickList(const List: TStrings);
     procedure ReadCaptions(const AFile: TMemIniFile);
     procedure ReadCaptionsN(const SectNum: integer; const AFile: TMemIniFile);
+    procedure ReadScenes(const AFile: TMemIniFile);
     procedure ReadStringsSect(const AFile: TMemIniFile);
     procedure SaveCaptions(const AFile: TMemIniFile);
     procedure SaveCaptionsN(const SectNum: integer; const AFile: TMemIniFile);
+    procedure SaveScenes(const AFile: TMemIniFile);
     procedure SaveStringsSect(const AFile: TMemIniFile);
   public
     procedure ReadSettings(const AFile: TMemIniFile);
@@ -69,7 +73,7 @@ end;
 procedure TfrmCaptionSettings.GetCaptionsPickList(const List: TStrings);
 var
   i: integer;
-  k: integer;
+  k: TCaptionParamIdx;
   v: string;
 begin
   List.Clear;
@@ -77,7 +81,7 @@ begin
   for i:=1 to iTanksNum do
     begin
       v := IntToStr(i) + '_';
-      for k:=Low(asCaptionParams) to High(asCaptionParams) do
+      for k:=Low(TCaptionParamIdx) to High(TCaptionParamIdx) do
         List.Add(v+asCaptionParams[k]);
     end;
 end;
@@ -113,13 +117,28 @@ begin
           EdProp := Ed.ItemProps[key];
           EdProp.EditStyle := esPickList;
           keyV := AFile.ReadString(sStringsSect, key, '');
-          if keyV <> '' then EdProp.KeyDesc := keyV;
+          if keyV <> '' then EdProp.KeyDesc := key + ' (' + keyV + ')';
         end;
+    end;
+end;
+
+procedure TfrmCaptionSettings.ReadScenes(const AFile: TMemIniFile);
+var
+  i: integer;
+  key: string;
+  v: string;
+begin
+  for i:=1 to iCaptionsNum do
+    begin
+      key := sCaptionScene+IntToStr(i);
+      v := AFile.ReadString(sScenesSect, key, sStringEmpty);
+      vleScenes.InsertRow(key, v, true);
     end;
 end;
 
 procedure TfrmCaptionSettings.ReadSettings(const AFile: TMemIniFile);
 begin
+  ReadScenes(AFile);
   ReadStringsSect(AFile);
   ReadCaptions(AFile);
 end;
@@ -169,9 +188,25 @@ begin
     end;
 end;
 
+procedure TfrmCaptionSettings.SaveScenes(const AFile: TMemIniFile);
+var
+  i: integer;
+  key: string;
+  v: string;
+begin
+  for i:=1 to iCaptionsNum do
+    begin
+      key := sCaptionScene+IntToStr(i);
+      v := vleScenes.Values[key];
+      if (v <> '') and (not SameText(v, sStringEmpty))
+        then AFile.WriteString(sScenesSect, key, v);
+    end;
+end;
+
 procedure TfrmCaptionSettings.SaveSettings(const AFile: TMemIniFile);
 begin
   AFile.Clear;
+  SaveScenes(AFile);
   SaveStringsSect(AFile);
   SaveCaptions(AFile);
   AFile.UpdateFile;
@@ -195,27 +230,17 @@ end;
 procedure TfrmCaptionSettings.vleCaptionStringsValidate(Sender: TObject; ACol,
   ARow: Integer; const KeyName, KeyValue: string);
 var
-  i: integer;
-  List: TStrings;
   v: string;
 begin
-  if (ACol <> 1) or
-     (KeyValue = '') or SameText(KeyValue, sStringEmpty)
-    then Exit;
-  List := vleCaptionStrings.Strings;
-  for i:=0 to List.Count-1 do
-    begin
-      if i+1=ARow then Continue;
-      v := List.Values[List.Names[i]];
-      if (v = '') or SameText(v, sStringEmpty) then Continue;
-      if SameText(KeyValue, v) then
-        raise Exception.Create('Duplicate string value');
-    end;
+  if ACol <> 1 then Exit;
 
-  vleCaptions1.ItemProps[KeyName].KeyDesc := KeyValue;
-  vleCaptions2.ItemProps[KeyName].KeyDesc := KeyValue;
-  vleCaptions3.ItemProps[KeyName].KeyDesc := KeyValue;
-  vleCaptions4.ItemProps[KeyName].KeyDesc := KeyValue;
+  if (KeyValue <> '') and (not SameText(KeyValue, sStringEmpty))
+    then v := KeyName + ' (' + KeyValue + ')'
+    else v := '';
+  vleCaptions1.ItemProps[KeyName].KeyDesc := v;
+  vleCaptions2.ItemProps[KeyName].KeyDesc := v;
+  vleCaptions3.ItemProps[KeyName].KeyDesc := v;
+  vleCaptions4.ItemProps[KeyName].KeyDesc := v;
 end;
 
 procedure TfrmCaptionSettings.vleCaptionsValidate(Sender: TObject; ACol,

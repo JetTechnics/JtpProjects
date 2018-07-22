@@ -45,9 +45,30 @@ object frmCaptionSettings: TfrmCaptionSettings
     Top = 0
     Width = 635
     Height = 299
-    ActivePage = pgStrings
-    Anchors = [akLeft, akTop, akRight, akBottom]
+    ActivePage = pgScenes
     TabOrder = 0
+    object pgScenes: TTabSheet
+      Caption = 'Scenes'
+      ImageIndex = 5
+      object vleScenes: TValueListEditor
+        Left = 0
+        Top = 0
+        Width = 627
+        Height = 271
+        Align = alClient
+        KeyOptions = [keyUnique]
+        TabOrder = 0
+        TitleCaptions.Strings = (
+          'Caption N'
+          'Scene name')
+        ColWidths = (
+          150
+          471)
+        RowHeights = (
+          18
+          18)
+      end
+    end
     object pgStrings: TTabSheet
       Caption = 'Strings'
       object vleCaptionStrings: TValueListEditor
@@ -104,6 +125,7 @@ object frmCaptionSettings: TfrmCaptionSettings
         Width = 627
         Height = 271
         Align = alClient
+        DropDownRows = 20
         KeyOptions = [keyUnique]
         TabOrder = 0
         TitleCaptions.Strings = (
@@ -128,6 +150,7 @@ object frmCaptionSettings: TfrmCaptionSettings
         Width = 627
         Height = 271
         Align = alClient
+        DropDownRows = 20
         KeyOptions = [keyUnique]
         TabOrder = 0
         TitleCaptions.Strings = (
@@ -152,6 +175,7 @@ object frmCaptionSettings: TfrmCaptionSettings
         Width = 627
         Height = 271
         Align = alClient
+        DropDownRows = 20
         KeyOptions = [keyUnique]
         TabOrder = 0
         TitleCaptions.Strings = (

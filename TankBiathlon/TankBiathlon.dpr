@@ -22,7 +22,8 @@ uses
   uGPSData in 'uGPSData.pas',
   fCaptionSettings in 'fCaptionSettings.pas' {frmCaptionSettings},
   uCaptionSettings in 'uCaptionSettings.pas',
-  uCaptionSettingsKeys in 'uCaptionSettingsKeys.pas';
+  uCaptionSettingsKeys in 'uCaptionSettingsKeys.pas',
+  uParamStorage in 'uParamStorage.pas';
 
 {$R *.res}
 

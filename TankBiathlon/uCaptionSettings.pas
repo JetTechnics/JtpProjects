@@ -1,4 +1,4 @@
-unit uCaptionSettings;
+ unit uCaptionSettings;
 
 interface
 
@@ -6,23 +6,9 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.IniFiles,
   Vcl.Controls,
-  uCaptionSettingsKeys;
+  uCaptionSettingsKeys, uParamStorage;
 
 type
-  TParamDescr = class(TObject)
-  private
-    FFullName: string;
-    FTankId: integer;
-    FName: string;
-    FValue: string;
-  public
-    constructor Create(const AFullName: string);
-    property FullName: string read FFullName;
-    property TankId: integer read FTankId;
-    property Name: string read FName;
-    property Value: string read FValue;
-  end;
-
   TCaptionSettings = class(TMemIniFile)
   private
     FListArr: array[1..iCaptionsNum] of TStrings;
@@ -33,6 +19,9 @@ type
     destructor Destroy; override;
     function Edit: boolean;
     procedure GetCaptionData(const CaptionN: integer; const AList: TStrings);
+    procedure GetCaption1DescrData(const Descr: TParamDescr;
+                const Value: string;
+                const CaptionN: integer; const AList: TStrings);
     procedure GetCaptionDataDescr(const CaptionN: integer; const AList: TStrings);
     function GetParamValue(const AParamDescr: TParamDescr): string;
   end;
@@ -41,26 +30,6 @@ implementation
 
 uses
   fCaptionSettings;
-
-{ TParamDescr }
-
-constructor TParamDescr.Create(const AFullName: string);
-var
-  s: string;
-  ln: integer;
-begin
-  FFullName := AFullName;
-  FTankId := 0;
-  FName := AFullName;
-  FValue := '';
-  ln := Length(FFullName);
-  if ln > 2 then
-    begin
-      s := AFullName[1];
-      FTankId := StrToIntDef(s, 0);
-      FName := Copy(s, 3, ln);
-    end;
-end;
 
 { TCaptionSettings }
 
@@ -122,6 +91,40 @@ begin
       GetCaptionDataDescr(i, FListArr[i]);
 end;
 
+procedure TCaptionSettings.GetCaption1DescrData(const Descr: TParamDescr;
+  const Value: string;
+  const CaptionN: integer; const AList: TStrings);
+var
+  i: integer;
+  key: string;
+  v: string;
+  lList: TStrings;
+  lDescr: TParamDescr;
+begin
+  AList.Clear;
+  if (not Descr.IndexCorrect) or
+     (CaptionN < 1) or (CaptionN > iCaptionsNum) then Exit;
+  key := sCaptionScene+IntToStr(CaptionN);
+  v := ReadString(sScenesSect, key, '');
+  if v <> '' then AList.AddPair('*****', v, TObject(CaptionN))
+             else Exit;
+
+  lList := FListArr[CaptionN];
+  for i:=0 to lList.Count-1 do
+    begin
+      lDescr := TParamDescr(lList.Objects[i]);
+      if (not lDescr.IndexCorrect) or
+         (lDescr.TankId <> Descr.TankId) or
+         (lDescr.ParamIndex <> Descr.ParamIndex)
+        then Continue;
+
+      key := lList.Names[i];
+      v := ReadString(sStringsSect, key, '');
+      if v <> '' then key := v;
+      AList.AddPair(key, Value);
+    end;
+end;
+
 procedure TCaptionSettings.GetCaptionData(const CaptionN: integer;
   const AList: TStrings);
 var
@@ -132,6 +135,10 @@ var
 begin
   AList.Clear;
   if (CaptionN < 1) or (CaptionN > iCaptionsNum) then Exit;
+  key := sCaptionScene+IntToStr(CaptionN);
+  v := ReadString(sScenesSect, key, '');
+  if v <> '' then AList.AddPair('*****', v, TObject(CaptionN))
+             else Exit;
 
   lList := FListArr[CaptionN];
   for i:=0 to lList.Count-1 do
@@ -165,11 +172,7 @@ end;
 
 function TCaptionSettings.GetParamValue(const AParamDescr: TParamDescr): string;
 begin
-  Result := '';
-  if not Assigned(AParamDescr) then Exit;
-
-  AParamDescr.FValue := AParamDescr.FFullName + '_' + IntToStr(Random(10000));
-  Result := AParamDescr.FValue;
+  Result := CaptionParamStorage.ParamData[AParamDescr];
 end;
 
 end.

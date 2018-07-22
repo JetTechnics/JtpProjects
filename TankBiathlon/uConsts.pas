@@ -48,7 +48,7 @@ const
 
   iTestOpt_def: integer = 0;
   sGPSServerIP_def: string = '94.228.243.168';
-  sGPSServerPort_def: string = '9876';
+  sGPSServerPort_def: string = '6543';
 
 implementation
 

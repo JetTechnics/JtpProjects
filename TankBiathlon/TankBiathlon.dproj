@@ -145,6 +145,7 @@
         </DCCReference>
         <DCCReference Include="uCaptionSettings.pas"/>
         <DCCReference Include="uCaptionSettingsKeys.pas"/>
+        <DCCReference Include="uParamStorage.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
