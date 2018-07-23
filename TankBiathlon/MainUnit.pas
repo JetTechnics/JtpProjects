@@ -668,18 +668,17 @@ begin
         fnd: boolean;
         fmt: string;
         v: single;
-        vmax: single;
       begin
         for i:=1 to iTanksNum do
           if Vehicles[i].Id = TankId then break;
 
         v := (Speed / 1000) * 3600; // convert to kmh
         Vehicles[i].Vcur := v;
-        CaptionParamStorage.SetParamDataV(cpiSpeed, i, v);
+        CaptionParamStorage.SetParamDataV(cpiSpeed, i, Round(v));
         if v > Vehicles[i].Vmax then
           begin
             Vehicles[i].Vmax := v;
-            CaptionParamStorage.SetParamDataV(cpiSpeed, i, v);
+            CaptionParamStorage.SetParamDataV(cpiSpeed_max, i, Round(v));
           end;
 
         fnd := false;

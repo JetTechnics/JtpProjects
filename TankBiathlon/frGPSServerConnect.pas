@@ -93,8 +93,7 @@ end;
 procedure TGPSServerConnectFrame.LogGPSData(Sender: TObject;
   const GpsData: TGpsData);
 begin
-  //MainForm.AddLogGpsData(GpsData.VehicleId,
-  //  GpsData.Latitude, GpsData.Longitude, Winapi.Windows.GetTickCount);
+  MainForm.AddLogGpsData(GpsData, Winapi.Windows.GetTickCount);
 end;
 
 procedure TGPSServerConnectFrame.UpdateUI(Sender: TObject);
