@@ -51,6 +51,18 @@ uses
 const  FLT_UNDEF    : single  = 3.402823466e+38;
 //const  COLOR_UNDEF  : dword   = $CCCCCCCC;
 const  INT_UNDEF    : integer = $CCCCCCCC;
+{************ End Copy from TypesJTP ******************}
+
+const
+  GpsPacketSize = 36;
+  GpsMaxCompNameLen = 16-1-1;   // 16 bytes - 1 byte packet type - #0 byte
+
+const
+  GPS_TITLER_NAME: byte = 1;    // Packet type with computer name
+  GpsPacketLen: integer = GpsPacketSize;   // Packet length
+
+type
+  TGpsPacketByte = array[1..GpsPacketSize] of byte;
 
 var
   WSAStarted: boolean;
@@ -72,7 +84,7 @@ type
 
   TGPSServerConnectThread = class(TThread)
   private
-    FId: integer;
+    FCompName: TGpsPacketByte;
     FServerIP: string;
     FServerIPa: array[0..63] of AnsiChar;
     FPort: integer;
@@ -107,7 +119,6 @@ type
 
 procedure TGPSServerConnectThread.CheckIncomingData;
 const
-  GpsPacketLen: integer = 36;   // Packet length
   MaxGpsTimeout: UInt64 = 3000; // Если привысили MaxGpsTimeout то рвём соединение.
   BeatInterval: UInt64 = 1000;
 var
@@ -115,7 +126,7 @@ var
   buff: array[0..255] of dword;
   GpsData: TGpsData;
   CurrentMills: UInt64;
-  lId: array[1..9] of integer;
+  lId: TGpsPacketByte;
 
   function ReceivePacket: integer;
   var
@@ -150,9 +161,7 @@ begin
         CurrentMills := Winapi.Windows.GetTickCount64;
         if (CurrentMills - FGPSLastBeat > BeatInterval) then
           begin
-            lId[1] := FId;
-            lId[2] := 0; lId[3] := 0; lId[4] := 0; lId[5] := 0;
-            lId[6] := 0; lId[7] := 0; lId[8] := 0; lId[9] := 0;
+            CopyMemory(@lId[1], @FCompName[1], GpsPacketLen);
             Res := send(FGPSSocket, lId, SizeOf(lId), 0);
             if Res = SizeOf(lId)
               then FGPSLastBeat := CurrentMills;
@@ -164,6 +173,7 @@ begin
             if (Res = GpsPacketLen) then
               begin
                 FGPSLastAccess := Winapi.Windows.GetTickCount64;
+                CurrentMills := FGPSLastAccess;
 
                 CopyMemory(@GpsData.Latitude, @buff[0], 4);     //  широта
                 CopyMemory(@GpsData.Longitude, @buff[1], 4);    //  долгота
@@ -203,7 +213,7 @@ var
   Res : integer;
   NotBlock : integer;
   AddrIn: sockaddr_in;
-  lId: array[1..9] of integer;
+  lId: TGpsPacketByte;
   SockSet: TFDSet;
   TimeoutStruct: TTimeVal;
 begin
@@ -259,9 +269,7 @@ begin
     begin
       FConnectState := csConnected;
       DoStateChanged(csDisconnected, FConnectState);
-      lId[1] := FId;
-      lId[2] := 0; lId[3] := 0; lId[4] := 0; lId[5] := 0;
-      lId[6] := 0; lId[7] := 0; lId[8] := 0; lId[9] := 0;
+      CopyMemory(@lId[1], @FCompName[1], GpsPacketLen);
       Res := send(FGPSSocket, lId, SizeOf(lId), 0);
       if Res = SizeOf(lId)
         then FGPSLastBeat := Winapi.Windows.GetTickCount64;
@@ -270,9 +278,23 @@ end;
 
 constructor TGPSServerConnectThread.Create(const AServerIP: string;
   const Port: integer);
+var
+  sz: Cardinal;
+  Res: BOOL;
+  s: AnsiString;
 begin
   inherited Create(true);
-  FId := Random(1000);
+  FCompName[1] := GPS_TITLER_NAME;
+  sz := MAX_COMPUTERNAME_LENGTH + 1;
+  Res := GetComputerNameA(@FCompName[2], sz);
+  if Res then
+    begin
+      Randomize;
+      s := '12345'; // AnsiString(IntToStr(Random(1000)));
+      sz := Length(s);
+      CopyMemory(@FCompName[2], PAnsiChar(s), sz);
+    end;
+  FillChar(FCompName[sz+2], GpsPacketLen-sz-1, 0);
   FreeOnTerminate := true;
   SetServerIP(AServerIP);
   FPort := Port;

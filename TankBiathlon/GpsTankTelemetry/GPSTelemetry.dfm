@@ -30,10 +30,6 @@ object _GPSTelemetry: T_GPSTelemetry
     object tsShow: TTabSheet
       Caption = #1058#1088#1072#1085#1089#1083#1103#1094#1080#1103
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel23: TPanel
         Left = 3
         Top = 6
@@ -2496,6 +2492,10 @@ object _GPSTelemetry: T_GPSTelemetry
       FieldKind = fkCalculated
       FieldName = 'cMish3'
       Calculated = True
+    end
+    object qInfoGPSID: TWideStringField
+      FieldName = 'GPSID'
+      Size = 200
     end
   end
   object dsInfo: TDataSource

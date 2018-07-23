@@ -39,7 +39,7 @@ begin
 
       GpsData.Latitude := Routes[pVehicle.CtRt].GpsPos.x;
       GpsData.Longitude := Routes[pVehicle.CtRt].GpsPos.z;
-      GpsData.VehicleId := TestCt;
+      GpsData.VehicleId := pVehicle.Id;
 
       Inc( pVehicle.CtRt );
       if( pVehicle.CtRt >= MaxRoute )

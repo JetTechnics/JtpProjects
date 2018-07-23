@@ -381,18 +381,47 @@ end;
 
 function TMainForm.GetSelectedTanks() : integer;
 var
+  Ids: TIdArray;
   i, j : integer;
+  GPSId: integer;
+  Idx : integer;
   Box : TCheckBox;
   str : string;
+
+  procedure GetSelectedTankIdx;
+  var
+    k: integer;
+  begin
+    Idx := 0;
+    for k:=1 to MaxOneVehicles do
+      if Vehicles[k].Id = GPSId then
+        begin
+          Idx := k;
+          Exit;
+        end;
+  end;
+
 begin
+  Ids[1] := StrToIntDef(Tank1Edit.Text, -1);
+  Ids[2] := StrToIntDef(Tank2Edit.Text, -1);
+  Ids[3] := StrToIntDef(Tank3Edit.Text, -1);
+  Ids[4] := StrToIntDef(Tank4Edit.Text, -1);
+
   // Из CheckBox-ов определим, за какими танками будем вести камеру.
   j := 0;
   for i := 1 to MaxOneVehicles do begin
+    GPSId := Ids[i];
+    if GPSId = -1 then Continue;
     str := 'TankBox' + IntToStr(i);
     Box := TCheckBox( Poligon2DGroupBox.FindChildControl( str ) );
-    if( Box.Checked ) then begin
-      ViewTanks[j] := i;
-      inc(j);
+    if Box.Checked then
+    begin
+      GetSelectedTankIdx;
+      if Idx > 0 then
+        begin
+          ViewTanks[j] := Idx;
+          inc(j);
+        end;
     end;
   end;
   ViewTanks[j] := 0;
@@ -675,7 +704,7 @@ end;
 
 procedure TMainForm.btnTelemetryClick(Sender: TObject);
 begin
-  // _GPSTelemetry.Show;
+  _GPSTelemetry.Show;
 end;
 
 end.

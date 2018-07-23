@@ -8,7 +8,7 @@ uses
   Vcl.StdCtrls, IniFiles, Data.DB, Data.Win.ADODB, Vcl.Mask, Vcl.DBCtrls,
   Vcl.DBGrids, Math, System.StrUtils, JTPStudio, TypesJTP, Vector, Vehicle,
   Vcl.Samples.Spin, Vcl.DBCGrids, System.DateUtils, Vcl.ComCtrls, Poligon2D,
-  uConsts, uGPSData;
+  uConsts, uGPSData, uCaptionSettingsKeys, uParamStorage;
 
 const
   cShootingRubegQty = 10;
@@ -348,6 +348,7 @@ type
     Label19: TLabel;
     eAddYR: TEdit;
     eAddYG: TEdit;
+    qInfoGPSID: TWideStringField;
     procedure TimerTelemetryTimer(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -447,7 +448,7 @@ type
     {
     procedure pSetCamera(i, iNumCam: integer);
     }
-    
+
     procedure pUnSetCamerasDists(Sender: TObject);
     procedure btnOpenScenesClick(Sender: TObject);
     procedure btnCloseScenesClick(Sender: TObject);
@@ -491,6 +492,7 @@ type
 
     glArrTitleESO : array [1..12] of TSpeedButton;
 
+    function GetTankIndexFromGPSId(const GPSId: integer): integer;
   public
     { Public declarations }
   end;
@@ -902,7 +904,7 @@ begin
       if i <= MaxOneVehicles then
         begin
           Vehicles[i].Id := StrToIntDef(_GPS_dm.qTeamInZaezd.FieldByName('GPSID').AsString, 0);
-          pInitial_TEdit_FourTanks(i, Vehicles[i].Id);
+          // pInitial_TEdit_FourTanks(i, Vehicles[i].Id);
         end
                              else
         break;
@@ -969,11 +971,11 @@ procedure T_GPSTelemetry.pRefresh(Sender: TObject);
    end;
 
 var lQty, lPic, lTex, lStr:string;
-    i,j,c,iHit,iMiss,iAll, iColBtn:integer;
+    i,j,c,iHit,iMiss,iAll{, iColBtn}:integer;
     r,g,b:single;
-    iTargetQty, iShotHitQty, iHitTargetQty : integer;
-    iQtyOts, iQtyOtsOnTitle, i1, j1:integer;
-    iResult, iRemainder: Word;
+    {iTargetQty, iShotHitQty, iHitTargetQty : integer;}
+    {iQtyOts, iQtyOtsOnTitle, i1, j1: integer;}
+    {iResult, iRemainder: Word;}
 begin
   if not _GPS_dm.DBTanks.Connected then
     EXIT;
@@ -1001,7 +1003,7 @@ begin
             fTankColorGet(_GPS_dm.qTankPlayersForTeam.FieldByName('TeamColorID').AsString, r, g, b, lTex, lPic);
             VehiclesData[i].TankSmallPicture := lPic;
 
-            iColBtn:=fNumColumnBtnForGPS(i);
+            // iColBtn:=fNumColumnBtnForGPS(i);
 
             for j:=0 to high(VehiclesData[i].Players) do
               begin
@@ -1016,8 +1018,8 @@ begin
                     VehiclesData[i].Players[j].PlayerName:=_GPS_dm.qTankPlayersForTeam.FieldByName('PlayerName').AsString;
                     VehiclesData[i].Players[j].AmplyaName:=_GPS_dm.qTankPlayersForTeam.FieldByName('AmplyaName').AsString;
 
-                    if (iColBtn > 0) and (iColBtn <= MaxOneVehicles) and (j+1 <= cEkipagCount) then
-                      glArrEkipage[iColBtn, j+1].Text := VehiclesData[i].Players[j].PlayerName;
+                    {if (iColBtn > 0) and (iColBtn <= MaxOneVehicles) and (j+1 <= cEkipagCount) then
+                      glArrEkipage[iColBtn, j+1].Text := VehiclesData[i].Players[j].PlayerName;}
                   end;
                 inc(j);
                 _GPS_dm.qTankPlayersForTeam.Next;
@@ -1026,7 +1028,7 @@ begin
 
             // обновляем отсечки
             _GPS_dm.qOtsechkiForTeam.Close;
-            _GPS_dm.qOtsechkiForTeam.Parameters.ParamByName('GPSID').Value:=IntToStr(i);
+            _GPS_dm.qOtsechkiForTeam.Parameters.ParamByName('GPSID').Value:=IntToStr(Vehicles[i].Id);
             _GPS_dm.qOtsechkiForTeam.Open;
             for j:=0 to high(VehiclesData[i].Intermediate) do
               begin
@@ -1035,23 +1037,24 @@ begin
                 VehiclesData[i].Intermediate[j].DisplayPos:='';
                 VehiclesData[i].Intermediate[j].TimeMSec:='';
               end;
-            j:=0;
+            // j:=0;
             while not _GPS_dm.qOtsechkiForTeam.Eof do
               begin
-                if j <= high(VehiclesData[i].Intermediate) then
+                j := StrToIntDef(_GPS_dm.qOtsechkiForTeam.FieldByName('NumOtsec').AsString, 0)-1;
+                if (j >= 0) and (j <= high(VehiclesData[i].Intermediate)) then
                   begin
                     VehiclesData[i].Intermediate[j].NumOtsec:=_GPS_dm.qOtsechkiForTeam.FieldByName('NumOtsec').AsString;
                     VehiclesData[i].Intermediate[j].TimeOtsec:=_GPS_dm.qOtsechkiForTeam.FieldByName('TimeOtsec').AsString;
                     VehiclesData[i].Intermediate[j].DisplayPos:=_GPS_dm.qOtsechkiForTeam.FieldByName('DisplayPos').AsString;
                     VehiclesData[i].Intermediate[j].TimeMSec:=_GPS_dm.qOtsechkiForTeam.FieldByName('tmsec').AsString;
                   end;
-                inc(j);
+                // inc(j);
                 _GPS_dm.qOtsechkiForTeam.Next;
               end;
             _GPS_dm.qOtsechkiForTeam.Close;
 
             // отсечки
-            iQtyOts:=0;
+            {iQtyOts:=0;
             for i1:=0 to high(VehiclesData[i].Intermediate) do
               begin
                 if (VehiclesData[i].Intermediate[i1].NumOtsec <> '') then
@@ -1069,12 +1072,12 @@ begin
                       glArrOtsechka[iColBtn, j1+1].Text := fConvertTime(VehiclesData[i].Intermediate[i1].TimeMSec);
                     inc(j1);
                   end;
-              end;
+              end;}
 
             // обновляем стрельбу
             _GPS_dm.qInfoForTeam.Close;
             _GPS_dm.qInfoForTeam.SQL.Text := fChangeTextSQL(_GPS_dm.qInfoForTeam);
-            _GPS_dm.qInfoForTeam.Parameters.ParamByName('GPSID').Value:=IntToStr(i);
+            _GPS_dm.qInfoForTeam.Parameters.ParamByName('GPSID').Value:=IntToStr(Vehicles[i].Id);
             _GPS_dm.qInfoForTeam.Open;
             for j:=0 to high(VehiclesData[i].Shooting) do
               begin
@@ -1140,7 +1143,7 @@ begin
                             VehiclesData[i].Shooting[j].TargetPicture:=lPic;
                           end;
 
-                        if VehiclesData[i].Shooting[j].TargetType <> '' then
+                        {if VehiclesData[i].Shooting[j].TargetType <> '' then
                           if (iColBtn > 0) and (iColBtn <= MaxOneVehicles) and (j+1 <= cShootsCount) then
                             begin
                               // количество сбитых из всего мишеней
@@ -1153,7 +1156,7 @@ begin
                                 lStr := IntToStr(iHitTargetQty)+'/'+IntToStr(iTargetQty);
 
                               glArrShooting[iColBtn, j+1].Text := VehiclesData[i].Shooting[j].TargetType + '  ' + lStr;
-                            end;
+                            end;}
 
                         inc(j);
                     end;
@@ -1650,6 +1653,21 @@ begin
   lTargetQty:=_GPS_dm.qMesheny_Get.FieldByName('MeshenyCount').AsString;
   lPicture:=_GPS_dm.qMesheny_Get.FieldByName('PicturePath').AsString;
   _GPS_dm.qMesheny_Get.Close;
+end;
+
+function T_GPSTelemetry.GetTankIndexFromGPSId(const GPSId: integer): integer;
+var
+  i: integer;
+begin
+  Result := -1;
+  for i:=1 to MaxOneVehicles do
+    begin
+      if Vehicles[i].Id = GPSId then
+        begin
+          Result := i;
+          Exit;
+        end;
+    end;
 end;
 
 procedure T_GPSTelemetry.qInfoCalcFields(DataSet: TDataSet);
@@ -2956,6 +2974,12 @@ var i, idGPS: integer;
     lColor : TColor;
     dwColor: DWord;
     JTPColor: TJTPColor;
+    VehIdx: integer;
+    j, iCol: integer;
+    iSplMax, i1, j1: integer;
+    iResult, iRemainder: Word;
+    iTargetQty, iShotHitQty, iHitTargetQty : integer;
+    lStr: string;
 begin
   if not _GPS_dm.DBLocal.Connected then
     EXIT;
@@ -2973,20 +2997,80 @@ begin
       glArrColorGPS[i].sColor := qColorLoc.FieldByName('ColorID').AsString;
       glArrColorGPS[i].vColor := StrToIntDef(qColorLoc.FieldByName('ColorValue').AsString, clWhite);
       glArrColorGPS[i].TeamName := lTeamName;
-      dwColor := Vcl.Graphics.ColorToRGB(glArrColorGPS[i].vColor);
-      JTPColor.VSet(GetRValue(dwColor)/255, GetGValue(dwColor)/255, GetBValue(dwColor)/255, 1);
-      Vehicles[i].SetColor(JTPColor);
-
-      glArrTeams[i].Text := glArrColorGPS[i].TeamName;
-//      glArrTeams[i].Color := glArrColorGPS[i].vColor;
-
-      glArrShapeTeam[i].Brush.Color := glArrColorGPS[i].vColor;
-      glArrShapeTeam1[i].Brush.Color := glArrColorGPS[i].vColor;
+      VehIdx := GetTankIndexFromGPSId(glArrColorGPS[i].iGPS);
+      if (VehIdx > 0) and (VehIdx <= MAX_VEHICLES) then
+        begin
+          dwColor := Vcl.Graphics.ColorToRGB(glArrColorGPS[i].vColor);
+          JTPColor.VSet(GetRValue(dwColor)/255, GetGValue(dwColor)/255, GetBValue(dwColor)/255, 1);
+          Vehicles[VehIdx].SetColor(JTPColor);
+        end;
 
       if i <= MaxOneVehicles then
         begin
+          glArrTeams[i].Text := glArrColorGPS[i].TeamName;
+          // glArrTeams[i].Color := glArrColorGPS[i].vColor;
+          CaptionParamStorage.SetParamDataV(cpiTeam_name, i, glArrTeams[i].Text);
+
+          glArrShapeTeam[i].Brush.Color := glArrColorGPS[i].vColor;
+          glArrShapeTeam1[i].Brush.Color := glArrColorGPS[i].vColor;
+
           glArrGPS[i].Text:=IntToStr(glArrColorGPS[i].iGPS);
-//          glArrGPS[i].Color := glArrColorGPS[i].vColor;
+          CaptionParamStorage.SetParamDataV(cpiGPS_id, i, glArrGPS[i].Text);
+          glArrGPS[i].Color := glArrColorGPS[i].vColor;
+          CaptionParamStorage.SetParamDataV(cpiColor, i, glArrColorGPS[i].sColor);
+
+          if (VehIdx > 0) and (VehIdx <= MaxOneVehicles) then
+            begin
+              // Crew
+              for j:=1 to cEkipagCount do
+                begin
+                  glArrEkipage[i,j].Text := VehiclesData[VehIdx].Players[j-1].PlayerName;
+                  case j of
+                    1: CaptionParamStorage.SetParamDataV(cpiName1, i, glArrEkipage[i,j].Text);
+                    2: CaptionParamStorage.SetParamDataV(cpiName2, i, glArrEkipage[i,j].Text);
+                    3: CaptionParamStorage.SetParamDataV(cpiName3, i, glArrEkipage[i,j].Text);
+                  end;
+                end;
+
+              // Splits
+              iSplMax:=0;
+              for i1:=0 to high(VehiclesData[VehIdx].Intermediate) do
+                begin
+                  if VehiclesData[VehIdx].Intermediate[i1].NumOtsec <> '' then
+                    iSplMax := i1 + 1;
+                end;
+              DivMod(iSplMax, cOtsechkiCount, iResult, iRemainder);
+              for i1:=1 to iRemainder do
+                begin
+                  j1 := iResult + i1 - 1;
+                  if VehiclesData[VehIdx].Intermediate[j1].NumOtsec <> '' then
+                    glArrOtsechka[i,i1].Text :=
+                      fConvertTime(VehiclesData[VehIdx].Intermediate[j1].TimeMSec);
+                end;
+
+              // Targets
+              for j:=1 to cShootsCount do
+                if VehiclesData[VehIdx].Shooting[j-1].TargetType <> '' then
+                  begin
+                    // количество сбитых из всего мишеней
+                    iTargetQty := StrToIntDef(VehiclesData[VehIdx].Shooting[j-1].TargetQuantity, 0);
+                    iShotHitQty := StrToIntDef(VehiclesData[VehIdx].Shooting[j-1].ShotHit, 0);
+                    iHitTargetQty := Min(iShotHitQty, iTargetQty);            // проверяем, что кол-во сбитых мишеней не больше общего кол-ва мишеней
+
+                    lStr := ' ';
+                    if (StrToIntDef(VehiclesData[VehIdx].Shooting[j-1].ShotAll, 0) <> 0)and(iTargetQty > 0) then  // если были выстелы, значит есть результат
+                      lStr := IntToStr(iHitTargetQty)+'/'+IntToStr(iTargetQty);
+
+                    glArrShooting[i,j].Text := VehiclesData[VehIdx].Shooting[j-1].TargetType + '  ' + lStr;
+                  end;
+            end;
+
+          case i of
+            1: MainForm.Tank1Edit.Text := IntToStr(glArrColorGPS[i].iGPS);
+            2: MainForm.Tank2Edit.Text := IntToStr(glArrColorGPS[i].iGPS);
+            3: MainForm.Tank3Edit.Text := IntToStr(glArrColorGPS[i].iGPS);
+            4: MainForm.Tank4Edit.Text := IntToStr(glArrColorGPS[i].iGPS);
+          end;
         end;
 
       inc(i);
@@ -3529,7 +3613,8 @@ end;
 }
 
 function T_GPSTelemetry.fGetColorForGPS(iGPS:string; var lColorID : string):TColor;
-var i:integer;
+var
+  i:integer;
 begin
   Result := clNone;
   lColorID := '';
@@ -3545,12 +3630,13 @@ begin
 end;
 
 procedure T_GPSTelemetry.pTankPanelColoring;
-var lColorID1, lColorID2, lColorID3, lColorID4: string;
+var
+  lColorID1, lColorID2, lColorID3, lColorID4: string;
 begin
-    MainForm.Tank1Panel.Color := fGetColorForGPS( MainForm.Tank1Edit.Text, lColorID1 );
-    MainForm.Tank2Panel.Color := fGetColorForGPS( MainForm.Tank2Edit.Text, lColorID2 );
-    MainForm.Tank3Panel.Color := fGetColorForGPS( MainForm.Tank3Edit.Text, lColorID3 );
-    MainForm.Tank4Panel.Color := fGetColorForGPS( MainForm.Tank4Edit.Text, lColorID4 );
+  MainForm.Tank1Panel.Color := fGetColorForGPS(MainForm.Tank1Edit.Text, lColorID1);
+  MainForm.Tank2Panel.Color := fGetColorForGPS(MainForm.Tank2Edit.Text, lColorID2);
+  MainForm.Tank3Panel.Color := fGetColorForGPS(MainForm.Tank3Edit.Text, lColorID3);
+  MainForm.Tank4Panel.Color := fGetColorForGPS(MainForm.Tank4Edit.Text, lColorID4);
 end;
 
 end.

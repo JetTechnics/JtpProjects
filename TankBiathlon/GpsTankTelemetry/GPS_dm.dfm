@@ -325,9 +325,7 @@ object _GPS_dm: T_GPS_dm
       'and z.ZaezdID = o.GroupID'
       'and t.TeamID = o.TeamID'
       'and GPSID =:GPSID'
-      ''
-      'order by  o.NumOtsec'
-      '')
+      'order by  o.NumOtsec')
     Left = 208
     Top = 65
   end
@@ -515,8 +513,8 @@ object _GPS_dm: T_GPS_dm
   end
   object DBTanks: TADOConnection
     ConnectionString = 
-      'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\_Tanks_13\Tank_B' +
-      'ASE\Tank_2013.mdb;Persist Security Info=False;'
+      'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\_TankBiathlon201' +
+      '8\Tank_BASE\Tank_2013.mdb;Persist Security Info=False;'
     LoginPrompt = False
     Mode = cmShareDenyNone
     Provider = 'Microsoft.Jet.OLEDB.4.0'
@@ -557,13 +555,7 @@ object _GPS_dm: T_GPS_dm
       'and z.ZaezdID = zm.ZaezdID'
       'and t.TeamID = zm.TeamID'
       'and t.TeamID = i.TeamID'
-      'and GPSID =:GPSID'
-      ''
-      ''
-      ''
-      ''
-      ''
-      '')
+      'and GPSID =:GPSID')
     Left = 104
     Top = 64
   end

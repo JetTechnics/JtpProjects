@@ -81,20 +81,19 @@ begin
       Vehicles[i].Initialize( @CloneObjectData.ObjectName, i );
     end;
 
-    for i := 1 to MaxOneVehicles do begin
-      if( TEST <> 0 ) then begin
-        Vehicles[i].Id := i;
-        Vehicles[i].CtRt := Random(200);
-      end
-      else
-        Vehicles[i].Id := Ids[i];
+    for i := 1 to MaxOneVehicles do
+    begin
+      if Vehicles[i].Id = 0
+        then Vehicles[i].Id := Ids[i];
+      if TEST <> 0
+        then Vehicles[i].CtRt := Random(200);
     end;
 
     //  закрасим танки
-    Color.VSet(1,0,0,1);    Vehicles[1].SetColor(Color); // Vehicles[1].SetColor( Vehicles[1].Color );
-    Color.VSet(0,1,0,1);    Vehicles[2].SetColor(Color); // Vehicles[2].SetColor( Vehicles[2].Color );
-    Color.VSet(0,0.5,1,1);    Vehicles[3].SetColor(Color); // Vehicles[3].SetColor( Vehicles[3].Color );
-    Color.VSet(1,1,0,1);    Vehicles[4].SetColor(Color); // Vehicles[4].SetColor( Vehicles[4].Color );
+    {Color.VSet(1,0,0,1);    Vehicles[1].SetColor(Color);} Vehicles[1].SetColor(Vehicles[1].Color);
+    {Color.VSet(0,1,0,1);    Vehicles[2].SetColor(Color);} Vehicles[2].SetColor(Vehicles[2].Color);
+    {Color.VSet(0,0.5,1,1);  Vehicles[3].SetColor(Color);} Vehicles[3].SetColor(Vehicles[3].Color);
+    {Color.VSet(1,1,0,1);    Vehicles[4].SetColor(Color);} Vehicles[4].SetColor(Vehicles[4].Color);
   end;
 
   SetSceneProcessCallback( @PoligonSceneName, @UpdateTankPoligon, 0, nil );
