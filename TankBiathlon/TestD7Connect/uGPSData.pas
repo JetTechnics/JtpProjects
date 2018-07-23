@@ -16,6 +16,13 @@ type
 type
   TConnectState = (csDisconnected, csDisconnecting, csConnecting, csConnected);
 
+const
+  GPSUnitsCleanInterval = 5000;
+
+var
+  //  Для теста
+  TEST : integer = 0;
+
 implementation
 
 end.

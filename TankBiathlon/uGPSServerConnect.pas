@@ -284,16 +284,19 @@ var
 begin
   inherited Create(true);
   FCompName[1] := GPS_TITLER_NAME;
+  FCompName[2] := byte(AnsiChar('m')); // GPS map machine
+  FCompName[3] := byte(AnsiChar(' '));
   sz := MAX_COMPUTERNAME_LENGTH + 1;
-  Res := GetComputerNameA(@FCompName[2], sz);
+  Res := GetComputerNameA(@FCompName[4], sz);
   if not Res then
     begin
       Randomize;
       s := AnsiString(IntToStr(Random(1000)));
       sz := Length(s);
-      CopyMemory(@FCompName[2], PAnsiChar(s), sz);
+      CopyMemory(@FCompName[4], PAnsiChar(s), sz);
     end;
-  FillChar(FCompName[sz+2], GpsPacketLen-sz-1, 0);
+  if sz > 16-3-1 then sz := 16-3-1;
+  FillChar(FCompName[sz+3+1], GpsPacketLen-sz-3, 0);
   FreeOnTerminate := true;
   SetServerIP(AServerIP);
   FPort := Port;
