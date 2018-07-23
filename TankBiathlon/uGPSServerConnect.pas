@@ -191,7 +191,6 @@ begin
                     if (GpsData.Latitude <> FLT_UNDEF) and (GpsData.Latitude <> 0) and
                        (GpsData.Longitude <> FLT_UNDEF) and (GpsData.Longitude <> 0)
                       then uGPSPacketsQueue.PushPacket(TGPSPacket.Create(GpsData));
-                    //MainForm.AddLogGpsData(GpsData.VehicleId, GpsData.Latitude, GpsData.Longitude);
                     DoLogGpsData(GpsData);
                   end;
               end
@@ -287,10 +286,10 @@ begin
   FCompName[1] := GPS_TITLER_NAME;
   sz := MAX_COMPUTERNAME_LENGTH + 1;
   Res := GetComputerNameA(@FCompName[2], sz);
-  if Res then
+  if not Res then
     begin
       Randomize;
-      s := '12345'; // AnsiString(IntToStr(Random(1000)));
+      s := AnsiString(IntToStr(Random(1000)));
       sz := Length(s);
       CopyMemory(@FCompName[2], PAnsiChar(s), sz);
     end;

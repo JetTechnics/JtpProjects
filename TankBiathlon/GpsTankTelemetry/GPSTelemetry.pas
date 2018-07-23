@@ -2980,6 +2980,7 @@ var i, idGPS: integer;
     iResult, iRemainder: Word;
     iTargetQty, iShotHitQty, iHitTargetQty : integer;
     lStr: string;
+    doRec: boolean;
 begin
   if not _GPS_dm.DBLocal.Connected then
     EXIT;
@@ -3002,7 +3003,10 @@ begin
         begin
           dwColor := Vcl.Graphics.ColorToRGB(glArrColorGPS[i].vColor);
           JTPColor.VSet(GetRValue(dwColor)/255, GetGValue(dwColor)/255, GetBValue(dwColor)/255, 1);
+          doRec := (Vehicles[VehIdx].ModelName.text[0] <> #0);
+          if doRec then OpenRecords(0, nil);
           Vehicles[VehIdx].SetColor(JTPColor);
+          if doRec then CloseRecords(0, nil);
         end;
 
       if i <= MaxOneVehicles then

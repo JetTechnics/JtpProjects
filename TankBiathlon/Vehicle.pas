@@ -73,7 +73,7 @@ Type  TVehicle = record     //  ѕодвижное средство
   Pos     : TVector;        //  текуща€ координата
   NewPos  : TVector;        //  вновь полученна€ координата
   Orient  : TVector;        //  текуща€ ориентаци€
-  Color   : TJTPColor;         //  цвет танка
+  Color   : TJTPColor;      //  цвет танка
   NewTime : TGpsTime;       //  еЄ врем€
   Speed   : single;         //  текуща€ скорость
   SpeedFactor : single;     //  правка скорости, если отстаЄм/опрежаем
@@ -108,6 +108,9 @@ Type  TVehicle = record     //  ѕодвижное средство
   SimPoints : array[0..MAX_SIM_PNTS] of TSimPoint;
   CtSim     : integer;
   SimSpeed  : single;
+
+  Vcur: single; // Speed current from GPS
+  Vmax: single; // Speed max from GPS
 
   procedure Initialize( VehicleName : PAnsiChar;  ArrayIndex : integer ); //, ModelName2: PAnsiChar;  State2: integer );
   procedure Reset();
@@ -207,7 +210,16 @@ begin
 
   Head := -2;    Focus := -1;     CtRt := 0;       Len := 0.0;      Speed := 0.0;     SpeedFactor := 1.0;
 
-  Dir1.VSet(0,0,1);    Dir2.VSet(0,0,1);         // Color.VSet(1,0,0,1);
+  Dir1.VSet(0,0,1);    Dir2.VSet(0,0,1);
+
+  if (Color.r = 0) and (Color.g = 0) and (Color.b = 0) and
+     (Color.a = 0) then
+    case ArrayIndex of
+      1: Color.VSet(1,1,0,1);
+      2: Color.VSet(0,0,1,1);
+      3: Color.VSet(1,0,0,1);
+      4: Color.VSet(0,1,0,1);
+    end;
 
   Orient.x := FLT_UNDEF;     Orient.z := FLT_UNDEF;    //  наклоны по карте высот, используем только Orient.y
 
@@ -216,6 +228,9 @@ begin
   NullSpeedTime := 0.0;
   //DebugId := 0;
   UserSpeedFactor := 1.0;
+
+  Vcur := 0;
+  Vmax := 0;
 
   Index := ArrayIndex;
 
@@ -446,8 +461,8 @@ procedure TVehicle.SetColor( NewColor : TJTPColor );
 begin
   Color := NewColor;
 
-  if( ModelName.text[0] <> #0 ) then
-      SetObjectSpace( @PoligonSceneName, @ModelName, nil, nil, nil, nil, nil, @Color, 0.0, JTP_ABSOLUTE, nil );
+  if ModelName.text[0] <> #0 then
+    SetObjectSpace(@PoligonSceneName, @ModelName, nil, nil, nil, nil, nil, @Color, 0.0, JTP_ABSOLUTE, nil);
 end;
 
 

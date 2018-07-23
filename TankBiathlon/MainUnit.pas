@@ -81,7 +81,7 @@ type
     procedure CleanGPSUnitsEvent(Sender: TObject);
   public
     procedure AddLogString(const AStr: string);
-    procedure AddLogGpsData(TankId: integer; Lat, Lon: single; ticks: dword);
+    procedure AddLogGpsData(const GpsData: TGpsData; ticks: dword);
     procedure OnParamValueChanged(Descr: TParamDescr;
                 const OldValue, NewValue, OldValueFmt, NewValueFmt: string);
   end;
@@ -183,11 +183,6 @@ begin
   end;
 
   MainForm.ShowButton.Enabled := true;
-  MainForm.btnCaption1.Enabled := true;
-  MainForm.btnCaption2.Enabled := true;
-  MainForm.btnCaption3.Enabled := true;
-  MainForm.btnCaption4.Enabled := true;
-  MainForm.btnCancelCaption.Enabled := true;
 
   CaptionParamStorage.OnParamChanged := MainForm.OnParamValueChanged;
 {
@@ -254,6 +249,14 @@ begin
 	ShowButton.Enabled := true;
   ClosePoligonButton.Enabled := false;
 
+  btnCaption1.Enabled := false;
+  btnCaption2.Enabled := false;
+  btnCaption3.Enabled := false;
+  btnCaption4.Enabled := false;
+  btnCancelCaption.Enabled := false;
+
+  CloseGlobalScene;
+
 	OpenRecords( 0, nil );
 
   for i := 1 to MaxOneVehicles do begin
@@ -270,9 +273,10 @@ var
   i: integer;
   ticks: dword;
   tc0: dword;
-  Descr: TParamDescr;
+  // Descr: TParamDescr;
 begin
-  Descr := TParamDescr.Create('N');
+  //*** Random speed for debug ***************
+  (* Descr := TParamDescr.Create('N');
   try
     for i:=1 to iTanksNum do
       begin
@@ -281,8 +285,8 @@ begin
       end;
   finally
     Descr.Free;
-  end;
-
+  end; *)
+  //******************************************
   ticks := Winapi.Windows.GetTickCount;
   LogListBox.Items.BeginUpdate;
   try
@@ -605,6 +609,12 @@ begin
 	ShowButton.Enabled := false;
   ClosePoligonButton.Enabled := true;
 
+  btnCaption1.Enabled := true;
+  btnCaption2.Enabled := true;
+  btnCaption3.Enabled := true;
+  btnCaption4.Enabled := true;
+  btnCancelCaption.Enabled := true;
+
   if chbSimulation.Checked
     then TEST := 1
     else TEST := 0;
@@ -629,8 +639,24 @@ begin
   CloseRecords( 0, nil );
 end;
 
-procedure TMainForm.AddLogGpsData(TankId: integer; Lat, Lon: single; ticks: dword);
+procedure TMainForm.AddLogGpsData(const GpsData: TGpsData; ticks: dword);
+var
+  TankId: integer;
+  Lat, Lon, Dist: single;
+  TimeMilli: UInt64;
+  PacketNum: integer;
+  Batt: integer;
+  Speed: single;
 begin
+  TankId := GpsData.VehicleId;
+  Lat  := GpsData.Latitude;
+  Lon  := GpsData.Longitude;
+  Dist := GpsData.Distance;
+  TimeMilli := GpsData.TimeMilli;
+  PacketNum := GpsData.PacketNum;
+  Batt  := GpsData.Battery;
+  Speed := GpsData.Speed;
+
   TThread.Queue(nil,
       procedure
       var
@@ -641,7 +667,21 @@ begin
         tc0: dword;
         fnd: boolean;
         fmt: string;
+        v: single;
+        vmax: single;
       begin
+        for i:=1 to iTanksNum do
+          if Vehicles[i].Id = TankId then break;
+
+        v := (Speed / 1000) * 3600; // convert to kmh
+        Vehicles[i].Vcur := v;
+        CaptionParamStorage.SetParamDataV(cpiSpeed, i, v);
+        if v > Vehicles[i].Vmax then
+          begin
+            Vehicles[i].Vmax := v;
+            CaptionParamStorage.SetParamDataV(cpiSpeed, i, v);
+          end;
+
         fnd := false;
         LogListBox.Items.BeginUpdate;
         try

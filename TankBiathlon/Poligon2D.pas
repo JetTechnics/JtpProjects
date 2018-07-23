@@ -48,8 +48,8 @@ procedure MoveCameraToTanks( FrameTime: single );
 
 implementation
 
-uses
-  MainUnit;
+// uses
+//   MainUnit;
 
 procedure ShowPoligon2D( NumTanks: integer; VideoTrunk: integer;  Ids : PIdArray );
 var
@@ -57,7 +57,7 @@ var
   i : integer;
   PlaySceneData : TPlaySceneData;
   CloneObjectData : TCloneObjectData;
-  Color : TJTPColor;
+  // Color : TJTPColor;
 begin
   PlaySceneData.Create();
 

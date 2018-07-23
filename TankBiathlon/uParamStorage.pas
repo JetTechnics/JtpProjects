@@ -24,7 +24,9 @@ type
                               const ATankId: integer;
                               const Value: string);
   public
-    constructor Create;
+    //*** Random init for debug ***
+    // constructor Create;
+    //*****************************
     procedure SetParamDataV(const AParamIndex: TCaptionParamIdx;
                             const ATankId: integer;
                             const Value: string); overload;
@@ -54,6 +56,8 @@ implementation
 
 { TCaptionParamStorage }
 
+//*** Random init for debug ***
+(*
 constructor TCaptionParamStorage.Create;
 var
   Idx: TCaptionParamIdx;
@@ -63,6 +67,7 @@ begin
     for TankN:=1 to iTanksNum do
       FData[Idx, TankN] := IntToStr(TankN)+'_'+asCaptionParams[Idx]+'_'+IntToStr(Random(1000));
 end;
+*)
 
 function TCaptionParamStorage.GetParamData(Descr: TParamDescr): string;
 begin
