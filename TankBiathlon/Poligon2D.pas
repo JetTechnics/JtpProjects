@@ -5,12 +5,12 @@ interface
 uses
   Winapi.Windows, System.SysUtils,
   JTPStudio, TypesJTP,
-  Vehicle, GpsConnection, Vector, uGPSData;
+  Vehicle, GpsConnection, Vector, uGPSData, uConsts;
 
 Var
   MaxTanks : integer = 0;
 
-  GWheelDelta : integer = 0; // колесико мыши
+  // GWheelDelta : integer = 0; // колесико мыши
 
   // Данные камеры.
   CameraSpeed : single;         //  скорость камеры
@@ -105,6 +105,7 @@ end;
 function UpdateTankPoligon( SceneName: PAnsiChar;  Flags: dword;  pEvents: PJtpEvent;  FrameTime: single;  pReserve: pointer ) : UInt64;  stdcall;
 const
   MaxPacketNum = 10;
+  CamMinDist = 200;
 var
   res, i : integer;
   kk: integer;
@@ -192,13 +193,16 @@ begin
     end;
   end;
 
-  //  Колесо мыши, приближаем/отдаляем камеру
+  //  Колесико мыши, приближаем/отдаляем камеру
   if( GWheelDelta <> 0 )  then begin
 
     if( GWheelDelta > 0 )  then Delta := -150.0
     else  Delta := 150.0;
 
     GetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @Target, nil, 0, nil );
+    Len := VecLength( Pos - Target );
+    if Len + Delta < CamMinDist
+      then Delta := CamMinDist - Len;
     Dir := VecNormalize( Pos - Target ) * Delta;
     Pos := Pos + Dir;
 

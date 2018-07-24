@@ -2979,6 +2979,7 @@ var i, idGPS: integer;
     iSplMax, i1, j1: integer;
     iResult, iRemainder: Word;
     iTargetQty, iShotHitQty, iHitTargetQty : integer;
+    iHitTargetTotal: integer;
     lStr: string;
     doRec: boolean;
 begin
@@ -3053,6 +3054,7 @@ begin
                 end;
 
               // Targets
+              iHitTargetTotal := 0;
               for j:=1 to cShootsCount do
                 if VehiclesData[VehIdx].Shooting[j-1].TargetType <> '' then
                   begin
@@ -3060,6 +3062,7 @@ begin
                     iTargetQty := StrToIntDef(VehiclesData[VehIdx].Shooting[j-1].TargetQuantity, 0);
                     iShotHitQty := StrToIntDef(VehiclesData[VehIdx].Shooting[j-1].ShotHit, 0);
                     iHitTargetQty := Min(iShotHitQty, iTargetQty);            // проверяем, что кол-во сбитых мишеней не больше общего кол-ва мишеней
+                    iHitTargetTotal := iHitTargetTotal + iHitTargetQty;
 
                     lStr := ' ';
                     if (StrToIntDef(VehiclesData[VehIdx].Shooting[j-1].ShotAll, 0) <> 0)and(iTargetQty > 0) then  // если были выстелы, значит есть результат
@@ -3067,6 +3070,7 @@ begin
 
                     glArrShooting[i,j].Text := VehiclesData[VehIdx].Shooting[j-1].TargetType + '  ' + lStr;
                   end;
+              CaptionParamStorage.SetParamDataV(cpiTargets_hit, i, iHitTargetTotal);
             end;
 
           case i of
