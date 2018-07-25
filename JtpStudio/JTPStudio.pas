@@ -274,7 +274,7 @@ function UpdateSurfaceElement( SceneName, ObjectName: PAnsiChar;  Index, NumTex:
                                X,Y, W,H: integer;  Delay: single;  Flags: dword;   pUpdateSurfElemData : pointer ) : UInt64;   stdcall; external JTPStudioDLL;
 //  Обновить элемент поверхности. Это может быть текст или иконка.
     //  SceneName, ObjectName - имена сцены и объекта.
-    //  Index - номер эелемента, NumTex - номер текстуры. Начиная от 1-го.
+    //  Index - номер эелемента, NumTex - номер текстуры внутри объекта (слой). Начиная от 1-го.
 		//  Если PicturePath <> nil, обновляется картинка.  Если Text <> nil, обновляется текст.
 		//  Если pColor = nil, то цвет не обновляется. Если компонент цвета равен FLT_UNDEF, то не учитывается.
     //  Если X,Y,W,H не равны INT_UNDEF - соответственно обновляются.
@@ -295,7 +295,7 @@ function CloneSurfaceElement( SceneName, ObjectName: PAnsiChar;  Index, NumTex: 
 															X,Y, W,H : integer;  Delay: single;  Flags: dword;  pCloneSurfElemData : pointer ) : UInt64;   stdcall; external JTPStudioDLL;
 //  Клонировать элемент поверхности. Это может быть текст или иконка.
 		//  SceneName, ObjectName - имена сцены и объекта.
-    //  Index - номер элемента, от которого клонируем, NumTex - номер текстуры. Начиная от 1-го.
+    //  Index - номер элемента, от которого клонируем, NumTex - номер текстуры внутри объекта (слой). Начиная от 1-го.
 		//  PicturePath - путь к картинке. Если nil, берётся от предка.
     //  Text - новый текст. Если nil, берётся от предка.
     //  Если pColor = nil, то цвет берётся от предка. Если компонент цвета равен FLT_UNDEF, то берётся от предка.
@@ -371,12 +371,12 @@ function GetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize
 
 
 
-function SetObjectTexture( SceneName, ObjectName: PAnsiChar;  TexturePath: PPath;  TexIndex : integer;  Delay: single;
+function SetObjectTexture( SceneName, ObjectName: PAnsiChar;  TexturePath: PPath;  NumTex : integer;  Delay: single;
                            Flags: dword;  pSetObjectTexture: PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
 //  Установить объекту новую текстуру.
     //  SceneName, ObjectName - имена сцены и объекта.
     //  TexturePath - путь к текстуре. Если текстура не загружена, она загрузится с диска.
-    //  TexIndex - номер текстуры внутри объекта. Используектся только 1.
+    //  NumTex - номер текстуры внутри объекта (слой). Используектся только 1.
     //  Delay - задержка на установку текстуры.
     //  Flags - не используется.
     //  pSetObjectTexture - указатель на TJtpFuncData.
