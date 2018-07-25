@@ -51,6 +51,7 @@ type
     btnCaption4: TButton;
     btnCancelCaption: TButton;
     btnEditCaptions: TButton;
+    Button1: TButton;
     procedure StartButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ShowButtonClick(Sender: TObject);
@@ -74,6 +75,7 @@ type
     procedure btnCaptionNClick(Sender: TObject);
     procedure btnCancelCaptionClick(Sender: TObject);
     procedure btnEditCaptionsClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     FRunning: boolean;
     FSettings: TCaptionSettings;
@@ -744,6 +746,19 @@ end;
 procedure TMainForm.btnTelemetryClick(Sender: TObject);
 begin
   _GPSTelemetry.Show;
+end;
+
+procedure TMainForm.Button1Click(Sender: TObject);
+var
+  Orient : TVector;
+begin
+  OpenRecords( 0, nil );
+
+  CameraInclination := 45.0;
+  Orient.VSet( 0.0, 0.0, CameraInclination );
+  SetObjectSpace( @PoligonSceneName, 'Camera', nil, @Orient, nil, nil, nil, nil, 0.0, JTP_ABSOLUTE, nil );
+
+  CloseRecords( 0, nil );
 end;
 
 end.
