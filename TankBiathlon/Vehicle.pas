@@ -462,7 +462,10 @@ begin
   Color := NewColor;
 
   if ModelName.text[0] <> #0 then
-    SetObjectSpace(@PoligonSceneName, @ModelName, nil, nil, nil, nil, nil, @Color, 0.0, JTP_ABSOLUTE, nil);
+    begin
+      SetObjectSpace(@PoligonSceneName, @ModelName, nil, nil, nil, nil, nil, @Color, 0.0, JTP_ABSOLUTE, nil);
+
+    end;
 end;
 
 
