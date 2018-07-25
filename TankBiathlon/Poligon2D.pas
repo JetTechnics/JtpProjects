@@ -14,12 +14,13 @@ Var
 
   // Данные камеры.
   CameraSpeed : single;         //  скорость камеры
+  CameraInclination : single = 0.0;   //  наклон камеры (угол крена)
   //CamViewLen : single;        //  дистанция камеры
   CamViewDir : TVector;         //  направление
   CancelCamera : boolean = false; // отмена движения камеры (эквивалентно щелчку правой кнопкой)
-  CameraMoving : dword = 0;     //  флаги состояние движения камеры
-  NewCameraMoving : dword = 0;  //  новые флаги состояние движения камеры
-  CameraScroll : dword = 0;     //  ñîñòîÿíèå ñêðîëëèðîâàíèÿ (ïåðåìåùåíèå â ïëîñêîñòè ãîðèçîíòà) êàìåðû.
+  CameraMoving : dword = 0;      //  флаги состояние движения камеры
+  NewCameraMoving : dword = 0;   //  новые флаги состояние движения камеры
+  CameraScroll : dword = 0;      //  состояние скроллирования (перемещение в плоскости горизонта) камеры.
   StartScrollTarget : TVector;
   StartScrollMouse : TJTPPoint;
 
@@ -58,6 +59,7 @@ var
   PlaySceneData : TPlaySceneData;
   CloneObjectData : TCloneObjectData;
   // Color : TJTPColor;
+  Orient : TVector;
 begin
   PlaySceneData.Create();
 
@@ -89,6 +91,10 @@ begin
         then Vehicles[i].CtRt := Random(200);
     end;
 
+    //  Получим угол крена камеры.
+    GetObjectSpace( @PoligonSceneName, 'Camera', nil, @Orient, nil, nil, nil, nil, 0, nil );
+    CameraInclination := Orient.z;
+
     //  закрасим танки
     {Color.VSet(1,0,0,1);    Vehicles[1].SetColor(Color);} Vehicles[1].SetColor(Vehicles[1].Color);
     {Color.VSet(0,1,0,1);    Vehicles[2].SetColor(Color);} Vehicles[2].SetColor(Vehicles[2].Color);
@@ -111,7 +117,7 @@ var
   kk: integer;
   GpsData : TGpsData;
   Pos, Dir, Target : TVector;
-  fsize, Len, fx, fz : single;
+  fsize, Len, fx, fz, sn, cs, xx, zz, angle : single;
   pEvent : PJtpEvent;
   Delta, CamLen, F, t : single;
   Color : TJTPColor;
@@ -138,21 +144,22 @@ begin
 
       if( pEvent.EventType = EVENT_MOUSE ) then begin
 
+        // Клик левой клавишей.
         if( ( pEvent.Flags and EM_LBUTTON_CLICK ) <> 0 ) then begin
 
         end;
 
-        // Êëèê ïðàâîé êëàâèøåé.
+        // Клик правой клавишей.
         if( ( pEvent.Flags and EM_RBUTTON_CLICK) <> 0 ) then begin
-          CameraMoving := 0;                      // îñòàíîâ êàìåðû
+          CameraMoving := 0;                      // останов камеры
           NewCameraMoving := 0;
 
-          for i := 1 to MaxOneVehicles do begin   // ñêðîåì ðàìêè òàíêîâ
+          for i := 1 to MaxOneVehicles do begin   // скроем рамки танков
 			    	Vehicles[i].SetSelectFrame( 0.0 );
     			end;
         end;
 
-        // Óäåðæèâàåì öåíòðàëüåóþ êëàâèøó.
+        // Удерживаем центральеую клавишу.
         if( ( pEvent.Flags and EM_MBUTTON_DOWN ) <> 0 ) then begin
 
           if( CameraScroll = 0 ) then begin
@@ -169,11 +176,18 @@ begin
             Len := VecLengthNormalize( Dir );
 
             MouseDelta := pEvent.PointXY - StartScrollMouse;
-            fx := MouseDelta.x;
+            fx := -MouseDelta.x;
             fz := MouseDelta.y;
 
-            Target.x := StartScrollTarget.x - fx * Len/900.0; // 900 ïîäîáðàë ïîä äàííûé ôîêóñ êàìåðû, îí íå ìåíÿåòñÿ.
-            Target.z := StartScrollTarget.z + fz * Len/900.0;
+            angle := -CameraInclination * PI / 180.0;
+            sn := sin( angle );
+            cs := cos( angle );
+
+            xx := fx * cs - fz * sn;
+            zz := fx * sn + fz * cs;
+
+            Target.x := StartScrollTarget.x + xx * Len/900.0;
+            Target.z := StartScrollTarget.z + zz * Len/900.0;
 
             Pos := Target - Dir * Len;
 
@@ -253,11 +267,11 @@ begin
   if( NewCameraMoving <> 0 ) then begin
     CameraMoving := NewCameraMoving;
     NewCameraMoving := 0;
-    for i := 1 to MaxOneVehicles do begin   // ñêðîåì ðàìêè òàíêîâ
+    for i := 1 to MaxOneVehicles do begin   // скроем рамки танков
 	    Vehicles[i].SetSelectFrame( 0.0 );
     end;
 
-    i := 0;                              // ïîêàæåì ðàìêè âûäåëåííûõ òàíêîâ
+    i := 0;                              // покажем рамки выделенных танков
     while( ViewTanks[i] <> 0 ) do begin
       Vehicles[ViewTanks[i]].SetSelectFrame( 0.7 );
       inc(i);
@@ -385,7 +399,7 @@ begin
     Pos := MedPos;
   end;
 
-  // Åñëè äâèãàëèñü ê îáùåìó ïëàíó è îñòàëüíûå ôëàãè óæå ñáðîøåíû, ñáðàñûâàåì ñîñòîÿíèå êàìåðû.
+  // Если двигались к общему плану и остальные флаги уже сброшены, сбрасываем состояние камеры.
   if( CameraMoving = CAM_MOVE_COMMON ) then
     CameraMoving := 0;
 
