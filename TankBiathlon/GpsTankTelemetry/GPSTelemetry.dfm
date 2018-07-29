@@ -24,7 +24,7 @@ object _GPSTelemetry: T_GPSTelemetry
     Top = 21
     Width = 581
     Height = 837
-    ActivePage = tsShow
+    ActivePage = tsBaseConnect
     Align = alClient
     TabOrder = 0
     object tsShow: TTabSheet

@@ -58,6 +58,9 @@ type
     property ParamIndex: TCaptionParamIdx read FParamIndex;
   end;
 
+var
+  TankIdRelative: array[1..iTanksNum] of integer;
+
 implementation
 
 { TParamDescr }

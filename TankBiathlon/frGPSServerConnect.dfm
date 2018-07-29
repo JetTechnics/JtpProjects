@@ -15,21 +15,21 @@ object GPSServerConnectFrame: TGPSServerConnectFrame
     TabOrder = 0
     object lblGpsAddr: TLabel
       Left = 9
-      Top = 22
+      Top = 17
       Width = 35
       Height = 13
       Caption = #1040#1076#1088#1077#1089':'
     end
     object lblGpsPort: TLabel
       Left = 156
-      Top = 22
+      Top = 17
       Width = 29
       Height = 13
       Caption = #1055#1086#1088#1090':'
     end
     object edGpsAddr: TEdit
       Left = 50
-      Top = 20
+      Top = 15
       Width = 92
       Height = 19
       Ctl3D = False
@@ -39,7 +39,7 @@ object GPSServerConnectFrame: TGPSServerConnectFrame
     end
     object edGpsPort: TEdit
       Left = 194
-      Top = 20
+      Top = 15
       Width = 50
       Height = 19
       Ctl3D = False
@@ -49,14 +49,14 @@ object GPSServerConnectFrame: TGPSServerConnectFrame
     end
     object btnConnect: TButton
       Left = 158
-      Top = 45
+      Top = 40
       Width = 86
       Height = 25
       TabOrder = 2
       OnClick = btnConnectClick
     end
   end
-  object GPSCleanEventTimer: TTimer
+  object GPSCheckQueueTimer: TTimer
     Enabled = False
     Left = 35
     Top = 43

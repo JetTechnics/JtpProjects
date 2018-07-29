@@ -121,7 +121,9 @@ begin
       key := lList.Names[i];
       v := ReadString(sStringsSect, key, '');
       if v <> '' then key := v;
-      AList.AddPair(key, Value);
+      if Descr.ParamIndex = cpiColor
+        then AList.AddPair(key, '$$$$$'+Value)
+        else AList.AddPair(key, Value);
     end;
 end;
 
@@ -173,6 +175,8 @@ end;
 function TCaptionSettings.GetParamValue(const AParamDescr: TParamDescr): string;
 begin
   Result := CaptionParamStorage.ParamData[AParamDescr];
+  if AParamDescr.IndexCorrect and (AParamDescr.ParamIndex = cpiColor)
+    then Result := '$$$$$'+Result;
 end;
 
 end.

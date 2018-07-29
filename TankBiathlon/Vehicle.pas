@@ -3,7 +3,9 @@ unit Vehicle;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, JTPStudio, Math, TypesJTP, Vector;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.AnsiStrings,
+  JTPStudio, Math, TypesJTP, Vector;
 
 const MAX_VCOORD = 7;
 
@@ -74,6 +76,7 @@ Type  TVehicle = record     //  ѕодвижное средство
   NewPos  : TVector;        //  вновь полученна€ координата
   Orient  : TVector;        //  текуща€ ориентаци€
   Color   : TJTPColor;      //  цвет танка
+  FlagPic : AnsiString;     //  Flag of country
   NewTime : TGpsTime;       //  еЄ врем€
   Speed   : single;         //  текуща€ скорость
   SpeedFactor : single;     //  правка скорости, если отстаЄм/опрежаем
@@ -121,6 +124,7 @@ Type  TVehicle = record     //  ѕодвижное средство
   procedure SetTankPictAlpha( Alpha : single );
   procedure SetSize( NewSize : single );
   procedure SetColor( NewColor : TJTPColor );
+  procedure SetFlagPic(NewFlagPic: AnsiString);
   procedure GetNewCoord( Coord: TVector;  hr, min, sec, ms: integer;  Speed, Distance : single );
   procedure PushNewCoord();
   procedure DoFocusPos( Skip : integer );
@@ -188,9 +192,9 @@ var Names : array [0..63] of TName;
     Clr, P : TVector;
     str : ansistring;
     PlayAnimationData : TJtpFuncData;
+    SurfElemData : TSurfElemData;
 begin
-
-  if( VehicleName <> nil ) then StrCopy( Name.text, VehicleName )
+  if( VehicleName <> nil ) then System.AnsiStrings.StrCopy( Name.text, VehicleName )
   else  Name.text[0] := #0;
 
   TestTime := 0.0;
@@ -198,12 +202,16 @@ begin
   if( ArrayIndex < 10 )  then str := 'TankModel0'
   else  str := 'TankModel';
   str := str + IntToStr(ArrayIndex);
-  StrCopy( ModelName.text, PAnsiChar(str) );
+  System.AnsiStrings.StrCopy( ModelName.text, PAnsiChar(str) );
 
   if( ArrayIndex < 10 )  then str := 'TankText0'
   else  str := 'TankText';
   str := str + IntToStr(ArrayIndex);
-  StrCopy( PictName.text, PAnsiChar(str) );
+  System.AnsiStrings.StrCopy( PictName.text, PAnsiChar(str) );
+
+  SurfElemData.Create;
+  Res := UpdateSurfaceElement(@PoligonSceneName, @PictName, 1, 1, nil, ' ', nil,
+                              INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData);
 
   //State := 0; //State2;
   State := VE_ENABLED or VE_STARTED;
@@ -215,10 +223,10 @@ begin
   if (Color.r = 0) and (Color.g = 0) and (Color.b = 0) and
      (Color.a = 0) then
     case ArrayIndex of
-      1: Color.VSet(1,1,0,1);
+      1: Color.VSet(0,1,0,1);
       2: Color.VSet(0,0,1,1);
       3: Color.VSet(1,0,0,1);
-      4: Color.VSet(0,1,0,1);
+      4: Color.VSet(1,1,0,1);
     end;
 
   Orient.x := FLT_UNDEF;     Orient.z := FLT_UNDEF;    //  наклоны по карте высот, используем только Orient.y
@@ -462,13 +470,25 @@ begin
   Color := NewColor;
 
   if ModelName.text[0] <> #0 then
-    begin
-      SetObjectSpace(@PoligonSceneName, @ModelName, nil, nil, nil, nil, nil, @Color, 0.0, JTP_ABSOLUTE, nil);
-
-    end;
+    SetObjectSpace(@PoligonSceneName, @ModelName, nil, nil, nil, nil, nil, @Color, 0.0, JTP_ABSOLUTE, nil);
 end;
 
 
+
+procedure TVehicle.SetFlagPic(NewFlagPic: AnsiString);
+var
+  ErrData: TJtpFuncData;
+begin
+  FlagPic := NewFlagPic;
+
+  if (ModelName.text[0] <> #0) and
+     (PictName.text[0] <> #0) and
+     (FlagPic <> '') then
+    begin
+      ErrData.Create;
+      SetObjectTexture(@PoligonSceneName, @PictName, PPath(PAnsiChar(FlagPic)), 1, 0, 0, @ErrData);
+    end;
+end;
 
 procedure TVehicle.GetNewCoord( Coord: TVector;  hr, min, sec, ms: integer;  Speed, Distance : single );
 var  Coord2 : TVector;
@@ -478,8 +498,11 @@ begin
 //  exit;
 
     //  пересчитаем GPS координаты в наши
-    Coord2.x := Coord.z * lon_f1 - lon_f2;
-    Coord2.z := Coord.x * lat_f1 - lat_f2;
+    //Coord2.x := Coord.z * lon_f1 - lon_f2;
+    //Coord2.z := Coord.x * lat_f1 - lat_f2;
+    Coord2.x := Coord.x * lat_f1 - lat_f2 - 330;
+    Coord2.z := -(Coord.z * lon_f1 - lon_f2) - 100;
+
 
 //    Coord2.x := (Coord.z * 100.0 - 3690.0) * 1010.0 - 2335.0;
 //    Coord2.z := (Coord.x * 100.0 - 5553.0) * 1760.0 - 1350.0;
@@ -786,7 +809,7 @@ function FindVehicle( Name: PAnsichar ) : integer;
 var i: integer;
 begin
    for i := 1 to (MAX_VEHICLES-1) do begin
-     if( StrComp( Vehicles[i].ModelName.Text, Name ) = 0 )  then begin
+     if( System.AnsiStrings.StrComp( Vehicles[i].ModelName.Text, Name ) = 0 )  then begin
         FindVehicle := i;    exit;
      end;
    end;
@@ -803,7 +826,7 @@ begin
 
     for i := 1 to (MAX_VEHICLES-1) do begin
       for j := 1 to (MAX_SIM_PNTS-1) do begin
-        if( StrComp( @Vehicles[i].SimPoints[j].Name, Name ) = 0 )  then begin
+        if( System.AnsiStrings.StrComp( @Vehicles[i].SimPoints[j].Name, Name ) = 0 )  then begin
           TankId := i;    FindVehicleByPoint := j;    exit;
         end;
       end;

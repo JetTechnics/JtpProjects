@@ -54,7 +54,7 @@ begin
   end
   else begin
 
-    Pkt := uGPSPacketsQueue.PopPacket;
+    Pkt := uGPSPacketsQueue.PopPacket(true);
     try
       if Assigned(Pkt) then
         begin

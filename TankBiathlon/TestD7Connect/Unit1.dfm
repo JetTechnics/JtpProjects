@@ -55,4 +55,10 @@ object Form1: TForm1
     ItemHeight = 13
     TabOrder = 3
   end
+  object Timer1: TTimer
+    Enabled = False
+    OnTimer = Timer1Timer
+    Left = 184
+    Top = 56
+  end
 end

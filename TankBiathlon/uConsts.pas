@@ -50,6 +50,11 @@ const
   sGPSServerIP_def: string = '94.228.243.168';
   sGPSServerPort_def: string = '6543';
 
+  sUISect: string = 'UI_Settings';
+
+  sShowFlags_key: string = 'show_flags';
+  iShowFlags_def: integer = 1;
+
 implementation
 
 end.

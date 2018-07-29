@@ -23,6 +23,8 @@ Var
   CameraScroll : dword = 0;      //  состояние скроллирования (перемещение в плоскости горизонта) камеры.
   StartScrollTarget : TVector;
   StartScrollMouse : TJTPPoint;
+  ShowFlags: integer = 1;
+  TankPropsChanged: boolean = false;
 
   const
     CAM_MOVE_TO_TANKS          : dword = $00000001;  // камера движется за такнками
@@ -89,7 +91,10 @@ begin
         then Vehicles[i].Id := Ids[i];
       if TEST <> 0
         then Vehicles[i].CtRt := Random(200);
+      if ShowFlags >= 0
+        then Vehicles[i].SetTankPictAlpha(ShowFlags);
     end;
+    ShowFlags := -1;
 
     //  Получим угол крена камеры.
     GetObjectSpace( @PoligonSceneName, 'Camera', nil, @Orient, nil, nil, nil, nil, 0, nil );
@@ -100,6 +105,11 @@ begin
     {Color.VSet(0,1,0,1);    Vehicles[2].SetColor(Color);} Vehicles[2].SetColor(Vehicles[2].Color);
     {Color.VSet(0,0.5,1,1);  Vehicles[3].SetColor(Color);} Vehicles[3].SetColor(Vehicles[3].Color);
     {Color.VSet(1,1,0,1);    Vehicles[4].SetColor(Color);} Vehicles[4].SetColor(Vehicles[4].Color);
+
+    Vehicles[1].SetFlagPic(Vehicles[1].FlagPic);
+    Vehicles[2].SetFlagPic(Vehicles[2].FlagPic);
+    Vehicles[3].SetFlagPic(Vehicles[3].FlagPic);
+    Vehicles[4].SetFlagPic(Vehicles[4].FlagPic);
   end;
 
   SetSceneProcessCallback( @PoligonSceneName, @UpdateTankPoligon, 0, nil );
@@ -110,7 +120,7 @@ end;
 
 function UpdateTankPoligon( SceneName: PAnsiChar;  Flags: dword;  pEvents: PJtpEvent;  FrameTime: single;  pReserve: pointer ) : UInt64;  stdcall;
 const
-  MaxPacketNum = 10;
+  MaxPacketNum = 20;
   CamMinDist = 200;
 var
   res, i : integer;
@@ -122,6 +132,9 @@ var
   Delta, CamLen, F, t : single;
   Color : TJTPColor;
   MouseDelta : TJTPPoint;
+  Sf: integer;
+  pc: boolean;
+
 begin
 
   OpenRecords( 0, nil );
@@ -254,6 +267,8 @@ begin
   fsize := 0.05 * Len;
 
   // Танки на забеге.
+  Sf := ShowFlags;
+  pc := TankPropsChanged;
   for i := 1 to MaxOneVehicles do begin
     if( ( Vehicles[i].State and VE_ENABLED ) <> 0 ) then begin
       //Vehicles[i].DebugId := i;
@@ -261,7 +276,17 @@ begin
       //  размер и цвет танков
       Vehicles[i].SetSize( fsize );
     end;
+    if Sf >= 0
+      then Vehicles[i].SetTankPictAlpha(ShowFlags);
+
+    if pc then
+      begin
+        Vehicles[i].SetColor(Vehicles[i].Color);
+        Vehicles[i].SetFlagPic(Vehicles[i].FlagPic);
+      end;
   end;
+  if Sf >= 0 then ShowFlags := -1;
+  if pc then TankPropsChanged := false;
 
   // Камера.
   if( NewCameraMoving <> 0 ) then begin
@@ -323,7 +348,8 @@ begin
   end
   else
   if( ( CameraMoving and CAM_MOVE_COMMON ) <> 0 ) then begin
-    MedTarget.VSet( 0.0, 0.0, 150.0 );  // в центр полигона
+    //MedTarget.VSet( 0.0, 0.0, 150.0 );  // в центр полигона
+    MedTarget.VSet( -300.0, 0.0, 360.0 );  // в центр полигона
   end;
 
   GetObjectSpace( @PoligonSceneName, 'Camera', @Pos, nil, nil, nil, @Target, nil, 0, nil );
@@ -352,7 +378,7 @@ begin
   end;
 
   if( ( CameraMoving and CAM_MOVE_COMMON ) <> 0 ) then begin
-    Len := 3800.0;
+    Len := 2200.0;
     FactorY := 2.0;
   end
   else begin
@@ -370,6 +396,8 @@ begin
   if( ( CameraMoving and CAM_MOVE_POS ) <> 0 ) then begin
     if( ( CameraMoving and CAM_MOVE_POS_OVER_TARGET ) <> 0 ) then begin
       CamViewDir.VSet( 0.0, -1.0, 0.01 );  // над target
+      //CamViewDir.VSet( 0.0, -2200, -310 );
+      //VecLengthNormalize(CamViewDir);
     end;
     if( ( CameraMoving and CAM_MOVE_POS_INCLINE ) <> 0 ) then begin
       CamViewDir.VSet( 0.0, -0.5, 0.5 );   // с наклоном

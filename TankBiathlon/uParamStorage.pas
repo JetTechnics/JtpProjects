@@ -16,6 +16,8 @@ type
   private
     FData: array[TCaptionParamIdx, 1..iTanksNum] of string;
     FOnParamChanged: TParamChangedEvent;
+    FOnEndUpdate: TNotifyEvent;
+    FUpdating: boolean;
     function GetParamData(Descr: TParamDescr): string;
     procedure SetParamData(Descr: TParamDescr; const Value: string);
     function GetParamDataIdx(const AParamIndex: TCaptionParamIdx;
@@ -24,9 +26,9 @@ type
                               const ATankId: integer;
                               const Value: string);
   public
-    //*** Random init for debug ***
-    // constructor Create;
-    //*****************************
+    constructor Create;
+    procedure BeginUpdate;
+    procedure EndUpdate;
     procedure SetParamDataV(const AParamIndex: TCaptionParamIdx;
                             const ATankId: integer;
                             const Value: string); overload;
@@ -43,10 +45,12 @@ type
     procedure SetParamDataV(Descr: TParamDescr; const Value: integer); overload;
     procedure SetParamDataV(Descr: TParamDescr; const Value: single); overload;
     procedure SetParamDataV(Descr: TParamDescr; const Value: double); overload;
+    procedure ZeroSpeeds;
     property ParamData[Descr: TParamDescr]: string read GetParamData
                                                    write SetParamData;
     property OnParamChanged: TParamChangedEvent read FOnParamChanged
                                                 write FOnParamChanged;
+    property OnEndUpdate: TNotifyEvent read FOnEndUpdate write FOnEndUpdate;
   end;
 
 var
@@ -56,18 +60,27 @@ implementation
 
 { TCaptionParamStorage }
 
-//*** Random init for debug ***
-(*
+procedure TCaptionParamStorage.BeginUpdate;
+begin
+  FUpdating := true;
+end;
+
 constructor TCaptionParamStorage.Create;
 var
-  Idx: TCaptionParamIdx;
-  TankN: integer;
+  i: integer;
 begin
-  for Idx:=Low(TCaptionParamIdx) to High(TCaptionParamIdx) do
-    for TankN:=1 to iTanksNum do
-      FData[Idx, TankN] := IntToStr(TankN)+'_'+asCaptionParams[Idx]+'_'+IntToStr(Random(1000));
+  FUpdating := false;
+  ZeroSpeeds;
+  for i:=1 to iTanksNum do
+    TankIdRelative[i] := i;
 end;
-*)
+
+procedure TCaptionParamStorage.EndUpdate;
+begin
+  FUpdating := false;
+  if Assigned(FOnEndUpdate)
+    then FOnEndUpdate(Self);
+end;
 
 function TCaptionParamStorage.GetParamData(Descr: TParamDescr): string;
 begin
@@ -78,12 +91,17 @@ end;
 
 function TCaptionParamStorage.GetParamDataIdx(
   const AParamIndex: TCaptionParamIdx; const ATankId: integer): string;
+var
+  Tnk: integer;
 begin
-  if (ATankId >= 1) and (ATankId <= iTanksNum) and
+  if (ATankId >= 1) and (ATankId <= iTanksNum)
+    then Tnk := TankIdRelative[ATankId];
+
+  if (Tnk >= 1) and (Tnk <= iTanksNum) and
      (asCaptionParamTemplates[AParamIndex] <> '')
       then Result := Format(asCaptionParamTemplates[AParamIndex],
-                            [FData[AParamIndex, ATankId]])
-      else Result := FData[AParamIndex, ATankId];
+                            [FData[AParamIndex, Tnk]])
+      else Result := FData[AParamIndex, Tnk];
 end;
 
 procedure TCaptionParamStorage.SetParamData(Descr: TParamDescr;
@@ -97,20 +115,24 @@ procedure TCaptionParamStorage.SetParamDataIdx(
   const AParamIndex: TCaptionParamIdx; const ATankId: integer;
   const Value: string);
 var
+  Tnk: integer;
   OldValue: string;
   OldValueFmt: string;
   Descr: TParamDescr;
 begin
-  if (ATankId >= 1) and (ATankId <= iTanksNum) and
-     (not SameText(FData[AParamIndex, ATankId], Value)) then
+  if (ATankId >= 1) and (ATankId <= iTanksNum)
+    then Tnk := TankIdRelative[ATankId];
+
+  if (Tnk >= 1) and (Tnk <= iTanksNum) and
+     (not SameText(FData[AParamIndex, Tnk], Value)) then
     begin
-      OldValue := FData[AParamIndex, ATankId];
-      OldValueFmt := GetParamDataIdx(AParamIndex, ATankId);
-      FData[AParamIndex, ATankId] := Value;
+      OldValue := FData[AParamIndex, Tnk];
+      OldValueFmt := GetParamDataIdx(AParamIndex, Tnk);
+      FData[AParamIndex, Tnk] := Value;
 
       Descr := TParamDescr.Create(ATankId, asCaptionParams[AParamIndex]);
       try
-        if Assigned(FOnParamChanged)
+        if (not FUpdating) and Assigned(FOnParamChanged)
           then FOnParamChanged(Descr,
                                OldValue, Value,
                                OldValueFmt, GetParamData(Descr));
@@ -169,6 +191,16 @@ procedure TCaptionParamStorage.SetParamDataV(Descr: TParamDescr;
   const Value: double);
 begin
   SetParamData(Descr, FloatToStr(Value));
+end;
+
+procedure TCaptionParamStorage.ZeroSpeeds;
+var
+  Idx: TCaptionParamIdx;
+  TankN: integer;
+begin
+  for Idx:=cpiSpeed to cpiSpeed_ave do
+    for TankN:=1 to iTanksNum do
+      SetParamDataIdx(Idx, TankN, '0');
 end;
 
 initialization

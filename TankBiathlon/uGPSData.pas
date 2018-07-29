@@ -17,6 +17,7 @@ type
   TConnectState = (csDisconnected, csDisconnecting, csConnecting, csConnected);
 
 const
+  GPSQueueCheckInterval = 1000;
   GPSUnitsCleanInterval = 5000;
 
 var

@@ -37,8 +37,8 @@ const
 
 procedure InitializeQueue;
 procedure DeinitializeQueue;
-procedure PushPacket(APacket: TGPSPacket);
-function PopPacket: TGPSPacket;
+procedure PushPacket(APacket: TGPSPacket; const ToMainQueue: boolean);
+function PopPacket(const FromMainQueue: boolean): TGPSPacket;
 
 implementation
 
@@ -63,7 +63,8 @@ type
   end;
 
 var
-  GPSPacketQueue: TGPSPacketQueue = nil;
+  GPSPacketQueueMain: TGPSPacketQueue = nil;
+  GPSPacketQueueAux: TGPSPacketQueue = nil;
 
 { TGPSPacketQueue }
 
@@ -201,30 +202,54 @@ end;
 { Globals }
 procedure InitializeQueue;
 begin
-  if not Assigned(GPSPacketQueue)
-    then GPSPacketQueue := TGPSPacketQueue.Create;
+  if not Assigned(GPSPacketQueueMain)
+    then GPSPacketQueueMain := TGPSPacketQueue.Create;
+  if not Assigned(GPSPacketQueueAux)
+    then GPSPacketQueueAux := TGPSPacketQueue.Create;
 end;
 
 procedure DeinitializeQueue;
 begin
-  if Assigned(GPSPacketQueue) then
+  if Assigned(GPSPacketQueueMain) then
     begin
-      GPSPacketQueue.Free;
-      GPSPacketQueue := nil;
+      GPSPacketQueueMain.Free;
+      GPSPacketQueueMain := nil;
+    end;
+  if Assigned(GPSPacketQueueAux) then
+    begin
+      GPSPacketQueueAux.Free;
+      GPSPacketQueueAux := nil;
     end;
 end;
 
-procedure PushPacket(APacket: TGPSPacket);
+procedure PushPacket(APacket: TGPSPacket; const ToMainQueue: boolean);
 begin
-  if Assigned(GPSPacketQueue)
-    then GPSPacketQueue.PushPacket(APacket);
+  if ToMainQueue then
+    begin
+      if Assigned(GPSPacketQueueMain)
+        then GPSPacketQueueMain.PushPacket(APacket);
+    end
+                 else
+    begin
+      if Assigned(GPSPacketQueueAux)
+        then GPSPacketQueueAux.PushPacket(APacket);
+    end;
 end;
 
-function PopPacket: TGPSPacket;
+function PopPacket(const FromMainQueue: boolean): TGPSPacket;
 begin
-  if Assigned(GPSPacketQueue)
-    then Result := GPSPacketQueue.PopPacket
-    else Result := nil;
+  if FromMainQueue then
+    begin
+      if Assigned(GPSPacketQueueMain)
+        then Result := GPSPacketQueueMain.PopPacket
+        else Result := nil;
+    end
+                   else
+    begin
+      if Assigned(GPSPacketQueueAux)
+        then Result := GPSPacketQueueAux.PopPacket
+        else Result := nil;
+    end;
 end;
 
 end.

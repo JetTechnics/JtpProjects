@@ -26,11 +26,11 @@ type
     edGpsAddr: TEdit;
     edGpsPort: TEdit;
     btnConnect: TButton;
-    GPSCleanEventTimer: TTimer;
+    GPSCheckQueueTimer: TTimer;
     procedure btnConnectClick(Sender: TObject);
   private
     FConnectObj: TGPSServerConnectObj;
-    procedure LogGPSData(Sender: TObject; const GpsData: TGpsData);
+    {procedure LogGPSData(Sender: TObject; const GpsData: TGpsData);}
     procedure ConnectionChanged(Sender: TObject;
                                 const OldState, NewState: TConnectState);
     function GetConnectState: TConnectState;
@@ -71,13 +71,13 @@ begin
   FConnectObj := TGPSServerConnectObj.Create;
   FConnectObj.OnUpdateUI := UpdateUI;
   FConnectObj.OnConnectionChanged := ConnectionChanged;
-  FConnectObj.OnLogGpsData := LogGPSData;
+  FConnectObj.OnLogGpsData := nil; // LogGPSData;
 end;
 
 destructor TGPSServerConnectFrame.Destroy;
 begin
-  GPSCleanEventTimer.Enabled := false;
-  GPSCleanEventTimer.OnTimer := nil;
+  GPSCheckQueueTimer.Enabled := false;
+  GPSCheckQueueTimer.OnTimer := nil;
   FConnectObj.OnLogGpsData := nil;
   FConnectObj.OnConnectionChanged := nil;
   FConnectObj.OnUpdateUI := nil;
@@ -90,11 +90,13 @@ begin
   Result := FConnectObj.ConnectState;
 end;
 
+(*
 procedure TGPSServerConnectFrame.LogGPSData(Sender: TObject;
   const GpsData: TGpsData);
 begin
   MainForm.AddLogGpsData(GpsData, Winapi.Windows.GetTickCount);
 end;
+*)
 
 procedure TGPSServerConnectFrame.UpdateUI(Sender: TObject);
 var
@@ -102,7 +104,7 @@ var
 begin
   btnConnect.Enabled := true;
   GPSServerGroup.Enabled := true;
-  GPSCleanEventTimer.Enabled := false;
+  GPSCheckQueueTimer.Enabled := false;
   if FConnectObj.ConnectState = csDisconnected then
     begin
       GPSServerGroup.Caption := rsGPSLbl + rsGPSDisconnected;
@@ -129,7 +131,7 @@ begin
             csConnected: begin
                            sLblCaption := rsGPSLbl + rsGPSConnected;
                            GPSServerGroup.Color := clGreen;
-                           GPSCleanEventTimer.Enabled := true;
+                           GPSCheckQueueTimer.Enabled := true;
                          end;
         else begin
                sLblCaption := rsGPSLbl + rsGPSDisconnected;

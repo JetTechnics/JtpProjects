@@ -5,11 +5,13 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.AnsiStrings,
+  System.Types, System.IOUtils,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   JTPStudio, VideoSetsHeader, TypesJTP, PluginJTP, Vector,
   Poligon2D, Vehicle, Titers,
   frGPSServerConnect, uGPSData, uConsts,
-  uCaptionSettingsKeys, uCaptionSettings, uParamStorage;
+  uGPSPacketsQueue, uCaptionSettingsKeys, uCaptionSettings, uParamStorage,
+  Vcl.Buttons;
 
 type
   TMainForm = class(TForm)
@@ -45,13 +47,23 @@ type
     CancelFollowBtn: TButton;
     chbSimulation: TCheckBox;
     CaptionsGroupBox: TGroupBox;
-    btnCaption1: TButton;
-    btnCaption2: TButton;
-    btnCaption3: TButton;
-    btnCaption4: TButton;
-    btnCancelCaption: TButton;
     btnEditCaptions: TButton;
     Button1: TButton;
+    chbShowFlags: TCheckBox;
+    btnRefresh: TButton;
+    btnZeroSpeeds: TButton;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    btnCaption1: TButton;
+    btnCancelCaption1: TButton;
+    btnCaption2: TButton;
+    btnCancelCaption2: TButton;
+    Panel3: TPanel;
+    btnCaption3: TButton;
+    btnCancelCaption3: TButton;
+    Panel4: TPanel;
+    btnCaption4: TButton;
+    btnCancelCaption4: TButton;
     procedure StartButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ShowButtonClick(Sender: TObject);
@@ -73,19 +85,26 @@ type
     procedure chbSimulationClick(Sender: TObject);
     procedure DirectCamButton1Click(Sender: TObject);
     procedure btnCaptionNClick(Sender: TObject);
-    procedure btnCancelCaptionClick(Sender: TObject);
+    procedure btnCancelCaptionNClick(Sender: TObject);
     procedure btnEditCaptionsClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure chbShowFlagsClick(Sender: TObject);
+    procedure btnRefreshClick(Sender: TObject);
+    procedure FormShortCut(var Msg: TWMKey; var Handled: Boolean);
+    procedure btnZeroSpeedsClick(Sender: TObject);
   private
     FRunning: boolean;
     FSettings: TCaptionSettings;
     procedure CheckSimOption;
-    procedure CleanGPSUnitsEvent(Sender: TObject);
+    procedure GPSCheckQueueEvent(Sender: TObject);
+    {procedure OnParamValueChanged(Descr: TParamDescr; const OldValue, NewValue,
+      OldValueFmt, NewValueFmt: string);}
   public
     procedure AddLogString(const AStr: string);
-    procedure AddLogGpsData(const GpsData: TGpsData; ticks: dword);
-    procedure OnParamValueChanged(Descr: TParamDescr;
-                const OldValue, NewValue, OldValueFmt, NewValueFmt: string);
+    {procedure AddLogGpsData(const GpsData: TGpsData; ticks: dword);}
+    {procedure OnParamValueChanged(Descr: TParamDescr;
+                const OldValue, NewValue, OldValueFmt, NewValueFmt: string);}
+    procedure OnEndUpdateParamStorage(Sender: TObject);
   end;
 
 var
@@ -140,11 +159,14 @@ function VideoCloseSetsFunc( Flags: integer;  VideoSets: PVideoSets ) : integer;
 var
   ProjectPath : array[0..1] of TPath;
   PluginPath : TPath;
-  Textures : array[0..15] of TPath;
+  Textures : array of TPath;
   Res: UInt64;
   LoadProjectData : TJtpLoadProjectData;
   PluginConfig : TPluginConfigTB;
   StartEngineData : TJtpFuncData;
+  FlagsList: TStringDynArray;
+  s: AnsiString;
+  i, k: integer;
 begin
 
   if Flags <> 0 then
@@ -156,21 +178,26 @@ begin
   VideoTrunk := VideoSets.Trunk1;
 
   //  Пути к картинкам.
-  Textures[0].Text := 'Resources/Flags/AGO.tga';
-  Textures[1].Text := 'Resources/Flags/ARM.tga';
-  Textures[2].Text := 'Resources/Flags/BLR.tga';
-  Textures[3].Text := 'Resources/Flags/CHN.tga';
-  // ...
-  Textures[4].Text := 'Resources/Color_Tank/Blue.tga';
-  Textures[5].Text := 'Resources/Color_Tank/Green.tga';
-  // ...
-  Textures[6].Text[0] := #0;
+  // All flags
+  SetLength(Textures, Length(FlagsList)+3);
+  k := Low(Textures);
+  FlagsList := TDirectory.GetFiles('C:/_TankBiathlon2018/Resources/Flags', '*.tga');
+  for i:=Low(FlagsList) to High(FlagsList) do
+    begin
+      s := AnsiString('Resources\Flags\' + ExtractFileName(FlagsList[i]));
+      CopyMemory(@Textures[k].Text, PAnsiChar(s), Length(s)+1);
+      Inc(k);
+    end;
+  // Other textures
+  Textures[k].Text := 'Resources/Color_Tank/Blue.tga';
+  Textures[k+1].Text := 'Resources/Color_Tank/Green.tga';
+  Textures[k+2].Text[0] := #0;
 
   //  Проект
   ProjectPath[0].text := 'C:/_TankBiathlon2018/Resources/TankBiathlon.prj';
   ProjectPath[1].text := '';
 
-  Res := LoadProject( @ProjectPath, @Textures, 0, @LoadProjectData );
+  Res := LoadProject( @ProjectPath, @Textures[Low(Textures)], 0, @LoadProjectData );
   if( Res <> JTP_OK ) then begin
   	AddErrorStrings( LoadProjectData.pErrorsStr );
     MessageDlg('Ошибка при загрузке проекта.', mtError, [mbOk], 0);
@@ -186,7 +213,8 @@ begin
 
   MainForm.ShowButton.Enabled := true;
 
-  CaptionParamStorage.OnParamChanged := MainForm.OnParamValueChanged;
+  // CaptionParamStorage.OnParamChanged := MainForm.OnParamValueChanged;
+  CaptionParamStorage.OnEndUpdate := MainForm.OnEndUpdateParamStorage;
 {
   OpenRecords( 0, nil );
 
@@ -255,9 +283,13 @@ begin
   btnCaption2.Enabled := false;
   btnCaption3.Enabled := false;
   btnCaption4.Enabled := false;
-  btnCancelCaption.Enabled := false;
+  btnCancelCaption1.Enabled := false;
+  btnCancelCaption2.Enabled := false;
+  btnCancelCaption3.Enabled := false;
+  btnCancelCaption4.Enabled := false;
 
-  CloseGlobalScene;
+  for i:=1 to iCaptionsNum do
+    CloseGlobalScene(i);
 
 	OpenRecords( 0, nil );
 
@@ -270,12 +302,88 @@ begin
   CloseRecords( 0, nil );
 end;
 
-procedure TMainForm.CleanGPSUnitsEvent(Sender: TObject);
+procedure TMainForm.GPSCheckQueueEvent(Sender: TObject);
 var
   i: integer;
   ticks: dword;
   tc0: dword;
+  Pkt: TGPSPacket;
   // Descr: TParamDescr;
+
+  procedure DoLogGpsData;
+  var
+    k: integer;
+    id: integer;
+    s: string;
+    pkts: string;
+    tc0: dword;
+    fnd: boolean;
+    fmt: string;
+    v: single;
+  begin
+    fnd := false;
+    for k:=1 to iTanksNum do
+      if Vehicles[k].Id = Pkt.DevId then
+        begin
+          fnd := true;
+          break;
+        end;
+
+    if fnd then
+      begin
+        v := (Pkt.Speed / 1000) * 3600; // convert to kmh
+        Vehicles[k].Vcur := v;
+        CaptionParamStorage.SetParamDataV(cpiSpeed, k, Round(v));
+        if v > Vehicles[k].Vmax then
+          begin
+            Vehicles[k].Vmax := v;
+            CaptionParamStorage.SetParamDataV(cpiSpeed_max, k, Round(v));
+          end;
+      end;
+
+    fnd := false;
+    fmt := '%5d%20.5f%20.5f%15d | %10d';
+    try
+      for k:=0 to LogListBox.Items.Count-1 do
+        begin
+          s := LogListBox.Items[k];
+          Delete(s, Pos('|',s)+2, 100);
+          id := StrToInt(Trim(System.Copy(s, 1, 6)));
+          tc0 := dword(LogListBox.Items.Objects[k]);
+          if id = Pkt.DevId then
+            begin
+              pkts := Format(fmt, [Pkt.DevId, Pkt.Lat, Pkt.Lon, ticks-tc0, 0]);
+              LogListBox.Items[k] := pkts;
+              LogListBox.Items.Objects[k] := TObject(ticks);
+              fnd := true;
+            end
+                         else
+            begin
+              pkts := s + Format('%10d', [ticks-tc0]);
+              LogListBox.Items[k] := pkts;
+            end;
+        end;
+
+      k := 0;
+      while k < LogListBox.Items.Count do
+        begin
+          tc0 := dword(LogListBox.Items.Objects[k]);
+          if ticks-tc0 > GPSUnitsCleanInterval
+            then LogListBox.Items.Delete(k)
+            else Inc(k);
+        end;
+
+      if fnd then Exit;
+      pkts := Format(fmt, [Pkt.DevId, Pkt.Lat, Pkt.Lon, 0, 0]);
+      LogListBox.Items.Add(pkts);
+      LogListBox.Items.Objects[LogListBox.Items.Count-1] := TObject(ticks);
+    except
+      pkts := Format(fmt, [Pkt.DevId, Pkt.Lat, Pkt.Lon, 0, 0]);
+      LogListBox.Items.Add(pkts);
+      LogListBox.Items.Objects[LogListBox.Items.Count-1] := TObject(ticks);
+    end;
+  end;
+
 begin
   //*** Random speed for debug ***************
   (* Descr := TParamDescr.Create('N');
@@ -289,19 +397,34 @@ begin
     Descr.Free;
   end; *)
   //******************************************
-  ticks := Winapi.Windows.GetTickCount;
   LogListBox.Items.BeginUpdate;
   try
+    CaptionParamStorage.BeginUpdate;
     try
-      i := 0;
-      while i < LogListBox.Items.Count do
-        begin
-          tc0 := dword(LogListBox.Items.Objects[i]);
-          if ticks-tc0 > GPSUnitsCleanInterval
-            then LogListBox.Items.Delete(i)
-            else Inc(i);
-        end;
-    except
+      ticks := Winapi.Windows.GetTickCount;
+      repeat
+        Pkt := PopPacket(false);
+        if not Assigned(Pkt) then break;
+          try
+            DoLogGPSData;
+          finally
+            Pkt.Free;
+          end;
+      until false;
+
+      try
+        i := 0;
+        while i < LogListBox.Items.Count do
+          begin
+            tc0 := dword(LogListBox.Items.Objects[i]);
+            if ticks-tc0 > GPSUnitsCleanInterval
+              then LogListBox.Items.Delete(i)
+              else Inc(i);
+          end;
+      except
+      end;
+    finally
+      CaptionParamStorage.EndUpdate;
     end;
   finally
     LogListBox.Items.EndUpdate;
@@ -309,9 +432,16 @@ begin
 end;
 
 //////////////// Captions //////////////////
-procedure TMainForm.btnCancelCaptionClick(Sender: TObject);
+procedure TMainForm.btnCancelCaptionNClick(Sender: TObject);
+var
+  btn: TButton absolute Sender;
 begin
-  CloseGlobalScene;
+  if StartButton.Enabled or
+     (not (Assigned(Sender) and (Sender is TButton) and
+       (btn.Tag >= 1) and (btn.Tag <= iCaptionsNum)))
+    then Exit;
+
+  CloseGlobalScene(btn.Tag);
 end;
 
 procedure TMainForm.btnCaptionNClick(Sender: TObject);
@@ -333,7 +463,29 @@ begin
   end;
 end;
 
-procedure TMainForm.OnParamValueChanged(Descr: TParamDescr;
+procedure TMainForm.OnEndUpdateParamStorage(Sender: TObject);
+var
+  i: integer;
+  lData: TStrings;
+begin
+  OpenRecords(0, nil);
+  try
+    lData := TStringList.Create;
+    try
+      for i:=1 to iCaptionsNum do
+        begin
+          FSettings.GetCaptionData(i, lData);
+          UpdateGlobalScene(lData);
+        end;
+    finally
+      lData.Free;
+    end;
+  finally
+    CloseRecords(0, nil);
+  end;
+end;
+
+{procedure TMainForm.OnParamValueChanged(Descr: TParamDescr;
   const OldValue, NewValue, OldValueFmt, NewValueFmt: string);
 var
   lData: TStrings;
@@ -348,12 +500,13 @@ begin
   finally
     lData.Free;
   end;
-end;
+end;}
 
 procedure TMainForm.btnEditCaptionsClick(Sender: TObject);
 begin
   FSettings.Edit;
 end;
+
 ///////////////////////////////////////////
 
 ////////////////   ЭКИПАЖ   ////////////////
@@ -477,6 +630,23 @@ begin
   CancelCamera := true;
 end;
 
+procedure TMainForm.chbShowFlagsClick(Sender: TObject);
+var
+  v: integer;
+begin
+  if FRunning then
+    begin
+      if chbShowFlags.Checked
+        then v := 1
+        else v := 0;
+      ShowFlags := v;
+      FSettings.WriteInteger(sUISect, sShowFlags_key, v);
+
+      if FSettings.Modified
+        then FSettings.UpdateFile;
+    end;
+end;
+
 procedure TMainForm.chbSimulationClick(Sender: TObject);
 begin
   if FRunning then
@@ -575,8 +745,11 @@ begin
     GPSServerConnectFrame1.edGpsPort.Text :=
         FSettings.ReadString(sGPSServerSect, sGPSServerPort_key, sGPSServerPort_def);
 
-    GPSServerConnectFrame1.GPSCleanEventTimer.Interval := GPSUnitsCleanInterval;
-    GPSServerConnectFrame1.GPSCleanEventTimer.OnTimer := CleanGPSUnitsEvent;
+    ShowFlags := FSettings.ReadInteger(sUISect, sShowFlags_key, iShowFlags_def);
+    chbShowFlags.Checked := (ShowFlags > 0);
+
+    GPSServerConnectFrame1.GPSCheckQueueTimer.Interval := GPSQueueCheckInterval;
+    GPSServerConnectFrame1.GPSCheckQueueTimer.OnTimer := GPSCheckQueueEvent;
     GPSServerConnectFrame1.UpdateUI(Self);
 
     CheckSimOption;
@@ -588,7 +761,8 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
-  CaptionParamStorage.OnParamChanged := nil;
+  // CaptionParamStorage.OnParamChanged := nil;
+  CaptionParamStorage.OnEndUpdate := nil;
   if FSettings.Modified
     then FSettings.UpdateFile;
   FSettings.Free;
@@ -599,6 +773,12 @@ begin
   GWheelDelta := WheelDelta;
 end;
 
+procedure TMainForm.FormShortCut(var Msg: TWMKey; var Handled: Boolean);
+begin
+  case Msg.CharCode of
+    VK_F1: _GPSTelemetry.pRefresh(nil);
+  end;
+end;
 
 procedure TMainForm.ShowButtonClick(Sender: TObject);
 var
@@ -615,7 +795,10 @@ begin
   btnCaption2.Enabled := true;
   btnCaption3.Enabled := true;
   btnCaption4.Enabled := true;
-  btnCancelCaption.Enabled := true;
+  btnCancelCaption1.Enabled := true;
+  btnCancelCaption2.Enabled := true;
+  btnCancelCaption3.Enabled := true;
+  btnCancelCaption4.Enabled := true;
 
   if chbSimulation.Checked
     then TEST := 1
@@ -641,6 +824,7 @@ begin
   CloseRecords( 0, nil );
 end;
 
+(*
 procedure TMainForm.AddLogGpsData(const GpsData: TGpsData; ticks: dword);
 var
   TankId: integer;
@@ -732,6 +916,7 @@ begin
       end
     );
 end;
+*)
 
 procedure TMainForm.AddLogString(const AStr: string);
 begin
@@ -748,13 +933,28 @@ begin
   _GPSTelemetry.Show;
 end;
 
+procedure TMainForm.btnZeroSpeedsClick(Sender: TObject);
+begin
+  CaptionParamStorage.BeginUpdate;
+  try
+    CaptionParamStorage.ZeroSpeeds;
+  finally
+    CaptionParamStorage.EndUpdate;
+  end;
+end;
+
+procedure TMainForm.btnRefreshClick(Sender: TObject);
+begin
+  _GPSTelemetry.pRefresh(nil);
+end;
+
 procedure TMainForm.Button1Click(Sender: TObject);
 var
   Orient : TVector;
 begin
   OpenRecords( 0, nil );
 
-  CameraInclination := 45.0;
+  CameraInclination := -90.0;
   Orient.VSet( 0.0, 0.0, CameraInclination );
   SetObjectSpace( @PoligonSceneName, 'Camera', nil, @Orient, nil, nil, nil, nil, 0.0, JTP_ABSOLUTE, nil );
 

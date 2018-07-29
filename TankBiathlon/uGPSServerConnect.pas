@@ -190,7 +190,10 @@ begin
                   begin
                     if (GpsData.Latitude <> FLT_UNDEF) and (GpsData.Latitude <> 0) and
                        (GpsData.Longitude <> FLT_UNDEF) and (GpsData.Longitude <> 0)
-                      then uGPSPacketsQueue.PushPacket(TGPSPacket.Create(GpsData));
+                      then begin
+                             uGPSPacketsQueue.PushPacket(TGPSPacket.Create(GpsData), true);
+                             uGPSPacketsQueue.PushPacket(TGPSPacket.Create(GpsData), false);
+                           end;
                     DoLogGpsData(GpsData);
                   end;
               end
@@ -342,7 +345,7 @@ begin
   repeat
     try
       CheckIncomingData;
-      Sleep(100);
+      Sleep(300);
     except
     end;
   until Terminated;

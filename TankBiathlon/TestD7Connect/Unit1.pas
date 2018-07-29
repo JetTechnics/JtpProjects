@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, uGPSData, uGPSServerConnect, StdCtrls{, WinSock};
+  Dialogs, uGPSData, uGPSServerConnect, StdCtrls,
+  uGPSPacketsQueue, ExtCtrls{, WinSock};
 
 type
   TForm1 = class(TForm)
@@ -13,9 +14,11 @@ type
     Button1: TButton;
     Label1: TLabel;
     LogListBox: TListBox;
+    Timer1: TTimer;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
     FConnectObj: TGPSServerConnectObj;
     FTankId: integer;
@@ -25,7 +28,6 @@ type
     procedure DoLogData;
   public
     procedure UpdateUI(Sender: TObject);
-
   end;
 
 var
@@ -75,7 +77,8 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
   FConnectObj := TGPSServerConnectObj.Create;
   FConnectObj.OnUpdateUI := UpdateUI;
-  FConnectObj.OnLogGpsData := LogGPSData;
+  //FConnectObj.OnLogGpsData := LogGPSData;
+  FConnectObj.OnLogGpsData := nil;
   UpdateUI(Self);
 end;
 
@@ -91,7 +94,7 @@ begin
   FTankId := GpsData.VehicleId;
   FLat := GpsData.Latitude;
   FLon := GpsData.Longitude;
-  TThread.Synchronize(nil, DoLogData);
+  DoLogData;
 end;
 
 procedure TForm1.UpdateUI(Sender: TObject);
@@ -103,9 +106,41 @@ begin
         csConnected: Label1.Caption := 'Connected';
     else Label1.Caption := 'Disconnected';
   end;
-  if FConnectObj.ConnectState = csDisconnected
-    then Button1.Caption := 'Connect'
-    else Button1.Caption := 'Disconnect';
+  if FConnectObj.ConnectState = csDisconnected then
+    begin
+      Button1.Caption := 'Connect';
+      Timer1.Enabled := false;
+    end
+                                               else
+    begin
+      Button1.Caption := 'Disconnect';
+      Timer1.Enabled := true;
+    end;
+end;
+
+procedure TForm1.Timer1Timer(Sender: TObject);
+var
+  Pkt: TGPSPacket;
+  GpsData: TGPSData;
+begin
+  repeat
+    Pkt := PopPacket;
+    if not Assigned(Pkt) then Exit;
+    try
+      GpsData.Latitude  := Pkt.Lat;
+      GpsData.Longitude := Pkt.Lon;
+      GpsData.Distance  := Pkt.Alt;
+      GpsData.TimeMilli := Pkt.TimeMilli;
+      GpsData.PacketNum := Pkt.PacketN;
+      GpsData.VehicleId := Pkt.DevId;
+      GpsData.Battery := Pkt.Battery;
+      GpsData.Speed := Pkt.Speed;
+      LogGPSData(Sender, GpsData);
+    finally
+      Pkt.Free;
+      Pkt := nil;
+    end;
+  until false;
 end;
 
 end.

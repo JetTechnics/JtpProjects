@@ -5,16 +5,17 @@ interface
 uses
  Winapi.Windows,
  System.SysUtils, System.Classes, System.AnsiStrings, System.Math,
- JTPStudio, TypesJTP;
+ JTPStudio, TypesJTP, Vector;
 
 var
-  GlobalScene: TName;
-  CaptionIndex: integer;
+  GlobalScene1: TName;
+  GlobalScene2: TName;
+  GlobalScene3: TName;
+  GlobalScene4: TName;
 
 procedure ShowGlobalScene(VideoTrunk: integer; const SceneData: TStrings);
 procedure UpdateGlobalScene(const SceneData: TStrings);
-procedure CloseGlobalScene;
-function GetCaptionIndex: integer;
+procedure CloseGlobalScene(const Idx: integer);
 
 var
   EkipagScene : TName;
@@ -33,12 +34,14 @@ implementation
 procedure ShowGlobalScene(VideoTrunk: integer; const SceneData: TStrings);
 var
   Res : UInt64;
+  Scn : PName;
   PlaySceneData : TPlaySceneData;
   SurfElemData : TSurfElemData;
   s: string;
   objName: AnsiString;
   sceneIdx: integer;
   sData: WideString;
+  aColor: TJTPColor;
   i, k: integer;
 begin
   if (SceneData.Count < 2) or (SceneData.Names[0] <> '*****')
@@ -52,29 +55,22 @@ begin
   OpenRecords(0, nil);
   try
     sceneIdx := integer(SceneData.Objects[0]);
-    if CaptionIndex <> sceneIdx then
+    case sceneIdx of
+      1: Scn := @GlobalScene1;
+      2: Scn := @GlobalScene2;
+      3: Scn := @GlobalScene3;
+      4: Scn := @GlobalScene4;
+      else Exit;
+    end;
+    if Scn^.text[0] <> #0 then
       begin
-        CaptionIndex := sceneIdx;
-        if GlobalScene.text[0] <> #0 then
-          begin
-            CloseScene(@GlobalScene, FLT_UNDEF, nil);
-            GlobalScene.text[0] := #0;
-          end;
-        Res := PlayScene(PAnsiChar(objName), 0.0, 0, VideoTrunk, @PlaySceneData);
-        if Res = JTP_OK
-          then System.SysUtils.StrCopy(GlobalScene.text, PlaySceneData.SceneName.text)
-          else Exit;
-      end
-                                else
-      begin
-        if GlobalScene.text[0] = #0 then
-          begin
-            Res := PlayScene(PAnsiChar(objName), 0.0, 0, VideoTrunk, @PlaySceneData);
-            if Res = JTP_OK
-              then System.SysUtils.StrCopy(GlobalScene.text, PlaySceneData.SceneName.text)
-              else Exit;
-          end;
+        CloseScene(PAnsiChar(Scn), FLT_UNDEF, nil);
+        Scn^.text[0] := #0;
       end;
+    Res := PlayScene(PAnsiChar(objName), 0.0, 0, VideoTrunk, @PlaySceneData);
+    if Res = JTP_OK
+      then System.SysUtils.StrCopy(Scn^.text, PlaySceneData.SceneName.text)
+      else Exit;
 
     for i:=1 to SceneData.Count-1 do
       begin
@@ -86,8 +82,21 @@ begin
                   else k := StrToIntDef(System.Copy(s, 1, k-1), 1);
         if k <= 0 then k := 1;
         sData := SceneData.ValueFromIndex[i];
-        Res := UpdateSurfaceElement(@GlobalScene, PAnsiChar(objName), k, 1, nil, PWideChar(sData), nil,
-                                    INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData);
+        aColor.VSet(0,0,0,0);
+        if sData = '$$$$$y' then aColor.VSet(1,1,0,1)
+                            else
+        if sData = '$$$$$b' then aColor.VSet(0,0,1,1)
+                            else
+        if sData = '$$$$$r' then aColor.VSet(1,0,0,1)
+                            else
+        if sData = '$$$$$g' then aColor.VSet(0,1,0,1);
+        if (aColor.r = 0) and (aColor.g = 0) and (aColor.b = 0) and
+           (aColor.a = 0) then
+    Res := UpdateSurfaceElement(PAnsiChar(Scn), PAnsiChar(objName), k, 1, nil, PWideChar(sData), nil,
+                                INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData)
+                          else
+    Res := UpdateSurfaceElement(PAnsiChar(Scn), PAnsiChar(objName), k, 1, nil, #9646#9646#9646#9646#9646, @aColor,
+                                INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData);
         if Res <> JTP_OK then begin
           //AddErrorStrings( SurfElemData.pErrorsStr );
         end;
@@ -100,21 +109,29 @@ end;
 procedure UpdateGlobalScene(const SceneData: TStrings);
 var
   Res : UInt64;
+  Scn : PName;
+  sceneIdx: integer;
   SurfElemData : TSurfElemData;
   s: string;
   objName: AnsiString;
   sData: WideString;
+  aColor: TJTPColor;
   i, k: integer;
 begin
-  if (GlobalScene.text[0] = #0) or
-     (SceneData.Count < 2) or (SceneData.Names[0] <> '*****') or
-     (integer(SceneData.Objects[0]) <> CaptionIndex)
+  if (SceneData.Count < 2) or (SceneData.Names[0] <> '*****')
     then Exit;
+  sceneIdx := integer(SceneData.Objects[0]);
+  case sceneIdx of
+    1: Scn := @GlobalScene1;
+    2: Scn := @GlobalScene2;
+    3: Scn := @GlobalScene3;
+    4: Scn := @GlobalScene4;
+    else Exit;
+  end;
+  if Scn^.text[0] = #0 then Exit;
   objName := AnsiString(SceneData.ValueFromIndex[0]);
   if objName = '' then Exit;
 
-  OpenRecords(0, nil);
-  try
     SurfElemData.Create;
 
     for i:=1 to SceneData.Count-1 do
@@ -127,36 +144,47 @@ begin
                   else k := StrToIntDef(System.Copy(s, 1, k-1), 1);
         if k <= 0 then k := 1;
         sData := SceneData.ValueFromIndex[i];
-        Res := UpdateSurfaceElement(@GlobalScene, PAnsiChar(objName), k, 1, nil, PWideChar(sData), nil,
-                                    INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData);
+        aColor.VSet(0,0,0,0);
+        if sData = '$$$$$y' then aColor.VSet(1,1,0,1)
+                            else
+        if sData = '$$$$$b' then aColor.VSet(0,0,1,1)
+                            else
+        if sData = '$$$$$r' then aColor.VSet(1,0,0,1)
+                            else
+        if sData = '$$$$$g' then aColor.VSet(0,1,0,1);
+        if (aColor.r = 0) and (aColor.g = 0) and (aColor.b = 0) and
+           (aColor.a = 0) then
+    Res := UpdateSurfaceElement(PAnsiChar(Scn), PAnsiChar(objName), k, 1, nil, PWideChar(sData), nil,
+                                INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData)
+                          else
+    Res := UpdateSurfaceElement(PAnsiChar(Scn), PAnsiChar(objName), k, 1, nil, #9646#9646#9646#9646#9646, @aColor,
+                                INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData);
         if Res <> JTP_OK then begin
           //AddErrorStrings( SurfElemData.pErrorsStr );
         end;
       end;
-  finally
-    CloseRecords(0, nil);
-  end;
 end;
 
-procedure CloseGlobalScene;
+procedure CloseGlobalScene(const Idx: integer);
+var
+  Scn: PName;
 begin
-  if GlobalScene.text[0] <> #0 then
+  case Idx of
+    1: Scn := @GlobalScene1;
+    2: Scn := @GlobalScene2;
+    3: Scn := @GlobalScene3;
+    4: Scn := @GlobalScene4;
+    else Exit;
+  end;
+  if Scn^.text[0] <> #0 then
     begin
       OpenRecords(0, nil);
 
-      CloseScene(@GlobalScene, FLT_UNDEF, nil);
-      GlobalScene.text[0] := #0;
-      CaptionIndex := 0;
+      CloseScene(PAnsiChar(Scn), FLT_UNDEF, nil);
+      Scn^.text[0] := #0;
 
       CloseRecords(0, nil);
   end;
-end;
-
-function GetCaptionIndex: integer;
-begin
-  if GlobalScene.text[0] = #0
-    then Result := -1
-    else Result := CaptionIndex;
 end;
 
 ////////////////////////////////////////////
