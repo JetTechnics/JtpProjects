@@ -7,8 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Grids, Vcl.Buttons,
   Vcl.StdCtrls, IniFiles, Data.DB, Data.Win.ADODB, Vcl.Mask, Vcl.DBCtrls,
   Vcl.DBGrids, Math, System.StrUtils, JTPStudio, TypesJTP, Vector, Vehicle,
-  Vcl.Samples.Spin, Vcl.DBCGrids, System.DateUtils, Vcl.ComCtrls, Poligon2D,
-  uConsts, uGPSData, uCaptionSettingsKeys, uParamStorage;
+  Vcl.Samples.Spin, Vcl.DBCGrids, System.DateUtils, Vcl.ComCtrls, System.Win.ComObj,
+  Poligon2D, uConsts, uGPSData, uCaptionSettingsKeys, uParamStorage;
 
 const
   cShootingRubegQty = 10;
@@ -476,6 +476,8 @@ type
     function fGetColorForGPS(iGPS:string; var lColorID : string):TColor;
     procedure pTankPanelColoring;
   private
+    FDBError: boolean;
+
     { Private declarations }
     glIniFileName:string;
 
@@ -526,6 +528,8 @@ procedure T_GPSTelemetry.FormCreate(Sender: TObject);
 var lIniFile:TIniFile;
     i:integer;
 begin
+  FDBError := false;
+
   glIniFileName:=ChangeFileExt(Application.ExeName,'.ini');
   lIniFile:=TIniFile.Create(glIniFileName);
   eBaseFile.Text:=lIniFile.ReadString('BASE','FILE_NAME','');
@@ -863,8 +867,27 @@ begin
 
   pStrGrid(sgColorTank);
   *)
+  try
+
+  if FDBError then
+    begin
+      _GPS_dm.DBTanks.Connected := True;
+      qOtsechki.Open;
+    end;
+
   qTanksData.Close;
   qTanksData.Open;
+
+  FDBError := false;
+
+  except
+    on E: EOleException do
+      begin
+        FDBError := true;
+        ShowMessage('Ошибка чтения базы данных!');
+        pCloseBase(nil);
+      end;
+  end;
 end;
 
 function T_GPSTelemetry.fCountryGet(lCountryName:string):string;
@@ -980,6 +1003,14 @@ var lQty, lPic, lTex, lStr:string;
     {iQtyOts, iQtyOtsOnTitle, i1, j1: integer;}
     {iResult, iRemainder: Word;}
 begin
+  try
+
+  if FDBError then
+    begin
+      _GPS_dm.DBTanks.Connected := True;
+      qOtsechki.Open;
+    end;
+
   if not _GPS_dm.DBTanks.Connected then
     EXIT;
 
@@ -1185,6 +1216,17 @@ begin
   pRefreshButtons(nil);
 
   pTankPanelColoring;
+
+  FDBError := false;
+
+  except
+    on E: EOleException do
+      begin
+        FDBError := true;
+        ShowMessage('Ошибка чтения базы данных!');
+        pCloseBase(nil);
+      end;
+  end;
 end;
 
 procedure T_GPSTelemetry.pRefreshLocal(Sender: TObject);

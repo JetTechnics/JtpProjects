@@ -30,10 +30,6 @@ object _GPSTelemetry: T_GPSTelemetry
     object tsShow: TTabSheet
       Caption = #1058#1088#1072#1085#1089#1083#1103#1094#1080#1103
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel23: TPanel
         Left = 3
         Top = 6
@@ -889,10 +885,6 @@ object _GPSTelemetry: T_GPSTelemetry
     end
     object tsExtendedData: TTabSheet
       Caption = #1069#1082#1080#1087#1072#1078#1080', '#1054#1090#1089#1077#1095#1082#1080', '#1057#1090#1088#1077#1083#1100#1073#1072
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel17: TPanel
         Left = 0
         Top = 0
@@ -1339,10 +1331,6 @@ object _GPSTelemetry: T_GPSTelemetry
     object tsTankGraphics: TTabSheet
       Caption = #1060#1083#1072#1075#1080' , '#1052#1080#1096#1077#1085#1080
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Splitter2: TSplitter
         Left = 0
         Top = 155
@@ -1754,10 +1742,6 @@ object _GPSTelemetry: T_GPSTelemetry
     object tsBaseConnect: TTabSheet
       Caption = #1041#1072#1079#1099', '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1077
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel16: TPanel
         Left = 0
         Top = 0
@@ -2027,10 +2011,6 @@ object _GPSTelemetry: T_GPSTelemetry
     object tsTitle3DGraphics: TTabSheet
       Caption = #1057#1094#1077#1085#1099' 3D'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel10: TPanel
         Left = 0
         Top = 0
