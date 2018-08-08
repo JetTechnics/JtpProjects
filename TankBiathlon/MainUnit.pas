@@ -64,6 +64,8 @@ type
     Panel4: TPanel;
     btnCaption4: TButton;
     btnCancelCaption4: TButton;
+    btnCountries: TButton;
+    btnCloseCountries: TButton;
     procedure StartButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ShowButtonClick(Sender: TObject);
@@ -92,6 +94,8 @@ type
     procedure btnRefreshClick(Sender: TObject);
     procedure FormShortCut(var Msg: TWMKey; var Handled: Boolean);
     procedure btnZeroSpeedsClick(Sender: TObject);
+    procedure btnCountriesClick(Sender: TObject);
+    procedure btnCloseCountriesClick(Sender: TObject);
   private
     FRunning: boolean;
     FSettings: TCaptionSettings;
@@ -279,6 +283,8 @@ begin
 	ShowButton.Enabled := true;
   ClosePoligonButton.Enabled := false;
 
+  btnCountries.Enabled := false;
+  btnCloseCountries.Enabled := false;
   btnCaption1.Enabled := false;
   btnCaption2.Enabled := false;
   btnCaption3.Enabled := false;
@@ -288,6 +294,7 @@ begin
   btnCancelCaption3.Enabled := false;
   btnCancelCaption4.Enabled := false;
 
+  CloseCountries;
   for i:=1 to iCaptionsNum do
     CloseGlobalScene(i);
 
@@ -505,6 +512,18 @@ end;}
 procedure TMainForm.btnEditCaptionsClick(Sender: TObject);
 begin
   FSettings.Edit;
+end;
+
+procedure TMainForm.btnCountriesClick(Sender: TObject);
+begin
+  if not StartButton.Enabled
+    then ShowCountries(VideoTrunk);
+end;
+
+procedure TMainForm.btnCloseCountriesClick(Sender: TObject);
+begin
+  if not StartButton.Enabled
+    then CloseCountries;
 end;
 
 ///////////////////////////////////////////
@@ -791,6 +810,8 @@ begin
 	ShowButton.Enabled := false;
   ClosePoligonButton.Enabled := true;
 
+  btnCountries.Enabled := true;
+  btnCloseCountries.Enabled := true;
   btnCaption1.Enabled := true;
   btnCaption2.Enabled := true;
   btnCaption3.Enabled := true;

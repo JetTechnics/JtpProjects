@@ -379,12 +379,12 @@ object MainForm: TMainForm
     Left = 8
     Top = 415
     Width = 265
-    Height = 170
+    Height = 251
     Caption = ' '#1058#1080#1090#1088#1099' '
     TabOrder = 11
     object btnEditCaptions: TButton
       Left = 10
-      Top = 118
+      Top = 204
       Width = 246
       Height = 35
       Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1090#1080#1090#1088#1086#1074
@@ -392,8 +392,8 @@ object MainForm: TMainForm
       OnClick = btnEditCaptionsClick
     end
     object Panel1: TPanel
-      Left = 8
-      Top = 24
+      Left = 9
+      Top = 110
       Width = 60
       Height = 88
       BevelOuter = bvNone
@@ -424,8 +424,8 @@ object MainForm: TMainForm
       end
     end
     object Panel2: TPanel
-      Left = 71
-      Top = 24
+      Left = 72
+      Top = 110
       Width = 60
       Height = 88
       BevelOuter = bvNone
@@ -456,8 +456,8 @@ object MainForm: TMainForm
       end
     end
     object Panel3: TPanel
-      Left = 133
-      Top = 24
+      Left = 134
+      Top = 110
       Width = 60
       Height = 88
       BevelOuter = bvNone
@@ -492,8 +492,8 @@ object MainForm: TMainForm
       end
     end
     object Panel4: TPanel
-      Left = 197
-      Top = 24
+      Left = 198
+      Top = 110
       Width = 58
       Height = 88
       BevelOuter = bvNone
@@ -522,6 +522,26 @@ object MainForm: TMainForm
         TabOrder = 1
         OnClick = btnCancelCaptionNClick
       end
+    end
+    object btnCountries: TButton
+      Left = 10
+      Top = 23
+      Width = 246
+      Height = 35
+      Caption = #1057#1090#1088#1072#1085#1099
+      Enabled = False
+      TabOrder = 5
+      OnClick = btnCountriesClick
+    end
+    object btnCloseCountries: TButton
+      Left = 10
+      Top = 64
+      Width = 246
+      Height = 35
+      Caption = #1059#1073#1088#1072#1090#1100' '#1089#1090#1088#1072#1085#1099
+      Enabled = False
+      TabOrder = 6
+      OnClick = btnCloseCountriesClick
     end
   end
   object Button1: TButton

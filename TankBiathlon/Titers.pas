@@ -5,7 +5,7 @@ interface
 uses
  Winapi.Windows,
  System.SysUtils, System.Classes, System.AnsiStrings, System.Math,
- JTPStudio, TypesJTP, Vector;
+ JTPStudio, TypesJTP, Vector, Vehicle, uCaptionSettingsKeys, uParamStorage;
 
 var
   GlobalScene1: TName;
@@ -16,6 +16,12 @@ var
 procedure ShowGlobalScene(VideoTrunk: integer; const SceneData: TStrings);
 procedure UpdateGlobalScene(const SceneData: TStrings);
 procedure CloseGlobalScene(const Idx: integer);
+
+var
+  CountriesScene: TName;
+
+procedure ShowCountries(VideoTrunk: integer);
+procedure CloseCountries;
 
 var
   EkipagScene : TName;
@@ -185,6 +191,64 @@ begin
 
       CloseRecords(0, nil);
   end;
+end;
+
+procedure ShowCountries(VideoTrunk: integer);
+var
+  Res : UInt64;
+  Scn : PName;
+  PlaySceneData : TPlaySceneData;
+  SurfElemData : TSurfElemData;
+  i: integer;
+  sn: integer;
+  sData: WideString;
+begin
+  PlaySceneData.Create;
+  SurfElemData.Create;
+
+  OpenRecords(0, nil);
+  try
+    if CountriesScene.text[0] <> #0 then
+      begin
+        CloseScene(@CountriesScene, FLT_UNDEF, nil);
+        CountriesScene.text[0] := #0;
+      end;
+    Res := PlayScene('Countries', 0.0, 0, VideoTrunk, @PlaySceneData);
+    if Res = JTP_OK
+      then System.SysUtils.StrCopy(CountriesScene.text, PlaySceneData.SceneName.text)
+      else Exit;
+    for i:=1 to iTanksNum do
+      begin
+        sn := 2*(i-1)+1;
+        Res := UpdateSurfaceElement(@CountriesScene, 'Countries', sn, 1,
+                                PAnsiChar(Vehicles[TankIdRelative[i]].FlagPic), nil, nil,
+                                INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData);
+        if Res <> JTP_OK then begin
+          //AddErrorStrings( SurfElemData.pErrorsStr );
+        end;
+        sData := CaptionParamStorage.GetParamDataIdx(cpiTeam_name, i);
+        Res := UpdateSurfaceElement(@CountriesScene, 'Countries', sn+1, 1, nil, PWideChar(sData), nil,
+                                INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData);
+        if Res <> JTP_OK then begin
+          //AddErrorStrings( SurfElemData.pErrorsStr );
+        end;
+      end;
+  finally
+    CloseRecords(0, nil);
+  end;
+end;
+
+procedure CloseCountries;
+begin
+  if CountriesScene.text[0] <> #0 then
+    begin
+      OpenRecords(0, nil);
+
+      CloseScene(@CountriesScene, FLT_UNDEF, nil);
+      CountriesScene.text[0] := #0;
+
+      CloseRecords(0, nil);
+    end;
 end;
 
 ////////////////////////////////////////////

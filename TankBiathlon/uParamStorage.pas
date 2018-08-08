@@ -18,6 +18,10 @@ type
     FOnParamChanged: TParamChangedEvent;
     FOnEndUpdate: TNotifyEvent;
     FUpdating: boolean;
+  public
+    constructor Create;
+    procedure BeginUpdate;
+    procedure EndUpdate;
     function GetParamData(Descr: TParamDescr): string;
     procedure SetParamData(Descr: TParamDescr; const Value: string);
     function GetParamDataIdx(const AParamIndex: TCaptionParamIdx;
@@ -25,10 +29,6 @@ type
     procedure SetParamDataIdx(const AParamIndex: TCaptionParamIdx;
                               const ATankId: integer;
                               const Value: string);
-  public
-    constructor Create;
-    procedure BeginUpdate;
-    procedure EndUpdate;
     procedure SetParamDataV(const AParamIndex: TCaptionParamIdx;
                             const ATankId: integer;
                             const Value: string); overload;
