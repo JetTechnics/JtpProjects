@@ -216,7 +216,7 @@ begin
       OutWindows[1] := Out2VideoPanel.Handle;
       OutWindows[2] := 0;
       OutWindows[3] := 0;
-      Res := pStartFunc( 0, self, @OutWindows, nil, VideoCloseSetsFunc, nil );
+      Res := pStartFunc( 0, Application, @OutWindows, nil, VideoCloseSetsFunc, nil );
     end;
 
   end;
