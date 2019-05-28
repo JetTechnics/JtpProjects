@@ -210,7 +210,7 @@ begin
   // All flags
   SetLength(Textures, Length(FlagsList)+3);
   k := Low(Textures);
-  FlagsList := TDirectory.GetFiles('C:/_TankBiathlon2018/Resources/Flags', '*.tga');
+  FlagsList := TDirectory.GetFiles('C:/_TankBiathlon_2019/Resources/Flags', '*.tga');
   for i:=Low(FlagsList) to High(FlagsList) do
     begin
       s := AnsiString('Resources\Flags\' + ExtractFileName(FlagsList[i]));
@@ -223,7 +223,7 @@ begin
   Textures[k+2].Text[0] := #0;
 
   //  Проект
-  ProjectPath[0].text := 'C:/_TankBiathlon2018/Resources/TankBiathlon.txt';
+  ProjectPath[0].text := 'C:/_TankBiathlon_2019/Resources/TankBiathlon.txt';
   ProjectPath[1].text := '';
 
   // Загрузим проект со сценами, текстурами и т.д.
