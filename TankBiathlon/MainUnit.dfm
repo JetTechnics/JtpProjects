@@ -38,9 +38,9 @@ object MainForm: TMainForm
   end
   object LogListBox: TListBox
     Left = 8
-    Top = 734
+    Top = 768
     Width = 1568
-    Height = 148
+    Height = 114
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -51,7 +51,7 @@ object MainForm: TMainForm
   end
   object Poligon2DGroupBox: TGroupBox
     Left = 8
-    Top = 160
+    Top = 192
     Width = 265
     Height = 249
     Caption = ' '#1055#1086#1083#1080#1075#1086#1085' 2D '
@@ -281,7 +281,7 @@ object MainForm: TMainForm
   end
   object CrewButton: TButton
     Left = 8
-    Top = 672
+    Top = 704
     Width = 60
     Height = 25
     Caption = #1069#1082#1080#1087#1072#1078
@@ -291,7 +291,7 @@ object MainForm: TMainForm
   end
   object CloseCrewButton: TButton
     Left = 70
-    Top = 672
+    Top = 704
     Width = 59
     Height = 25
     Caption = #1047#1072#1082#1088#1099#1090#1100
@@ -301,7 +301,7 @@ object MainForm: TMainForm
   end
   object OtsechkaButton: TButton
     Left = 8
-    Top = 703
+    Top = 735
     Width = 60
     Height = 25
     Caption = #1054#1090#1089#1077#1095#1082#1072
@@ -311,7 +311,7 @@ object MainForm: TMainForm
   end
   object CloseOtsechkaButton: TButton
     Left = 70
-    Top = 703
+    Top = 735
     Width = 59
     Height = 25
     Caption = #1047#1072#1082#1088#1099#1090#1100
@@ -330,17 +330,15 @@ object MainForm: TMainForm
   end
   inline GPSServerConnectFrame1: TGPSServerConnectFrame
     Left = 8
-    Top = 67
+    Top = 99
     Width = 265
     Height = 87
     TabOrder = 9
     ExplicitLeft = 8
-    ExplicitTop = 67
+    ExplicitTop = 99
     ExplicitWidth = 265
     inherited GPSServerGroup: TGroupBox
-      Left = 0
       Width = 265
-      ExplicitLeft = 0
       ExplicitWidth = 265
       inherited lblGpsAddr: TLabel
         Top = 22
@@ -377,7 +375,7 @@ object MainForm: TMainForm
   end
   object CaptionsGroupBox: TGroupBox
     Left = 8
-    Top = 415
+    Top = 447
     Width = 265
     Height = 251
     Caption = ' '#1058#1080#1090#1088#1099' '
@@ -546,7 +544,7 @@ object MainForm: TMainForm
   end
   object Button1: TButton
     Left = 144
-    Top = 672
+    Top = 704
     Width = 75
     Height = 25
     Caption = 'Button1'

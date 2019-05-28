@@ -4,20 +4,12 @@ interface
 
 uses
   Windows,
-  TypesJTP, Decklink, PluginJTP, Vector;
+  TypesJTP, VideoSetsHeader, PluginJTP, Vector;
 
 
 const  JTPStudioPath = 'C:\Program Files\JTPStudio\';
 const  JTPStudioDLL = JTPStudioPath + 'JTPStudioNew.dll';
 
-
-const  MAX_VIDEO_DEVICES = 16;    //  Макисмальное кол-во видео устройств.
-const  LAST_VIDEO_DEVICE = MAX_VIDEO_DEVICES - 1;
-
-const  MAX_VIDEO_TRUNKS = 4;    //  Макисмальное кол-во стволов.
-const  LAST_VIDEO_TRUNK = MAX_VIDEO_TRUNKS - 1;
-
-const  MAX_PREVIEW_WINDOWS = 4;
 
 
 //     Video device types.
@@ -29,69 +21,16 @@ const  SIMULATOR_VIDEO_DEVICE     : DWORD = $00000010;
 
 
 
-//   VideoTrunk. Ствол видео вывода.
-Type TVideoTrunk = record
-
-  Size               : integer;    //  Размер стр-ры TVideoTrunk.
-
-//  ScreensLayout      : integer;    //  Расположение экранов в стволе: 1х девайс (TrunkScreens_1x1), 2х1 девайсы (TrunkScreens_2x1) и т.д.
-  ScreensHorizontal  : integer;    //  Кол-во экранов по горизонтали.
-  ScreensVertical    : integer;    //  Кол-во экранов по вертикали.
-
-  ScreensRotate      : integer;    //  Повороты экрана. Например, TrunkVideo_90R и т.д.
-
-  Flags              : integer;    //  Различные флаги. Например, TrunkVideo_SD_16_9 и т.д.
-
-  OutputDisplayMode  : integer;    //  Режим видео вывода. Например, bmdModeHD1080i50, bmdModePAL и т.д.
-  OutputPixelFormat  : integer;    //  Формат пикселя на выход. Например, bmdFormat8BitBGRA  и т.д.
-  hOutWindow         : HWND;       //  Окно вывода видео картинки.
-
-  InputDisplayMode   : integer;    //  Режим захвата видео. Например, bmdModeHD1080i50, bmdModePAL и т.д.
-  InputPixelFormat   : integer;    //  Формат пикселя на вход. Например, bmdFormat8BitBGRA  и т.д.
-
-  AlphaChannelTrunk  : integer;    //  Индекс ствола, используемого как альфа-канал. -1 - не используется.
-
-  GpuIndex           : integer;    //  Какой GPU в системе использовать для рендера ствола.
-
-  pExtensions        : pointer;    //  Расширения для нестандарного применеия. Например, симулятор VideoCapture (играем из видео файла)
-
-  OutDevices   : array [0..LAST_VIDEO_DEVICE] of integer;
-  InputDevices : array [0..LAST_VIDEO_DEVICE] of integer;
-
-  Reserves     : array [0..127] of integer;   //  Резерв.
-
-  FrameWidthFactor   : integer;    //  Не используется.
-  Rect               : TJTPRect;      //  Не используется.
-  pWindowRender      : pointer;    //  Не используется.
-
-  procedure ClearForDecklink();
-end;
-
-PVideoTrunk = ^TVideoTrunk;
-
-
-//    Повороты экранов в стволе (для TVideoTrunk.ScreensRotate).
-const TrunkScreens_90R    : integer = $00000001;   //  Перевернуть вправо.
-const TrunkScreens_90L    : integer = $00000002;   //  Перевернуть влево.
-const TrunkScreens_180    : integer = $00000004;   //  Перевернуть на 180 градусов.
-
-//    Флаги для TVideoTrunk.Flags
-const TrunkVideo_SD_16_9      : integer = $00000001;   //  Режим SD (PAL 4/3) растягивается до 16/9.
-const TrunkVideo_KeyPass      : integer = $00000002;   //  Кейер на проход.
-const TrunkVideo_VertBlur     : integer = $00000004;   //  Только вертикальный блюр (для кадра без альфы).
-const TrunkVideo_ProcessMouse : integer = $00000008;   //  Ловит событие от мыши в окне, к которому привязано это окно.
-
-//    Выбор GPU по умолчанию для рендера.
-const TrunkVideo_GpuDefault : integer = -1;
-
-
 Type PHWnd = ^HWND;
 
 
 const MaxErrorString = 4096;
 
+
 Type TJtpFuncData = object
+  Version : integer;
   pErrorsStr : PAnsiChar;
+  //procedure Init;
   Constructor Create;
 end;
 PJtpFuncData = ^TJtpFuncData;
@@ -123,14 +62,22 @@ const EM_MBUTTON_DOWN  :  integer = $00000020;    //  Удерживаем центральную кла
 //const EM_MWHEEL        :  integer = $00000040;    //  крутим центральное колесо (значение в iValue[0])
 
 
+
+
 //////////////   P R O X Y    E N G I N E    F U N C T I O N S     ///////////////
 
-function Get3DEngineVersion() : UInt64;  stdcall;  external JTPStudioDLL;
+function Get3DEngineVersion() : JtpRes;  stdcall;  external JTPStudioDLL;
 //  Получить версию движка.
 
 
+Type TEnumVideoDevices = object(TJtpFuncData)
+  NumRequestSimulators : integer;  // Кол-во запрашиваемых симуляторов.
 
-function EnumerateVideoDevices( DeviceType: DWORD;  DevicesNames: PStr256;  Params: DWORD;  pFuncData: pointer ) : UInt64;  stdcall;  external JTPStudioDLL;
+  constructor Create();
+end;
+PEnumVideoDevices = ^TEnumVideoDevices;
+
+function EnumerateVideoDevices( DeviceType: DWORD;  DevicesNames: PStr256;  Params: DWORD;  pFuncData: PEnumVideoDevices ) : JtpRes;  stdcall;  external JTPStudioDLL;
 //  Записывает имена видео плат. В случае успеха возвращает OK.
 //  В последний DevicesNames записывает 0.
 //  Params:
@@ -138,140 +85,182 @@ function EnumerateVideoDevices( DeviceType: DWORD;  DevicesNames: PStr256;  Para
 
 
 
-function InitVideo( VideoTrunks: PVideoTrunk;  Params: DWORD;  pInitVideoDesc: pointer) : UInt64;  stdcall;  external JTPStudioDLL;
-//  Устанавливает конфигурацию видео стволов и инициализирует устройства в них.
+Type TInitVideo = object(TJtpFuncData)
+  NumRenderFrames : integer;  //  Кол-во запасённых отрисованных кадров.
+
+  NumTimingFrames : integer;  //  Кол-во измерений времени.
+  TimingItems : dword;        //  Какие участки движка измерять.
+
+  constructor Create();
+end;
+PInitVideo = ^TInitVideo;
+
+const TIMING_RENDER_WAIT      : dword = $00000001;  // время ожидания движком, когда видео девайсы заберут кадр.
+const TIMING_RENDER           : dword = $00000002;  // время отрисовки кадра.
+const TIMING_COPY_DEVICE      : dword = $00000004;  // время копирования кадра на видео девайс.
+const TIMING_RNDR_FILLS       : dword = $00000008;  // сколько кадров рендера запасено.
+const TIMING_OUT_SYNCS        : dword = $00000010;  // время синхронизации девайсов на выдачу.
+const TIMING_WAIT_RNDR_FRAME  : dword = $00000020;  // сколько девайсы ждут отрисованного кадра.
+const TIMING_INPUT_READIES    : dword = $00000040;  // сколько накоплено входных буферов.
+const TIMING_INPUT_WAITS      : dword = $00000080;  // сколько ожидаем входной буфер.
+
+
+function InitVideo( Params: DWORD;  VideoTrunks: PVideoTrunk;  VideoInputProperties: PVideoInputProperties;  pInitVideo: PInitVideo )
+                  : JtpRes;  stdcall;  external JTPStudioDLL;
+//  Устанавливает конфигурацию видео стволов и инициализирует устройства на вывод или ввод.
+		//  Params - сейчас 0.
 		//  VideoTrunks - стволы видео вывода/ввода.
-		//  Params - не используется
-		//  pInitVideoDesc - указатель на
-  		  type TInitVideoDesc = record
-	    		Version : integer;          //  версия.
-	    		VerticalBlur : single;      //  блюр пикселей при interlaced-трансляции.
-		    	ScreenAlpha : single;       //  прозрачность всей картинки.
-	  	    ClearColor : dword;
-          pErrorsStr : PAnsiChar;     //  Текст ошибки, если произошла.
-		    end;
+		//  pInitVideoDesc - указатель на TInitVideo
 
 
 
-function LoadProject( ProjectPath: PPath;  TexturePathes: PPath;  Params: DWORD;  pLoadProjectData: pointer ) : UInt64;  stdcall;  external JTPStudioDLL;
+Type TLoadProjectData = object(TJtpFuncData)
+  NumScenes : integer;     // количество сцен в проекте.
+  pSceneNames : PName;     // имена сцен.
+
+  NumVariables : integer;  // количество переменных в проекте. Сейчас не используется.
+  pProjVarNames : PName;   // имена переменных.
+
+  constructor Create();
+end;
+PLoadProjectData = ^TLoadProjectData;
+
+function LoadProject( ProjectPath: PPath;  TexturePathes: PPath;  Params: DWORD;  pLoadProjectData: PLoadProjectData ) : JtpRes;  stdcall;  external JTPStudioDLL;
 //  Загружает проект трансляции.
 		//  ProjectPath - файл проекта, где прописаны пути к сценам и переменные проекта.
 		//  TexturePathes - пути к картинкам (фото, логотипы и т.д.). В последний TexturePathes записываем 0.
-    //  pLoadProjectData - указатель на TJtpLoadProjectData.
-        Type TJtpLoadProjectData = object(TJtpFuncData)
-          NumScenes : integer;     // количество сцен в проекте.
-					pSceneNames : PName;     // имена сцен.
-          NumVariables : integer;  // количество переменных в проекте. Сейчас не используется.
-					pProjVarNames : PName;   // имена переменных.
-        end;
+    //  pLoadProjectData - указатель на TLoadProjectData.
 
 
 
-Type
-  TErrorsCallbackPtr = function ( pErrors : PAnsiChar;  pReserved : pointer ) : dword;  stdcall;
+Type TErrorsCallbackPtr = function ( pErrors : PAnsiChar;  pReserved : pointer ) : dword;  stdcall;
+//  Функция, куда сыпятся ошибки из движка.
 
-function StartEngine( Version: integer;  Params: DWORD;  pErrorsCallback : TErrorsCallbackPtr;  pStartEngineData: pointer ) : UInt64;  stdcall;  external JTPStudioDLL;
+Type TStartEngineData = object(TJtpFuncData)
+  constructor Create();
+end;
+PStartEngineData = ^TStartEngineData;
+
+function StartEngine( SoftVersion: integer;  Params: DWORD;  pErrorsCallback : TErrorsCallbackPtr;  pStartEngineData: PStartEngineData ) : JtpRes;  stdcall;  external JTPStudioDLL;
 //  Стартуем движек.
-		//  Version = 1.
 
 
-function CloseEngine( Params: DWORD ) : UInt64;  stdcall;  external JTPStudioDLL;
+
+function CloseEngine( Params: DWORD; pReserved : pointer ) : JtpRes;  stdcall;  external JTPStudioDLL;
 //  Закрывает движек.
     //  Params - не используется.
+    //  pReserved - не используется.
 
 
 
-function OpenRecords( Params: DWORD;  pReserve: pointer ) : UInt64;  stdcall;  external JTPStudioDLL;
+function OpenRecords( Params: DWORD;  pReserve: pointer ) : JtpRes;  stdcall;  external JTPStudioDLL;
 //  Открывает запись действий для движка.
 
-function CloseRecords( Params: DWORD;  pReserve: pointer ) : UInt64;  stdcall;  external JTPStudioDLL;
+function CloseRecords( Params: DWORD;  pReserve: pointer ) : JtpRes;  stdcall;  external JTPStudioDLL;
 //  Закрывает запись действий для движка.
 
 
 
-function PlayScene( SceneName: PAnsiChar;  Delay: single;  Mode: dword;  TrunkIndex: integer;  pPlaySceneData: pointer ) : UInt64;  stdcall;  external JTPStudioDLL;
+Type TPlayScene = object(TJtpFuncData)
+  SceneName: TName;   //  Имя созданной сцены. Например будет возвращено 'MyScene_Trunk1'.
+  hPreviewWnds : array[0..MAX_PREVIEW_WINDOWS-1] of HWND;  //  Окна для превью.
+  Constructor Create;
+end;
+PPlayScene = ^TPlayScene;
+
+function PlayScene( SceneName: PAnsiChar;  Delay: single;  Mode: dword;  TrunkIndex: integer;  pPlayScene: PPlayScene ) : JtpRes;  stdcall;  external JTPStudioDLL;
 //  Запускает сцену.
 		//  SceneName  - имя сцены.
 		//  Delay      - задержка, когда сцена появится на экране.
     //  Mode       - режим (не используется).
     //  TrunkIndex - индекс ствола (от 1 до MAX_VIDEO_TRUNKS).
-    //  pPlaySceneData - указатель на TPlaySceneData.
-
-		Type TPlaySceneData = object(TJtpFuncData)
-		  SceneName: TName;   //  Имя созданной сцены. Например будет возвращено 'MyScene_Trunk1'.
-		  hPreviewWnds : array[0..MAX_PREVIEW_WINDOWS-1] of HWND;  //  Окна для превью.
-      Constructor Create;
-		end;
-    PPlaySceneData = ^TPlaySceneData;
+    //  pPlayScene - указатель на TPlayScene.
 
 
-function CloseScene( SceneName: PAnsiChar;  Delay: single;  pCloseSceneData : PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
+
+function CloseScene( SceneName: PAnsiChar;  Delay: single;  Flags: dword;  pCloseScene : PJtpFuncData ) : JtpRes;   stdcall; external JTPStudioDLL;
 //  Закрывает сцену.
     //  SceneName  - имя сцены.
-		//  Delay - задержка на закрытие сцены. Если FLT_UNDEF - задержка берётся из данных сцены.
-    //  pCloseSceneData - укзатель на TJtpFuncData.
+		//  Delay - задержка на закрытие сцены. Если FLT_UNDEF - задержка берётся из данных сцены. Если Delay=0, сцена уничтожается моментально.
+    //  Flags - флаги, сейчас ноль.
+    //  pCloseScene - указатель на TCloseScene.
 
 
 type
-  TSceneFrameFunc = function ( SceneName: PAnsiChar;  Flags: dword;  pEvents: PJtpEvent;  FrameTime: single;  pReserve: pointer ) : UInt64;  stdcall;
+  TSceneFrameFunc = function ( SceneName: PAnsiChar;  Flags: dword;  pEvents: PJtpEvent;  FrameTime: single;  pReserve: pointer ) : JtpRes;  stdcall;
 
-function SetSceneProcessCallback( SceneName: PAnsiChar;  SceneFunc: TSceneFrameFunc;  Flags: dword;  pPlaySceneData : PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
+function SetSceneProcessCallback( SceneName: PAnsiChar;  SceneFunc: TSceneFrameFunc;  Flags: dword;  pPlayScene : PJtpFuncData ) : JtpRes;   stdcall; external JTPStudioDLL;
 //  Задаёт пользовательскую функцию обработки сцены. Вызывается из движка.
 
 
 
-function GetSceneInfo( SceneName: PAnsiChar;  pSceneInfoData: pointer ) : UInt64;   stdcall; external JTPStudioDLL;
+Type TSceneInfo = object(TJtpFuncData)
+  NumObjects: integer;       //  количество объектов в сцене.
+  pObjectsNames: PName;      //  имена объектов.
+
+  NumScenaries: integer;     //  количество сценариев в сцене.
+  pScenariesNames: PName;    //  имена сценариев.
+
+  Constructor Create;
+end;
+PSceneInfo = ^TSceneInfo;
+
+function GetSceneInfo( SceneName: PAnsiChar;  pSceneInfo: PSceneInfo ) : JtpRes;   stdcall; external JTPStudioDLL;
 //  Перечисляет объекты в сцене.
 		//  SceneName  - имя сцены.
-    //  pSceneInfoData - указатель на структуру TSceneInfoData. После вызова имена объектов надо скопировать куда-либо.
-		//																													Т.к. pSceneInfoData будет не валиден после CloseRecords.
-
-    Type TSceneInfoData = object(TJtpFuncData)
-      NumObjects: integer;       //  количество объектов в сцене.
-		  pObjectsNames: PName;      //  имена объектов.
-
-      NumScenaries: integer;     //  количество сценариев в сцене.
-      pScenariesNames: PName;    //  имена сценариев.
-      Constructor Create;
-		end;
+    //  pSceneInfo - указатель на структуру TSceneInfo. После вызова имена объектов, сценариев и т.д. надо скопировать куда-либо.
+    //               Т.к. pSceneInfo будет валиден до следующего вызова GetSceneInfo или CloseRecords.
 
 
 
-function GetObjectInfo( SceneName, ObjectName: PAnsiChar;  pObjectInfoData: pointer ) : UInt64;   stdcall; external JTPStudioDLL;
+Type TObjectInfo = object(TJtpFuncData)
+  pObjName : PName;           //  имя объекта.
+  ObjectType: integer;        //  тип объекта, см. типы объектов в TypesJTP.pas.
+
+  NumAnimations: integer;     //  количество анимаций у объекта.
+  pAnimationsNames : PName;   //  имена анимаций объекта.
+
+  NumSurfElems : integer;			//  количество элементов поверхности.
+
+  Constructor Create;
+end;
+PObjectInfo = ^TObjectInfo;
+
+function GetObjectInfo( SceneName, ObjectName: PAnsiChar;  pObjectInfo: PObjectInfo ) : JtpRes;   stdcall; external JTPStudioDLL;
 //  Получает информацию об объекте сцены.
     //  SceneName  - имя сцены.
     //  ObjectName - имя объекта.
-    //  pObjectInfoData - указатель на структуру TObjectInfoData. Будет не валиден после CloseRecords.
-
-    Type TObjectInfoData = object(TJtpFuncData)
-      pObjName : PName;           //  имя объекта.
-      ObjectType: integer;        //  тип объекта, см. типы объектов в TypesJTP.pas.
-
-      NumAnimations: integer;     //  количество анимаций у объекта.
-      pAnimationsNames : PName;   //  имена анимаций объекта.
-
-      NumSurfElems : integer;			//  количество элементов поверхности.
-    end;
+    //  pObjectInfo - указатель на структуру TObjectInfo. Будет валиден до следующего вызова GetObjectInfo или CloseRecords.
 
 
 
-function CloneObject( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize, pColor : PVector;  Delay : single;  Flags: dword;  pCloneObjectData: pointer ) : UInt64;   stdcall; external JTPStudioDLL;
+Type TCloneObject = object(TJtpFuncData)
+  ObjectName: TName;   //  Имя полученного объекта.
+  Constructor Create;
+end;
+PCloneObject = ^TCloneObject;
+
+function CloneObject( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize, pColor : PVector;  Delay : single;  Flags: dword;  pCloneObject: PCloneObject )
+                     : JtpRes;   stdcall; external JTPStudioDLL;
 //  Клонируем объект.  несут смещение относительно клонируемого, если nil, то не учитываем.
 		//  Delay - задержка клонирования.
     //  pPos, pOrient, pSize, pColor - указатели на вектора. Смещение, поворот относительно исходного объекта.
     //                               - pSize, pColor : размер и цвет нового объекта.
     //  Если какой-либо указатель nil, то не учитывается. Если какой-либо компонент вектора равен FLT_UNDEF, то компонент не учитывается.
 
-    Type TCloneObjectData = object(TJtpFuncData)
-		  ObjectName: TName;   //  Имя полученного объекта.
-      Constructor Create;
-		end;
-    PCloneObjectData = ^TCloneObjectData;
 
 
+
+Type TSurfElemData = object(TJtpFuncData)
+  I : integer;    //  Индекс нового элемента (для CloneSurfaceElement).
+  W : integer;    //  Получаемая длина строки в пикселях. Если W=1 - получаем длину строки, 0 - не получаем.
+  H : integer;    //  Получаемая высота строки в пикселях. Если H=1 - получаем длину строки, 0 - не получаем.
+  Constructor Create;
+end;
+PSurfElemData = ^TSurfElemData;
 
 function UpdateSurfaceElement( SceneName, ObjectName: PAnsiChar;  Index, NumTex: integer;  PicturePath : PAnsiChar;  Text: PWideChar;  pColor : PJTPColor;
-                               X,Y, W,H: integer;  Delay: single;  Flags: dword;   pUpdateSurfElemData : pointer ) : UInt64;   stdcall; external JTPStudioDLL;
+                               X,Y, W,H: integer;  Delay: single;  Flags: dword;   pUpdateSurfElemData : PSurfElemData ) : JtpRes;   stdcall; external JTPStudioDLL;
 //  Обновить элемент поверхности. Это может быть текст или иконка.
     //  SceneName, ObjectName - имена сцены и объекта.
     //  Index - номер эелемента, NumTex - номер текстуры внутри объекта (слой). Начиная от 1-го.
@@ -282,17 +271,11 @@ function UpdateSurfaceElement( SceneName, ObjectName: PAnsiChar;  Index, NumTex:
     //  Flags = 0.
     //  pUpdateSurfElemData - указатель на TSurfElemData.
 
-    Type TSurfElemData = object(TJtpFuncData)
-      I : integer;    //  Индекс нового элемента (для CloneSurfaceElement).
-      W : integer;    //  Получаемая длина строки в пикселях. Если W=1 - получаем длину строки, 0 - не получаем.
-      Constructor Create;
-    end;
-    PSurfElemData = ^TSurfElemData;
 
 
 
 function CloneSurfaceElement( SceneName, ObjectName: PAnsiChar;  Index, NumTex: integer;  PicturePath : PAnsiChar;  Text: PWideChar;  pColor : PVector;
-															X,Y, W,H : integer;  Delay: single;  Flags: dword;  pCloneSurfElemData : pointer ) : UInt64;   stdcall; external JTPStudioDLL;
+															X,Y, W,H : integer;  Delay: single;  Flags: dword;  pCloneSurfElemData : PSurfElemData ) : JtpRes;   stdcall; external JTPStudioDLL;
 //  Клонировать элемент поверхности. Это может быть текст или иконка.
 		//  SceneName, ObjectName - имена сцены и объекта.
     //  Index - номер элемента, от которого клонируем, NumTex - номер текстуры внутри объекта (слой). Начиная от 1-го.
@@ -307,17 +290,17 @@ function CloneSurfaceElement( SceneName, ObjectName: PAnsiChar;  Index, NumTex: 
 
 
 
-function PlayAnimation( SceneName, ObjectName, AnimationName : PAnsiChar;  Delay: single;  AnimFlags: dword;  pPlayAnimationData: pointer ) : UInt64;
+function PlayAnimation( SceneName, ObjectName, AnimationName : PAnsiChar;  Delay: single;  AnimFlags: dword;  pPlayAnimation: PJtpFuncData ) : JtpRes;
 										    stdcall; external JTPStudioDLL;
 //  Проиграть анимацию у объекта сцены. Анимация создана заранее в редакторе.
 		//  SceneName, ObjectName, AnimationName - имена сцены, объекта и анимации.
     //  Delay - задержка на запуск анимации. Она плюсуется к времени старта анимации в редакторе.
-    //  pPlayAnimationData - указатель на TJtpFuncData.
+    //  pPlayAnimation - указатель на TJtpFuncData.
 
 
 
 function PlayAnimationSmooth( SceneName, UnitName : PAnsiChar;  Delay: single;  AnimFlags: dword;  pFrom, pTo: PVector;  SmoothType: dword;
-											        SmoothFactor: single;  Duration: single;  pPlayAnimationData: pointer ) : UInt64;    stdcall; external JTPStudioDLL;
+											        SmoothFactor: single;  Duration: single;  pPlayAnimation: PJtpFuncData ) : JtpRes;    stdcall; external JTPStudioDLL;
 //  Создать и прогирать анимацию у объекта сцены. Анимация может быть с мягкими ключами (плавное ускорене и торможение).
 		//  SceneName, ObjectName - имена сцены и объекта.
     //  Delay - задержка на запуск анимации.
@@ -326,11 +309,11 @@ function PlayAnimationSmooth( SceneName, UnitName : PAnsiChar;  Delay: single;  
     //  SmoothType - тип мягкого ключа. См. коды мягких ключей в TypesJTP.pas.
     //  SmoothFactor - степень мягкости.
     //  Duration - длительность анимации.
-    //  pPlayAnimationData - указатель на TJtpFuncData.
+    //  pPlayAnimation - указатель на TJtpFuncData.
 
 
 
-function PlayScenario( SceneName, ScenarioName : PAnsiChar;  Delay: single;  Flags: dword;  pPlayScenario: PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
+function PlayScenario( SceneName, ScenarioName : PAnsiChar;  Delay: single;  Flags: dword;  pPlayScenario: PJtpFuncData ) : JtpRes;   stdcall; external JTPStudioDLL;
 //  Проиграть сценарий сцены.
 		//  SceneName - именя сцены.
     //  ScenarioName - имя сценария.
@@ -348,7 +331,7 @@ PSetObjectSpace = ^TSetObjectSpace;
 
 
 function SetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize, pDir, pTarget : PVector;  pColor : PJTPColor;  Delay: single;
-												 Flags: dword;  pSetObjectSpace: PSetObjectSpace ) : UInt64;   stdcall; external JTPStudioDLL;
+												 Flags: dword;  pSetObjectSpace: PSetObjectSpace ) : JtpRes;   stdcall; external JTPStudioDLL;
 //  Установить пространственные коор-ты объекта. Это позиция, ориентация, размер, направление, цвет.
 		//  SceneName, ObjectName - имена сцены и объекта.
     //  pPos, pOrient, pSize - позиция, ориентация и размер соответственно. Если nil, то вектор не учитывается.
@@ -365,14 +348,14 @@ function SetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize
 
 
 function GetObjectSpace( SceneName, ObjectName: PAnsiChar;  pPos, pOrient, pSize, pDir, pTarget : PVector;  pColor : PJTPColor;
-												 Flags: dword;  pGetObjectSpaceData: PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
+												 Flags: dword;  pGetObjectSpace: PJtpFuncData ) : JtpRes;   stdcall; external JTPStudioDLL;
 //  Получить пространственные коор-ты объекта.
     //  Параметры как в SetObjectSpace.
 
 
 
 function SetObjectTexture( SceneName, ObjectName: PAnsiChar;  TexturePath: PPath;  NumTex : integer;  Delay: single;
-                           Flags: dword;  pSetObjectTexture: PJtpFuncData ) : UInt64;   stdcall; external JTPStudioDLL;
+                           Flags: dword;  pSetObjectTexture: PJtpFuncData ) : JtpRes;   stdcall; external JTPStudioDLL;
 //  Установить объекту новую текстуру.
     //  SceneName, ObjectName - имена сцены и объекта.
     //  TexturePath - путь к текстуре. Если текстура не загружена, она загрузится с диска.
@@ -383,13 +366,38 @@ function SetObjectTexture( SceneName, ObjectName: PAnsiChar;  TexturePath: PPath
 
 
 
+function OutInputPictureToTrunk( InputDeviceIndex: integer;  TrunkIndex: integer;  Enable: integer;  Flags: dword;  pOutIPtoTrunk: PJtpFuncData ) :
+                                 JtpRes;   stdcall; external JTPStudioDLL;
+//  Выдать входную картинку на ствол выдачи.
+//  DeviceIndex - номер входного устройства.
+//  TrunkIndex - номер выходного ствола.
+//  Enable - 1/0 вкл/выкл выдачу.
+//  Flags:
+           const OIP_SHOW_ONLY_WINDOW : DWORD = $00000001;  //  Входная картинка подаётся только в окне play out ствола.
+           const OIP_HIDE_ALPHA : DWORD       = $00000002;  //  Альфа входной картинки очищается, попадает только цвет.
+//  pOutIPtoTrunk - указатель.
+
+
 
 
 /////////////    Р А Б О Т А   С   П Л А Г И Н А М И   /////////////////////////
 
-function  LoadPlugin( pPath : PPath;  PluginJTP : PPluginJTP ) : UInt64;   stdcall; external JTPStudioDLL;
+function  LoadPlugin( Path : PPath;  PluginJTP : PPluginJTP ) : JtpRes;   stdcall; external JTPStudioDLL;
+//  Загружает плагин из dll библиотеки.
+//  Path - путь к библиотеке.
+//  PluginJTP - конфигурация плагина: тип, версия и т.д.
 
 
+function  SendPluginCommand( PluginName : PAnsiChar;  Command : PAnsiChar;  pSendPluginCommand: PJtpFuncData ) : JtpRes;   stdcall; external JTPStudioDLL;
+//  Послать команду плагину.
+//  PluginName - имя плагина.
+//  Command - строковая команда (длина не ограничена).
+
+
+
+//function  SetPluginCallBack( PluginName, CallbackName : PAnsiChar;  pFunc: pointer;  SetPluginCallBackPtr : PJtpFuncData ) :
+//                             JtpRes;   stdcall; external JTPStudioDLL;
+//  Назначить callback плагину. Указывается имя плагина, имя callback-а и указатель на него.
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -398,23 +406,32 @@ function  LoadPlugin( pPath : PPath;  PluginJTP : PPluginJTP ) : UInt64;   stdca
 
 implementation
 
-Constructor TJtpFuncData.Create;
+//procedure TJtpFuncData.Init();
+Constructor TJtpFuncData.Create();
 begin
+  Version := 1;
   pErrorsStr := nil;
 end;
 
 
-Constructor TPlaySceneData.Create;
+
+Constructor TPlayScene.Create;
 var i : integer;
 begin
+  TJtpFuncData.Create();
+
 	SceneName.text[0] := #0;
+
   for i := 0 to (MAX_PREVIEW_WINDOWS-1) do
     hPreviewWnds[i] := 0;
 end;
 
 
-Constructor TSceneInfoData.Create;
+
+Constructor TSceneInfo.Create;
 begin
+  TJtpFuncData.Create();
+
 	NumObjects := 0;
   pObjectsNames := nil;
 
@@ -423,66 +440,87 @@ begin
 end;
 
 
-Constructor TCloneObjectData.Create;
+
+Constructor TObjectInfo.Create;
 begin
-	ObjectName.text[0] := #0;
+  TJtpFuncData.Create();
+
+  pObjName := nil;
+  ObjectType := 0;
+
+  NumAnimations := 0;
+  pAnimationsNames := nil;
+
+  NumSurfElems := 0;
+end;
+
+
+
+
+Constructor TCloneObject.Create;
+begin
+	TJtpFuncData.Create();
+
+  ObjectName.text[0] := #0;
 end;
 
 
 Constructor TSurfElemData.Create;
 begin
+  TJtpFuncData.Create();
+
   I := 0;
   W := 0;
+  H := 0;
 end;
 
 
 
 Constructor TSetObjectSpace.Create();
 begin
+  TJtpFuncData.Create();
+
   BillboardRingShift := FLT_UNDEF;
 end;
 
 
 
-
-procedure TVideoTrunk.ClearForDecklink();
-var device : integer;
-    i : integer;
+Constructor TEnumVideoDevices.Create();
 begin
-  Size := sizeof( TVideoTrunk );
+  TJtpFuncData.Create();
 
-//  ScreensLayout := 0;
-  ScreensHorizontal := 0;
-  ScreensVertical := 0;
-  ScreensRotate := 0;
-  Flags := 0;
+  NumRequestSimulators := 0;
+end;
 
-  OutputDisplayMode := 0; //bmdModeUnknown;
-  OutputPixelFormat := bmdFormat8BitBGRA;
-  hOutWindow := 0;
 
-  InputDisplayMode := 0;  //bmdModeUnknown;
-  InputPixelFormat := bmdFormat8BitBGRA;
 
-  AlphaChannelTrunk := -1;
+Constructor TInitVideo.Create();
+begin
+  TJtpFuncData.Create();
 
-  GpuIndex := TrunkVideo_GpuDefault;
+  NumRenderFrames := 4;
 
-  pExtensions := nil;
+  NumTimingFrames := 0;
+  TimingItems := 0;
+end;
 
-  FrameWidthFactor := 0;
 
-  with Rect do begin
-    x1 := 0;  x2 := 0;  y1 := 0;  y2 := 0;
-  end;
 
-  for device := 0 to LAST_VIDEO_DEVICE do begin
-    OutDevices[device] := -1;
-    InputDevices[device] := -1;
-  end;
+Constructor TLoadProjectData.Create();
+begin
+  TJtpFuncData.Create();
 
-  for i := 0 to 127 do
-    Reserves[i] := 0;
+  NumScenes := 0;
+	pSceneNames := nil;
+  NumVariables := 0;
+  pProjVarNames := nil;
+end;
+
+
+
+Constructor TStartEngineData.Create();
+begin
+  TJtpFuncData.Create();
 end;
 
 end.

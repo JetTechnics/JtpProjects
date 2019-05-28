@@ -8,39 +8,26 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
 
-  JTPStudio, TypesJTP, VideoSetsHeader, Decklink;
+  JTPStudio, TypesJTP, VideoSetsHeader;
 
 type
   TSettingsForm = class(TForm)
-    Out1TrunkBox: TGroupBox;
+
     VideoInputBox: TGroupBox;
-    Out1VideoModeBox: TComboBox;
+
     InputVideoModeBox: TComboBox;
-    Out1Device1Button: TRadioButton;
-    Out1Device2Button: TRadioButton;
+
     VideoSetsButtonOK: TButton;
-    InputDevice1Button: TRadioButton;
-    InputDevice2Button: TRadioButton;
-    Out1PassCheckBox: TCheckBox;
-    SimOutBox: TCheckBox;
-    SimInputBox: TCheckBox;
-    Out1Device3Button: TRadioButton;
-    InputDevice3Button: TRadioButton;
-    Out1TrunkCheckBox: TCheckBox;
-    Out2TrunkBox: TGroupBox;
-    Out2VideoModeBox: TComboBox;
-    Out2Device1Button: TRadioButton;
-    Out2Device2Button: TRadioButton;
-    Out2PassCheckBox: TCheckBox;
-    Out2Device3Button: TRadioButton;
-    Out2TrunkCheckBox: TCheckBox;
+    VideoModesBoxTemplate: TComboBox;
+    MultiScreensBoxTemplate: TComboBox;
+
     procedure VideoSetsButtonOKClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
   private
     FErrorFlag: integer;
-    procedure CreateSimulators;
+    //procedure CreateSimulators;
   public
     { Public declarations }
   end;
@@ -54,15 +41,15 @@ var
 
   gpCloseFunc: TVideoCloseSetsFunc;
 
-  VideoSets: TVideoSets;
+  GVideoSets: PVideoSets;
 
   DevicesNames : array[0..MAX_VIDEO_DEVICES] of Str256;   // 16 devices [0..15] + 17th [16] for null char.
 
-  VideoTrunks : array[0..LAST_VIDEO_TRUNK] of TVideoTrunk;
+  //VideoTrunks : array[0..LAST_VIDEO_TRUNK] of TVideoTrunk;
 
-  OutWindows : array [0..LAST_VIDEO_TRUNK] of HWND;
+  //OutWindows : array [0..LAST_VIDEO_TRUNK] of HWND;
 
-  TrunkFlags : array [0..LAST_VIDEO_TRUNK] of integer;
+  //TrunkFlags : array [0..LAST_VIDEO_TRUNK] of integer;
 
 
 implementation
@@ -70,30 +57,27 @@ implementation
 {$R *.dfm}
 
 
-function VideoStartSets( Flags: integer;  MainApp: TApplication;  OutWins: PHwndArray;  pTrunkFlags: PTrunkFlagsArray;  pCloseFunc: TVideoCloseSetsFunc;  pReserve: pointer ) : integer; stdcall;
-var trunk : integer;
+function GetVersionVideoSets( Flags: integer;  pReserve: pointer ) : integer; stdcall;
 begin
+  GetVersionVideoSets := 1;
+end;
+
+
+
+function VideoStartSets( Flags: integer;  MainApp: TApplication;  VideoSets : PVideoSets;{OutWins: PHwndArray;  pTrunkFlags: PTrunkFlagsArray;}
+                         pCloseFunc: TVideoCloseSetsFunc;  pReserve: pointer ) : integer; stdcall;
+//var trunk : integer;
+begin
+  GVideoSets := VideoSets;
+
   DllApp := Application;
   Application := MainApp;
 
   SettingsForm := TSettingsForm.Create(Application.MainForm);
   SettingsForm.Show();
 
-  if( OutWins <> nil ) then begin
-	  for trunk := 0 to LAST_VIDEO_TRUNK do
-  	  OutWindows[trunk] := OutWins^[trunk];
-  end else begin
-    for trunk := 0 to LAST_VIDEO_TRUNK do
-  	  OutWindows[trunk] := 0;
-  end;
-
-  if( pTrunkFlags <> nil ) then begin
-    for trunk := 0 to LAST_VIDEO_TRUNK do
-      TrunkFlags[trunk] := pTrunkFlags^[trunk];
-  end else begin
-    for trunk := 0 to LAST_VIDEO_TRUNK do
-      TrunkFlags[trunk] := 0;
-  end;
+  //  Надо создать TrunkBox-ы исходя из VideoSets.NumRequestTrunks.
+  //  ...
 
   gpCloseFunc := pCloseFunc;
 
@@ -101,9 +85,9 @@ begin
 end;
 
 
-procedure TSettingsForm.CreateSimulators;
+{procedure TSettingsForm.CreateSimulators;
 var
-  Res: UInt64;
+  Res: JtpRes;
   EnumParams : dword;
   DeviceType : dword;
   EnumDeviceData : TJtpFuncData;
@@ -120,67 +104,274 @@ begin
         begin
         end;
     end;
-end;
+end;}
+
 
 procedure TSettingsForm.FormActivate(Sender: TObject);
-var Res: UInt64;
-    trunk, device : integer;
+var Res: JtpRes;
+    trunk, device, dvy, ind, i : integer;
     EnumParams : dword;
-    DeviceType : dword;
+    DeviceTypes : dword;
     str : string;
+
+    EnumDeviceData : TEnumVideoDevices;
+
+    VideoForm : TForm;
+    FormWidth : integer;
+
     TrunkBox : TGroupBox;
-    DeviceButton : TRadioButton;
-    EnumDeviceData : TJtpFuncData;
+    TrunkBoxX, TrunkBoxW : integer;
+    pTrunk : PVideoTrunk;
+
+    DeviceBox, CheckBox : TCheckBox;
+    ComboBox : TComboBox;
+    MyLabel : TLabel;
+
+    VideoModeStrings, ScreenConfigStrings : TStrings;
+
+    sim_str : integer;
+    HardwarePresent : boolean;
 begin
   if( not FirstStart ) then
     exit;
 
+  VideoForm := TForm(Sender);
+  FormWidth := 200;
+
+  VideoSetsButtonOK.SetFocus();
+
   FirstStart := false;
-  FErrorFlag := -1;
+  FErrorFlag := 0;//-1;
 
   EnumParams := 0;
 
-  Out1VideoModeBox.ItemIndex := 0;
-  Out2VideoModeBox.ItemIndex := 0;
+  InputVideoModeBox.ItemIndex := 0;
 
-  DeviceType := DECKLINK_VIDEO_DEVICE;
+  EnumDeviceData.Create();
+  EnumDeviceData.NumRequestSimulators := GVideoSets.NumRequestSimulators;
 
-  //  Очистим стволы в значения по умолчанию. Назначим окна вывода видео.
-  for trunk := 0 to LAST_VIDEO_TRUNK do
-    VideoTrunks[trunk].ClearForDecklink();
-
-  // if( SimOutBox.Checked ) then begin
-  //   EnumParams := EnumParams or EnumVidDevsNoWarn;
-  //   DeviceType := SIMULATOR_VIDEO_DEVICE;
-  // end;
+  DeviceTypes := DECKLINK_VIDEO_DEVICE;
+  if( EnumDeviceData.NumRequestSimulators <> 0 ) then
+    DeviceTypes := DeviceTypes or SIMULATOR_VIDEO_DEVICE;
 
   //  Найдём видео девайсы.
-  Res := EnumerateVideoDevices( DeviceType, @DevicesNames, EnumParams, @EnumDeviceData );
+  Res := EnumerateVideoDevices( DeviceTypes, @DevicesNames, EnumParams, @EnumDeviceData );
+
   if( Res = JTP_OK ) then begin
+
+    //  Есть ли аппаратные девайсы в системе?
+    HardwarePresent := false;
+    for device := 0 to LAST_VIDEO_DEVICE do begin
+      if( DevicesNames[device].text[0] <> #0 )  then begin
+        i := pos( 'DeckLink', DevicesNames[device].text );
+        if( i <> 0 ) then begin
+          HardwarePresent := true;
+          break;
+        end;
+      end;
+    end;
+
+    //  Список видео-режимов.
+    ComboBox := TComboBox( VideoForm.FindChildControl('VideoModesBoxTemplate') );
+    if( ComboBox <> nil ) then
+      VideoModeStrings := ComboBox.Items;
+
+    //  Список конфигураций ствола (1x1, 2x1, ...).
+    ComboBox := TComboBox( VideoForm.FindChildControl('MultiScreensBoxTemplate') );
+    if( ComboBox <> nil ) then
+      ScreenConfigStrings := ComboBox.Items;
+
+    TrunkBoxX := 15;  TrunkBoxW := 230;
 
     //  Запишем имена девайсов в контролы на форме
 
     //  Проходим по GroupBox-ам стволов.
-    for trunk := 0 to LAST_VIDEO_TRUNK do begin
+    for trunk := 0 to GVideoSets.NumRequestTrunks-1 do begin
 
-      str := 'Out' + IntToStr(trunk+1) + 'TrunkBox';
-      TrunkBox := TGroupBox( TForm(Sender).FindChildControl( str ) );
-      if( TrunkBox <> nil ) then begin
+      pTrunk := @GVideoSets.Trunks[trunk-1];
 
-        //  Проходим по девайсам в стволе.
-        for device := 0 to LAST_VIDEO_DEVICE do begin
-          if( DevicesNames[device].text[0] <> #0 )  then begin
-            str := 'Out' + IntToStr(trunk+1) + 'Device' + IntToStr(device+1) + 'Button';
-            DeviceButton := TRadioButton( TrunkBox.FindChildControl( str ) );
-            if( DeviceButton <> nil ) then begin
-              //  Запишем имя девайса в контрол.
-              DeviceButton.Visible := true;
-              DeviceButton.Caption := String( DevicesNames[device].text );
-            end;
-          end;
+      //str := 'Trunk' + IntToStr(trunk+1) + 'Box';
+      //TrunkBox := TGroupBox( VideoForm.FindChildControl( str ) );
+      //if( TrunkBox <> nil ) then begin
+
+      //  Создадим GroupBox для ствола.
+      TrunkBox := TGroupBox.Create(VideoForm);
+      TrunkBox.Parent := VideoForm;
+      TrunkBox.Name := 'Trunk' + IntToStr(trunk+1) + 'Box';
+      TrunkBox.Caption := '';
+      TrunkBox.Visible := true;
+      TrunkBox.Left := TrunkBoxX;    inc(TrunkBoxX, 260);
+      TrunkBox.Top := 30;
+      TrunkBox.Width := TrunkBoxW;
+      TrunkBox.Height := 280;
+
+      //  Галоча "Вкл ствол"
+      CheckBox := TCheckBox.Create(VideoForm);
+      CheckBox.Parent := VideoForm;
+      CheckBox.Name := 'Trunk' + IntToStr(trunk+1) + 'EnableBox';
+      CheckBox.Caption := 'Видео - ствол ' + IntToStr(trunk+1);
+      CheckBox.Visible := true;
+      CheckBox.Left := TrunkBox.Left + 16;
+      CheckBox.Top := TrunkBox.Top - 7;
+      CheckBox.Width := 100;
+      CheckBox.Height := 17;
+if( trunk = 0 ) then CheckBox.Checked := true;
+
+      //  Список видео-режимов.
+      ComboBox := TComboBox.Create(TrunkBox);
+      ComboBox.Parent := TForm(TrunkBox);
+      ComboBox.Name := 'Trunk' + IntToStr(trunk+1) + 'VideoModeBox';
+      ComboBox.Visible := true;
+      ComboBox.Items := VideoModeStrings;
+      ComboBox.ItemIndex := 0;
+      ComboBox.Left := 16;
+      ComboBox.Top := 16;
+      ComboBox.Width := 170;
+      ComboBox.Height := 21;
+
+      //  Проходим по девайсам, создаём CheckBox для девайса, записываем его имя.
+      dvy := 50;    ind := 0;
+
+      for device := 0 to LAST_VIDEO_DEVICE do begin
+        if( DevicesNames[device].text[0] <> #0 )  then begin
+
+          //sim_str := pos( 'Simulator', DevicesNames[device].text );
+          //if( (sim_str <> 0) and (HardwarePresent) ) then
+          //  continue;
+
+          //  Выбраны симуляторы или аппаратные девайсы.
+          //if( (GVideoSets.SimulatorOutput = 0) and (sim_str <> 0) ) then
+          //  continue;
+          //if( (GVideoSets.SimulatorOutput <> 0) and (sim_str = 0) ) then
+          //  continue;
+
+          DeviceBox := TCheckBox.Create(TrunkBox);
+          DeviceBox.Parent := TrunkBox;
+          DeviceBox.Name := 'Device' + IntToStr(device+1);
+          DeviceBox.Caption := DevicesNames[device].text;
+          DeviceBox.Visible := true;
+          DeviceBox.Left := 16;
+          DeviceBox.Top := dvy;    inc(dvy,19);
+          DeviceBox.Width := 200;
+          DeviceBox.Height := 17;
+
+//if( ( trunk = 0 ) and ( ind >= 0 ) and ( ind <= 2 ) ) then  DeviceBox.Checked := true;
+//if( ( trunk = 1 ) and ( ind = 3 ) ) then  DeviceBox.Checked := true;
+
+if( ( trunk = 0 ) and ( ind = 0 ) ) then DeviceBox.Checked := true;
+if( ( trunk = 1 ) and ( ind = 1 ) ) then DeviceBox.Checked := true;
+
+          inc(ind);
         end;
       end;
+
+      //  Конфигурация ствола (1х1, 2х1, ...)
+      dvy := dvy + 15;
+      MyLabel := TLabel.Create(TrunkBox);
+      MyLabel.Parent := TrunkBox;
+      MyLabel.Name := 'Trunk' + IntToStr(trunk+1) + 'MultiScreenText';
+      MyLabel.Caption := 'Мульти экраны: ';
+      MyLabel.Visible := true;
+      MyLabel.Left := 16;
+      MyLabel.Top := dvy;
+      MyLabel.Width := 82;
+      MyLabel.Height := 17;
+
+      //  Список конфигураций ствола.
+      ComboBox := TComboBox.Create(TrunkBox);
+      ComboBox.Parent := TForm(TrunkBox);
+      ComboBox.Name := 'Trunk' + IntToStr(trunk+1) + 'MultiScreensBox';
+      ComboBox.Visible := true;
+      ComboBox.Items := ScreenConfigStrings;
+      ComboBox.Text := '1x1';
+      ComboBox.Left := MyLabel.Left + MyLabel.Width + 5;
+      ComboBox.Top := MyLabel.Top - 3;
+      ComboBox.Width := 49;
+      ComboBox.Height := 21;
+
+      // Галочка "На проход"
+      dvy := dvy + 30;
+      CheckBox := TCheckBox.Create(TrunkBox);
+      CheckBox.Parent := TrunkBox;
+      CheckBox.Name := 'Trunk' + IntToStr(trunk+1) + 'PassCheckBox';
+      CheckBox.Caption := 'На проход';
+      CheckBox.Visible := true;
+      CheckBox.Left := 16;
+      CheckBox.Top := dvy;
+      CheckBox.Width := 73;
+      CheckBox.Height := 17;
+      if( (pTrunk.Flags and TrunkVideo_KeyPass) <> 0 ) then
+        CheckBox.Checked := true
+      else
+        CheckBox.Checked := false;
+
+      // Галочка "Симулятор"
+      CheckBox := TCheckBox.Create(TrunkBox);
+      CheckBox.Parent := TrunkBox;
+      CheckBox.Name := 'Device' + IntToStr(device+1);
+      CheckBox.Caption := 'Симулятор';
+      CheckBox.Visible := true;
+      CheckBox.Left := 110;
+      CheckBox.Top := dvy;
+      CheckBox.Width := 70;
+      CheckBox.Height := 17;
+      if( (DeviceTypes and SIMULATOR_VIDEO_DEVICE) <> 0 ) then
+        CheckBox.Checked := true;
+
+      TrunkBox.Height := dvy + 30;
+
+      FormWidth := TrunkBox.Left + TrunkBoxW + 30;
+      //end;
     end;
+
+    //  Видео вход.
+    if( GVideoSets.InputProperties.Present <> 0 ) then begin
+
+      VideoInputBox.Left := TrunkBoxX + 20;
+      VideoInputBox.Visible := true;
+
+      // Запишем имена девайсов для видео входа.
+      dvy := 65;    ind := 0;
+      for device := 0 to LAST_VIDEO_DEVICE do begin
+        if( DevicesNames[device].text[0] <> #0 )  then begin
+
+          sim_str := ansipos( 'Simulator', DevicesNames[device].text );
+
+          //  Выбраны симуляторы или аппаратные девайсы.
+          //if( (GVideoSets.SimulatorInput = 0) and (sim_str <> 0) ) then
+          //  continue;
+          //if( (GVideoSets.SimulatorInput <> 0) and (sim_str = 0) ) then
+          //  continue;
+
+          DeviceBox := TCheckBox.Create(VideoInputBox);
+          DeviceBox.Parent := VideoInputBox;
+          DeviceBox.Name := 'Device' + IntToStr(device+1);
+          DeviceBox.Caption := DevicesNames[device].text;
+          DeviceBox.Visible := true;
+          DeviceBox.Left := 16;
+          DeviceBox.Top := dvy;    inc(dvy,19);
+          DeviceBox.Width := 200;
+          DeviceBox.Height := 17;
+
+  //if( ind = 3 ) then DeviceBox.Checked := true;
+
+          inc(ind);
+
+        end;
+      end;
+
+      VideoInputBox.Height := dvy + 15;
+
+      FormWidth := VideoInputBox.Left + VideoInputBox.Width + 50;
+    end;
+
+    VideoSetsButtonOK.Top := TrunkBox.Top + TrunkBox.Height + 30;
+
+    VideoForm.Width := FormWidth;
+    VideoForm.Height := VideoSetsButtonOK.Top + VideoSetsButtonOK.Height + 60;
+
+    VideoSetsButtonOK.Left := Round( (VideoForm.Width - VideoSetsButtonOK.Width) / 2 );
+
   end else begin
     FErrorFlag := 1;
     //  Show error.
@@ -196,10 +387,11 @@ begin
   Action := caFree;
   try
     if( Pointer(@gpCloseFunc) <> nil ) then
-      gpCloseFunc( FErrorFlag, @VideoSets );
+      gpCloseFunc( FErrorFlag, GVideoSets );
   except
   end;
 end;
+
 
 procedure TSettingsForm.FormDestroy(Sender: TObject);
 begin
@@ -207,130 +399,152 @@ begin
   SettingsForm := nil;
 end;
 
+
+
+function GetDisplayModeByIndex( Index: integer ) : integer;
+begin
+  GetDisplayModeByIndex := VideoModeNull;
+
+  if( Index = 0 )  then  GetDisplayModeByIndex := VideoModeHD1080i50;
+  if( Index = 1 )  then  GetDisplayModeByIndex := VideoModePAL;
+  if( Index = 2 )  then  GetDisplayModeByIndex := VideoMode4K2160p25;
+  if( Index = 3 )  then  GetDisplayModeByIndex := VideoMode4K2160p50;
+
+  if( Index = 5 )  then  GetDisplayModeByIndex := VideoModeHD1080p24;
+  if( Index = 6 )  then  GetDisplayModeByIndex := VideoModeHD1080p25;
+  if( Index = 7 )  then  GetDisplayModeByIndex := VideoModeHD1080p30;
+  if( Index = 8 )  then  GetDisplayModeByIndex := VideoModeHD1080p50;
+  if( Index = 9 )  then  GetDisplayModeByIndex := VideoModeHD1080p60;
+
+  if( Index = 11 ) then  GetDisplayModeByIndex := VideoModeHD1080i60;
+
+  if( Index = 13 ) then  GetDisplayModeByIndex := VideoMode4K2160p24;
+  if( Index = 14 ) then  GetDisplayModeByIndex := VideoMode4K2160p30;
+  if( Index = 15 ) then  GetDisplayModeByIndex := VideoMode4K2160p60;
+
+  if( Index = 17 ) then  GetDisplayModeByIndex := VideoModeHD720p50;
+  if( Index = 18 ) then  GetDisplayModeByIndex := VideoModeHD720p60;
+
+  if( Index = 20 ) then  GetDisplayModeByIndex := VideoModeNTSC;
+end;
+
+
+
 procedure TSettingsForm.VideoSetsButtonOKClick(Sender: TObject);
-var Res: UInt64;
+var Res: JtpRes;
     trunk : integer;
     str : string;
-    TrunkGrBox : TGroupBox;
+    VideoForm : TForm;
+    TrunkBox : TGroupBox;
     TrunkCheckBox : TCheckBox;
     pTrunk : PVideoTrunk;
+    pInputDevice : PVideoInputDevice;
     device : integer;
-    DeviceButton : TRadioButton;
+    DeviceButton : TCheckBox;
     ComboBox : TComboBox;
-    VideoModeIndex : integer;
-    KeyPassButton : TRadioButton;
+    //VideoModeIndex : integer;
+    KeyPassButton : TCheckBox;
     ind : integer;
-    InitVideoDesc : TInitVideoDesc;
+    sim_str : integer;
 begin
 
-  if SimOutBox.Checked then CreateSimulators;
+  //if SimOutBox.Checked then CreateSimulators;
 
-  //  Проходим по стволам.
-  for trunk := 1 to MAX_VIDEO_TRUNKS do begin
+  VideoForm := TForm(TButton(Sender).Parent);
 
-  		pTrunk := @VideoTrunks[trunk-1];
+  //  Проходим по стволам. Находим выбранные девайсы из контролов на форме.
+  for trunk := 1 to GVideoSets.NumRequestTrunks do begin // to MAX_VIDEO_TRUNKS
 
-      pTrunk.hOutWindow := OutWindows[trunk-1];
+  		pTrunk := @GVideoSets.Trunks[trunk-1];
 
       //  GroupBox ствола.
-      str := 'Out' + IntToStr(trunk) + 'TrunkBox';
-      TrunkGrBox := TGroupBox( SettingsForm.FindChildControl(str) );
-      if( TrunkGrBox <> nil ) then begin
-        //  CheckBox ствола.
-        str := 'Out' + IntToStr(trunk) + 'TrunkCheckBox';
-        TrunkCheckBox := TCheckBox( TrunkGrBox.FindChildControl(str) );
+      str := 'Trunk' + IntToStr(trunk) + 'Box';
+      TrunkBox := TGroupBox( SettingsForm.FindChildControl(str) );
+      if( TrunkBox <> nil ) then begin
+        //  EnableBox ствола.
+        str := 'Trunk' + IntToStr(trunk) + 'EnableBox';
+        TrunkCheckBox := TCheckBox( VideoForm.FindChildControl(str) );
         if( TrunkCheckBox.Checked ) then begin
+
+          pTrunk.Enabled := 1;
 
           pTrunk.ScreensHorizontal := 1;
           pTrunk.ScreensVertical := 1;
 
           //  Видео режим.
-          str := 'Out' + IntToStr(trunk) + 'VideoModeBox';
-          ComboBox := TComboBox( TrunkGrBox.FindChildControl(str) );
-          VideoModeIndex := ComboBox.ItemIndex;
+          str := 'Trunk' + IntToStr(trunk) + 'VideoModeBox';
+          ComboBox := TComboBox( TrunkBox.FindChildControl(str) );
+          //VideoModeIndex := ComboBox.ItemIndex;
 
-          if( VideoModeIndex = 0 )  then  pTrunk.OutputDisplayMode := bmdModeHD1080i50;
-          if( VideoModeIndex = 1 )  then  pTrunk.OutputDisplayMode := bmdModePAL;
-          if( VideoModeIndex = 2 )  then  pTrunk.OutputDisplayMode := bmdMode4K2160p25;
-          if( VideoModeIndex = 3 )  then  pTrunk.OutputDisplayMode := bmdMode4K2160p50;
-
-          if( VideoModeIndex = 5 )  then  pTrunk.OutputDisplayMode := bmdModeHD1080p24;
-          if( VideoModeIndex = 6 )  then  pTrunk.OutputDisplayMode := bmdModeHD1080p25;
-          if( VideoModeIndex = 7 )  then  pTrunk.OutputDisplayMode := bmdModeHD1080p30;
-          if( VideoModeIndex = 8 )  then  pTrunk.OutputDisplayMode := bmdModeHD1080p50;
-          if( VideoModeIndex = 9 )  then  pTrunk.OutputDisplayMode := bmdModeHD1080p6000;
-
-          if( VideoModeIndex = 11 ) then  pTrunk.OutputDisplayMode := bmdModeHD1080i6000;
-
-          if( VideoModeIndex = 13 ) then  pTrunk.OutputDisplayMode := bmdMode4K2160p24;
-          if( VideoModeIndex = 14 ) then  pTrunk.OutputDisplayMode := bmdMode4K2160p30;
-          if( VideoModeIndex = 15 ) then  pTrunk.OutputDisplayMode := bmdMode4K2160p60;
-
-          if( VideoModeIndex = 17 ) then  pTrunk.OutputDisplayMode := bmdModeHD720p50;
-          if( VideoModeIndex = 18 ) then  pTrunk.OutputDisplayMode := bmdModeHD720p60;
-
-          if( VideoModeIndex = 20 ) then  pTrunk.OutputDisplayMode := bmdModeNTSC;
+          pTrunk.OutputDisplayMode := GetDisplayModeByIndex( ComboBox.ItemIndex );
 
           // Вкл/Выкл кейер на проход.
-          str := 'Out' + IntToStr(trunk) + 'PassCheckBox';
-          KeyPassButton := TRadioButton( TrunkGrBox.FindChildControl(str) );
+          str := 'Trunk' + IntToStr(trunk) + 'PassCheckBox';
+          KeyPassButton := TCheckBox( TrunkBox.FindChildControl(str) );
           if( KeyPassButton.Checked ) then
-            pTrunk.Flags := pTrunk.Flags or TrunkVideo_KeyPass;
+            pTrunk.Flags := pTrunk.Flags or TrunkVideo_KeyPass
+          else
+            pTrunk.Flags := pTrunk.Flags and not TrunkVideo_KeyPass;
 
-          pTrunk.Flags := pTrunk.Flags or TrunkFlags[trunk-1];
+          //  Проходим по девайсам в стволе, если девайс отмечен галочкой, помещаем его индекс в ствол.
+          ind := 0;
+          for device := 1 to MAX_VIDEO_DEVICES do begin
+            if( DevicesNames[device-1].text[0] <> #0 )  then begin
 
-        end else begin
-          pTrunk.ScreensHorizontal := 0;
-          pTrunk.ScreensVertical := 0;
-        end;
+              str := 'Device' + IntToStr(device);
 
-        if SimOutBox.Checked then
-          begin
-            if (trunk = 1) or (trunk = 2)
-              then pTrunk.OutDevices[0] := trunk;
-          end
-                             else
-          begin
-            //  Проходим по девайсам в стволе.
-            ind := 0;
-            for device := 1 to MAX_VIDEO_DEVICES do begin
-              if( DevicesNames[device-1].text[0] <> #0 )  then begin
-                str := 'Out' + IntToStr(trunk) + 'Device' + IntToStr(device) + 'Button';
-                DeviceButton := TRadioButton( TrunkGrBox.FindChildControl(str) );
-                if( (DeviceButton <> nil) and (DeviceButton.Checked) ) then begin
-                  pTrunk.OutDevices[ind] := device;
-                  Inc(ind);
-                end;
+              DeviceButton := TCheckBox( TrunkBox.FindChildControl(str) );
+              if( (DeviceButton <> nil) and (DeviceButton.Checked) ) then begin
+
+                pTrunk.OutDevices[ind] := device;
+                Inc(ind);
               end;
             end;
           end;
+
+          //  ComboBox с конфигурацией нескольких экранов.
+          str := 'Trunk' + IntToStr(trunk) + 'MultiScreensBox';
+          ComboBox := TComboBox( TrunkBox.FindChildControl(str) );
+          if( ComboBox <> nil ) then begin
+
+            str := ComboBox.Text;
+
+            // первая цифра поля ComboBox
+            pTrunk.ScreensHorizontal := StrToInt(str[1]);
+            // вторая цифра поля ComboBox
+            pTrunk.ScreensVertical := StrToInt(str[3]);
+          end;
+
+        end else begin
+          pTrunk.Enabled := 0;
+        end;
       end;
   end;
 
-  with InitVideoDesc do begin
-    Version := 1;
-    VerticalBlur := 0.15;
- 	  ScreenAlpha := 1.0;
-    ClearColor := $00999999;
-  end;
+  // Найдём выбранные девайсы для видео входа.
+  ind := 0;
+  for device := 1 to MAX_VIDEO_DEVICES do begin
+    if( DevicesNames[device-1].text[0] <> #0 )  then begin
 
-  Res := InitVideo( @VideoTrunks, 0, @InitVideoDesc );
-  if( Res = JTP_OK ) then begin
-    VideoSets.Clear();
+      str := 'Device' + IntToStr(device);
 
-    if( Out1TrunkCheckBox.Checked ) then
-      VideoSets.Trunk1 := 1;
-    if( Out2TrunkCheckBox.Checked ) then
-      VideoSets.Trunk2 := 2;
+      DeviceButton := TCheckBox( VideoInputBox.FindChildControl(str) );
+      if( (DeviceButton <> nil) and (DeviceButton.Checked) ) then begin
 
-    FErrorFlag := 0;
-    // if( gpCloseFunc <> nil ) then
-      // gpCloseFunc( 0, @VideoSets );
-    // end;
-  end else begin
-    FErrorFlag := 3;
-    //  Show error.
-    if( InitVideoDesc.pErrorsStr <> nil ) then begin
+        pInputDevice := @GVideoSets.InputProperties.InputDevices[ind];
+
+        pInputDevice.DisplayMode := GetDisplayModeByIndex( InputVideoModeBox.ItemIndex );
+
+//sim_str := pos( 'Simulator', DevicesNames[device-1].text );
+//if( sim_str <> 0 ) then begin
+//  pInputDevice.PixelFormat := PixelFormat8BitBGRA; // для тестов
+//  pInputDevice.StreamPath.text := 'C:/ALEXBASE/seqs/image001.tga';
+//end;
+
+        GVideoSets.InputProperties.InputDevices[ind].Index := device;
+        Inc(ind);
+      end;
+
     end;
   end;
 
@@ -340,6 +554,7 @@ begin
 end;
 
 
+exports GetVersionVideoSets;
 exports VideoStartSets;
 
 

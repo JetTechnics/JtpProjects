@@ -105,7 +105,6 @@
         <DCCReference Include="VideoSetsHeader.pas"/>
         <DCCReference Include="..\JTPStudio\JTPStudio.pas"/>
         <DCCReference Include="..\JTPStudio\TypesJTP.pas"/>
-        <DCCReference Include="Decklink.pas"/>
         <DCCReference Include="..\JTPStudio\PluginJTP.pas"/>
         <DCCReference Include="..\JtpStudio\Vector.pas"/>
         <BuildConfiguration Include="Release">

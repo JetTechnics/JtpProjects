@@ -39,9 +39,9 @@ implementation
 
 procedure ShowGlobalScene(VideoTrunk: integer; const SceneData: TStrings);
 var
-  Res : UInt64;
+  Res : JtpRes;
   Scn : PName;
-  PlaySceneData : TPlaySceneData;
+  PlaySceneData : TPlayScene;
   SurfElemData : TSurfElemData;
   s: string;
   objName: AnsiString;
@@ -55,8 +55,7 @@ begin
   objName := AnsiString(SceneData.ValueFromIndex[0]);
   if objName = '' then Exit;
 
-  PlaySceneData.Create;
-  SurfElemData.Create;
+  PlaySceneData.Create();
 
   OpenRecords(0, nil);
   try
@@ -70,7 +69,7 @@ begin
     end;
     if Scn^.text[0] <> #0 then
       begin
-        CloseScene(PAnsiChar(Scn), FLT_UNDEF, nil);
+        CloseScene(PAnsiChar(Scn), FLT_UNDEF, 0, nil);
         Scn^.text[0] := #0;
       end;
     Res := PlayScene(PAnsiChar(objName), 0.0, 0, VideoTrunk, @PlaySceneData);
@@ -96,13 +95,19 @@ begin
         if sData = '$$$$$r' then aColor.VSet(1,0,0,1)
                             else
         if sData = '$$$$$g' then aColor.VSet(0,1,0,1);
+
+        SurfElemData.Create();
+
         if (aColor.r = 0) and (aColor.g = 0) and (aColor.b = 0) and
            (aColor.a = 0) then
+
     Res := UpdateSurfaceElement(PAnsiChar(Scn), PAnsiChar(objName), k, 1, nil, PWideChar(sData), nil,
                                 INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData)
+
                           else
     Res := UpdateSurfaceElement(PAnsiChar(Scn), PAnsiChar(objName), k, 1, nil, #9646#9646#9646#9646#9646, @aColor,
                                 INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData);
+
         if Res <> JTP_OK then begin
           //AddErrorStrings( SurfElemData.pErrorsStr );
         end;
@@ -114,7 +119,7 @@ end;
 
 procedure UpdateGlobalScene(const SceneData: TStrings);
 var
-  Res : UInt64;
+  Res : JtpRes;
   Scn : PName;
   sceneIdx: integer;
   SurfElemData : TSurfElemData;
@@ -138,8 +143,6 @@ begin
   objName := AnsiString(SceneData.ValueFromIndex[0]);
   if objName = '' then Exit;
 
-    SurfElemData.Create;
-
     for i:=1 to SceneData.Count-1 do
       begin
         s := SceneData.Names[i];
@@ -158,6 +161,9 @@ begin
         if sData = '$$$$$r' then aColor.VSet(1,0,0,1)
                             else
         if sData = '$$$$$g' then aColor.VSet(0,1,0,1);
+
+        SurfElemData.Create();
+
         if (aColor.r = 0) and (aColor.g = 0) and (aColor.b = 0) and
            (aColor.a = 0) then
     Res := UpdateSurfaceElement(PAnsiChar(Scn), PAnsiChar(objName), k, 1, nil, PWideChar(sData), nil,
@@ -186,7 +192,7 @@ begin
     begin
       OpenRecords(0, nil);
 
-      CloseScene(PAnsiChar(Scn), FLT_UNDEF, nil);
+      CloseScene(PAnsiChar(Scn), FLT_UNDEF, 0, nil);
       Scn^.text[0] := #0;
 
       CloseRecords(0, nil);
@@ -195,22 +201,21 @@ end;
 
 procedure ShowCountries(VideoTrunk: integer);
 var
-  Res : UInt64;
+  Res : JtpRes;
   Scn : PName;
-  PlaySceneData : TPlaySceneData;
+  PlaySceneData : TPlayScene;
   SurfElemData : TSurfElemData;
   i: integer;
   sn: integer;
   sData: WideString;
 begin
   PlaySceneData.Create;
-  SurfElemData.Create;
 
   OpenRecords(0, nil);
   try
     if CountriesScene.text[0] <> #0 then
       begin
-        CloseScene(@CountriesScene, FLT_UNDEF, nil);
+        CloseScene(@CountriesScene, FLT_UNDEF, 0, nil);
         CountriesScene.text[0] := #0;
       end;
     Res := PlayScene('Countries', 0.0, 0, VideoTrunk, @PlaySceneData);
@@ -220,6 +225,9 @@ begin
     for i:=1 to iTanksNum do
       begin
         sn := 2*(i-1)+1;
+
+        SurfElemData.Create();
+
         Res := UpdateSurfaceElement(@CountriesScene, 'Countries', sn, 1,
                                 PAnsiChar(Vehicles[TankIdRelative[i]].FlagPic), nil, nil,
                                 INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData);
@@ -244,7 +252,7 @@ begin
     begin
       OpenRecords(0, nil);
 
-      CloseScene(@CountriesScene, FLT_UNDEF, nil);
+      CloseScene(@CountriesScene, FLT_UNDEF, 0, nil);
       CountriesScene.text[0] := #0;
 
       CloseRecords(0, nil);
@@ -257,8 +265,8 @@ end;
 
 procedure ShowCrew( VideoTrunk : integer );
 var
-  Res : UInt64;
-  PlaySceneData : TPlaySceneData;
+  Res : JtpRes;
+  PlaySceneData : TPlayScene;
   SurfElemData : TSurfElemData;
   FilePath : TPath;
 begin
@@ -298,7 +306,7 @@ begin
 
     OpenRecords( 0, nil );
 
-    CloseScene( @EkipagScene, FLT_UNDEF, nil );
+    CloseScene( @EkipagScene, FLT_UNDEF, 0, nil );
     EkipagScene.text[0] := #0;
 
     CloseRecords( 0, nil );
@@ -313,13 +321,12 @@ end;
 
 procedure ShowOtsechka( VideoTrunk : integer );
 var
-  Res : UInt64;
-  PlaySceneData : TPlaySceneData;
+  Res : JtpRes;
+  PlaySceneData : TPlayScene;
   SurfElemData : TSurfElemData;
   FilePath : TPath;
 begin
 	PlaySceneData.Create();
-  SurfElemData.Create;
 
   OpenRecords( 0, nil );
 
@@ -328,6 +335,7 @@ begin
     System.SysUtils.StrCopy( OtsechkaScene.text, PlaySceneData.SceneName.text );
 
     // —Ú‡Ì‡
+    SurfElemData.Create();
     Res := UpdateSurfaceElement( @OtsechkaScene, 'Status', 1, 1, nil, '¿–Ã≈Õ»ﬂ', nil,
 											            INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData );
 
@@ -353,7 +361,7 @@ begin
 
     OpenRecords( 0, nil );
 
-    CloseScene( @OtsechkaScene, FLT_UNDEF, nil );
+    CloseScene( @OtsechkaScene, FLT_UNDEF, 0, nil );
     OtsechkaScene.text[0] := #0;
 
     CloseRecords( 0, nil );

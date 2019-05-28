@@ -8,8 +8,10 @@ SceneDeclarations:
 
 	EditCamPoses:
 	{	Top [ 0.00 2111.80 0.00 0.44 ]    Bottom [ 0.00 -20.00 0.00 1.00 ]    Left [ -20.00 0.00 0.00 1.00 ]    Right [ 20.00 0.00 0.00 1.00 ]    
-		Front [ 0.00 0.00 -2111.93 0.44 ]    Back [ 0.00 0.00 20.00 1.00 ]    Perspective [ 152.21 72.57 -348.67 1.00 ]     [ 0.00 0.00 0.00 ]
+		Front [ 34.21 -10.42 -2111.93 0.17 ]    Back [ 0.00 0.00 20.00 1.00 ]    Perspective [ 99.03 117.22 -355.61 1.00 ]     [ 0.00 0.00 0.00 ]
 	}
+
+	EditCamPerspectiveNearFar: [  Near: 10.000  Far: 5000.000  ]
 };
 
 
@@ -85,21 +87,239 @@ Units:
 			Element:
 			{	text:  "Чемпионат"
 				font: [  win_name: "Arial"  win_height: 24  weight: 700  ]
-				align: center    case: mixed    text_width: 300
-				pos: [ 262 1 ]     color: 0xFFFFFFFF
-				shadow_pos: [ 2 2 ]    shadow_color: 0x66000000
+				align: center    text_width: 444
+				pos: [ 262 1 ]     color: 0xFF00FFFF
+				shadow_pos: [ 2 2 ]    shadow_color: 0xFF000048
 				tex_index: 0
+
+				JtpExtended...
+				{
+					case: upper    small_as_big_symb_h: 50    letter_space: 11    no_mixing    blur: 3    border: 1
+				}
 			}
 
 			Element:
 			{	text:  "Команда"
 				font: [  win_name: "Arial"  win_height: 14  weight: 700  ]
-				align: left    case: mixed    text_width: 300
-				pos: [ 28 54 ]     color: 0xFFFFFFFF
-				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				align: left    text_width: 300
+				pos: [ 17 58 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 4 4 ]    shadow_color: 0x7F5B0000
 				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
 			}
 
+			Element:
+			{	text:  "Новый Текст"
+				font: [  win_name: "Book Antiqua"  win_height: 22  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 50 100 ]     color: 0x80FFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x7F000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "МойТекст\n012345"
+				font: [  win_name: "Book Antiqua"  win_height: 22  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 50 140 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	image: "Resources\Textures\Lion.tga"
+				image_align: 0    image_size_x: 100  image_size_y: 100
+				pos: [ 333 50 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 5 4 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	image: "Resources\Textures\Protivogas.tga"
+				image_align: 0    image_size_x: 222  image_size_y: 100
+				pos: [ 222 188 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					    blur: 0    border: 0
+				}
+			}
+
+		};
+
+		SurfElemsViewY: 0    SurfEditorViewScale: 1    SurfEditorViewPnt: [ 104 91 ]
+	};
+
+
+
+	JtpBillboard
+	{
+		name:  "Gradient"
+		pos:      [  0.000  0.000  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  32.000  20.000  0.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+		render_queue: 12
+		mesh:  "C:\_TankBiathlon2018\Resources\ShareMeshes\Rect1x1.msh"
+		texture:  "Resources\Textures\Gradient.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		SurfElemsViewY: 0    SurfEditorViewScale: 1    SurfEditorViewPnt: [ 0 0 ]
+
+		bill_controls:   [   face_to_cam_pitch: only_ay   relative_pos: [ 0.00 0.00 0.00 ]   ]
+	};
+
+
+
+	JtpBillboard
+	{
+		name:  "Gradient01"
+		pos:      [  0.000  0.000  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  32.000  20.000  0.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+		render_queue: 12
+		mesh:  "C:\_TankBiathlon2018\Resources\ShareMeshes\Rect1x1.msh"
+		texture:  "Resources\Textures\Gradient.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		SurfElemsViewY: 0    SurfEditorViewScale: 1    SurfEditorViewPnt: [ 0 0 ]
+
+		bill_controls:   [   face_to_cam_pitch: only_ay   relative_pos: [ 0.00 0.00 0.00 ]   ]
+	};
+};
+
+
+
+UnitGroups:
+{
+
+	UnitGroup
+	{
+		Name:  "GroupA"
+
+		Units:
+		{
+		    "Table"    "FlashLight"
+		};
+	};
+
+	UnitGroup
+	{
+		Name:  "GroupBBB_03456_WAWA_987654321_DEDE_87654"
+
+		Units:
+		{
+		    "Gradient"    "Gradient01"
+		};
+	};
+
+	UnitGroup
+	{
+		Name:  "Group_001"
+
+		Units:
+		{
+		    "Gradient"    "FDirect01"    "Table"    "FlashLight"    "Gradient01"
+		};
+	};
+
+	UnitGroup
+	{
+		Name:  "MyGroupForTest"
+
+		Units:
+		{
+		    "Gradient"    "Gradient01"    "Table"
+		};
+	};
+
+	UnitGroup
+	{
+		Name:  "Group_003"
+
+		Units:
+		{
+		    "Gradient"    "Gradient01"
+		};
+	};
+
+	UnitGroup
+	{
+		Name:  "Group_004"
+
+		Units:
+		{
+		    "Gradient"    "Gradient01"
+		};
+	};
+
+	UnitGroup
+	{
+		Name:  "Group_005"
+
+		Units:
+		{
+		    "Gradient"    "Gradient01"    "Table"
+		};
+	};
+
+	UnitGroup
+	{
+		Name:  "Group_006"
+
+		Units:
+		{
+		    "Gradient"    "Gradient01"
+		};
+	};
+
+	UnitGroup
+	{
+		Name:  "Group01"
+
+		Units:
+		{
+		
 		};
 	};
 };
@@ -108,9 +328,9 @@ Units:
 
 Scenaries:
 {
-	Scenario:  "NewScenario01"
+	Scenario:  "OpenScenario"
 	{
 
-		Type:  FadeIN      Delay: 0.00
+		Type:  AutoStart      Delay: 0.00
 	};
 };

@@ -118,6 +118,8 @@ var
 
   MyVersion : integer = 2;
 
+  VideoSets : TVideoSets;
+
 
 implementation
 
@@ -157,29 +159,52 @@ End;
 
 
 //  Закрыли видео настройки.
-//  Загрузим проект. Загрузим плагин для таскания танчиков по полю.
+//  Загрузим проект.
 
 function VideoCloseSetsFunc( Flags: integer;  VideoSets: PVideoSets ) : integer;  stdcall;
 var
   ProjectPath : array[0..1] of TPath;
   PluginPath : TPath;
   Textures : array of TPath;
-  Res: UInt64;
-  LoadProjectData : TJtpLoadProjectData;
-  PluginConfig : TPluginConfigTB;
+  Res: JtpRes;
+
+  LoadProjectData : TLoadProjectData;
+  InitVideoData : TInitVideo;
   StartEngineData : TJtpFuncData;
+
+  //PluginConfig : TPluginConfigTB;
+
   FlagsList: TStringDynArray;
   s: AnsiString;
   i, k: integer;
 begin
 
-  if Flags <> 0 then
-    begin
-      MessageDlg('Ошибка инициализации видео.', mtError, [mbOk], 0);
-      Exit;
+  LoadProjectData.Create();
+  InitVideoData.Create();
+  StartEngineData.Create();
+
+  if Flags <> 0 then begin
+    MessageDlg('Ошибка инициализации видео.', mtError, [mbOk], 0);
+    Exit;
+  end;
+
+  VideoTrunk := 1;
+
+  VideoSets.Trunks[VideoTrunk-1].hOutWindow := MainForm.OutVideoPanel.Handle;
+
+
+  //  Инициализируем видео.
+  Res := InitVideo( 0, @VideoSets.Trunks, @VideoSets.InputProperties, @InitVideoData );
+  if( Res <> JTP_OK ) then begin
+
+    if( InitVideoData.pErrorsStr <> nil ) then begin
+      MessageDlg(InitVideoData.pErrorsStr, mtError, [mbOk], 0);
     end;
 
-  VideoTrunk := VideoSets.Trunk1;
+    AddErrorStrings( InitVideoData.pErrorsStr );
+
+    Exit;
+  end;
 
   //  Пути к картинкам.
   // All flags
@@ -198,9 +223,10 @@ begin
   Textures[k+2].Text[0] := #0;
 
   //  Проект
-  ProjectPath[0].text := 'C:/_TankBiathlon2018/Resources/TankBiathlon.prj';
+  ProjectPath[0].text := 'C:/_TankBiathlon2018/Resources/TankBiathlon.txt';
   ProjectPath[1].text := '';
 
+  // Загрузим проект со сценами, текстурами и т.д.
   Res := LoadProject( @ProjectPath, @Textures[Low(Textures)], 0, @LoadProjectData );
   if( Res <> JTP_OK ) then begin
   	AddErrorStrings( LoadProjectData.pErrorsStr );
@@ -208,6 +234,7 @@ begin
     Exit;
   end;
 
+  // Запустим движёк.
   Res := StartEngine( MyVersion, 0, ErrorsFunctionCB, @StartEngineData );
   if( Res <> JTP_OK ) then begin
     AddErrorStrings( StartEngineData.pErrorsStr );
@@ -237,14 +264,31 @@ end;
 procedure TMainForm.StartButtonClick(Sender: TObject);
 Var
   hVideoSetsDll : HMODULE;
-  VideoSets : TVideoSets;
+
   pStartFunc : TVideoStartSetsFunc;
-  Res, i : integer;
-  OutWindows : array [0..LAST_VIDEO_TRUNK] of HWND;
-  TrunkFlags : array [0..LAST_VIDEO_TRUNK] of integer;
+  pGetVersionFunc : TGetVersionVideoSetsFunc;
+
+  i : integer;
+
+  Res : JtpRes;
+
+  Version : integer;
   EngineVersion : integer;
+  //OutWindows : array [0..LAST_VIDEO_TRUNK] of HWND;
+  //TrunkFlags : array [0..LAST_VIDEO_TRUNK] of integer;
+
 begin
   StartButton.Enabled := false;
+
+  VideoSets.Clear();
+
+  VideoSets.NumRequestTrunks := 1;
+
+  VideoSets.NumRequestSimulators := 2;
+
+  //  Симуляторы видео ввода/вывода
+  //if( SimOutBox.Checked ) then
+  //  VideoSets.SimulatorOutput := 1;
 
   //  Адрес GPS сервера
   {
@@ -252,26 +296,32 @@ begin
   GPSPort := StrToInt( GPSPortEdit.Text );
   }
 
-  for i := 0 to LAST_VIDEO_TRUNK do begin
+  {for i := 0 to LAST_VIDEO_TRUNK do begin
     OutWindows[i] := 0;
     TrunkFlags[i] := 0;
-  end;
+  end;}
 
 	EngineVersion := Get3DEngineVersion();
 
+  // Загрузим dll, показывающую окно видео настроек.
   hVideoSetsDll := LoadLibrary( JTPStudioPath + 'VideoSettings.dll' );
-  if( hVideoSetsDll <> 0) then begin
+  if( hVideoSetsDll <> 0 ) then begin
 
+    // Получим версию окна видео настроек.
+    pGetVersionFunc := GetProcAddress( hVideoSetsDll, 'GetVersionVideoSets' );
+    if( @pGetVersionFunc <> nil ) then begin
+      Version := pGetVersionFunc( 0, nil );
+    end;
+
+    // Функция, запускающая окно видео настроек.
     pStartFunc := GetProcAddress( hVideoSetsDll, 'VideoStartSets' );
     if( @pStartFunc <> nil ) then begin
 
-      OutWindows[0] := OutVideoPanel.Handle;
-
-      TrunkFlags[0] := TrunkVideo_ProcessMouse;
-
-      Res := pStartFunc( 0, Application, @OutWindows, @TrunkFlags, VideoCloseSetsFunc, nil );
+      // VideoCloseSetsFunc вызвается при закрытии окна видео настроек.
+      Res := pStartFunc( 0, Application, @VideoSets, VideoCloseSetsFunc, nil );
+      if( Res <> 0 ) then begin
+      end;
     end;
-
   end;
 end;
 
@@ -304,7 +354,7 @@ begin
     Vehicles[i].Reset();
   end;
 
-  CloseScene( @PoligonSceneName, 0.0, nil );
+  CloseScene( @PoligonSceneName, 0.0, 0, nil );
 
   CloseRecords( 0, nil );
 end;
@@ -742,7 +792,7 @@ end;
 
 procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  CloseEngine(0);
+  CloseEngine(0, nil);
 end;
 
 
@@ -850,7 +900,7 @@ procedure TMainForm.AddLogGpsData(const GpsData: TGpsData; ticks: dword);
 var
   TankId: integer;
   Lat, Lon, Dist: single;
-  TimeMilli: UInt64;
+  TimeMilli: JtpRes;
   PacketNum: integer;
   Batt: integer;
   Speed: single;

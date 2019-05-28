@@ -1,0 +1,10 @@
+
+Mon Feb 18 15:37:06 2019
+
+Log...
+
+Direct3D 11 init: OK.
+
+VideoAdapter:  NVIDIA GeForce GTX 580
+
+VideoMemory:  3019 Mb

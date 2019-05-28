@@ -1,0 +1,601 @@
+fr0    inwait: 0.000    rwait: 0.000    render: 0.010     rfills: 0100    out_syncs: 0.000     out_waits: 0.019     copies: 0.001      
+
+fr1    inwait: 0.000    rwait: 0.000    render: 0.007     rfills: 0110    out_syncs: 0.000     out_waits: 0.020     copies: 0.001      
+
+fr2    inwait: 0.000    rwait: 0.000    render: 0.007     rfills: 0111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr3    inwait: 0.000    rwait: 0.000    render: 0.006     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr4    inwait: 0.000    rwait: 0.004    render: 0.007     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr5    inwait: 0.000    rwait: 0.034    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr6    inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr7    inwait: 0.000    rwait: 0.030    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr8    inwait: 0.000    rwait: 0.033    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr9    inwait: 0.000    rwait: 0.030    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr10   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr11   inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr12   inwait: 0.000    rwait: 0.030    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr13   inwait: 0.000    rwait: 0.032    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr14   inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr15   inwait: 0.000    rwait: 0.032    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr16   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr17   inwait: 0.000    rwait: 0.026    render: 0.012     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr18   inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr19   inwait: 0.000    rwait: 0.028    render: 0.010     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr20   inwait: 0.000    rwait: 0.033    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr21   inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr22   inwait: 0.000    rwait: 0.028    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr23   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr24   inwait: 0.000    rwait: 0.033    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr25   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr26   inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr27   inwait: 0.000    rwait: 0.031    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr28   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr29   inwait: 0.000    rwait: 0.031    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr30   inwait: 0.000    rwait: 0.026    render: 0.015     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr31   inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr32   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr33   inwait: 0.000    rwait: 0.033    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr34   inwait: 0.000    rwait: 0.026    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr35   inwait: 0.000    rwait: 0.032    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr36   inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr37   inwait: 0.000    rwait: 0.033    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr38   inwait: 0.000    rwait: 0.026    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr39   inwait: 0.000    rwait: 0.034    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.222     copies: 0.001      
+
+fr40   inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.223     copies: 0.001      
+
+fr41   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.003     copies: 0.001      
+
+fr42   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.004     copies: 0.001      
+
+fr43   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr44   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr45   inwait: 0.000    rwait: 0.029    render: 0.010     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr46   inwait: 0.000    rwait: 0.030    render: 0.010     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr47   inwait: 0.000    rwait: 0.034    render: 0.010     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr48   inwait: 0.000    rwait: 0.030    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr49   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr50   inwait: 0.000    rwait: 0.028    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr51   inwait: 0.000    rwait: 0.026    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr52   inwait: 0.000    rwait: 0.033    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.132     copies: 0.001      
+
+fr53   inwait: 0.000    rwait: 0.026    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.133     copies: 0.001      
+
+fr54   inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.003     copies: 0.001      
+
+fr55   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.004     copies: 0.001      
+
+fr56   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr57   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr58   inwait: 0.000    rwait: 0.034    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr59   inwait: 0.000    rwait: 0.028    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr60   inwait: 0.000    rwait: 0.026    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr61   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr62   inwait: 0.000    rwait: 0.032    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr63   inwait: 0.000    rwait: 0.030    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr64   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr65   inwait: 0.000    rwait: 0.028    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr66   inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr67   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr68   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr69   inwait: 0.000    rwait: 0.034    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr70   inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr71   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr72   inwait: 0.000    rwait: 0.033    render: 0.010     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr73   inwait: 0.000    rwait: 0.030    render: 0.010     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr74   inwait: 0.000    rwait: 0.026    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr75   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr76   inwait: 0.000    rwait: 0.033    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr77   inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr78   inwait: 0.000    rwait: 0.033    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr79   inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr80   inwait: 0.000    rwait: 0.034    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr81   inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr82   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr83   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr84   inwait: 0.000    rwait: 0.032    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr85   inwait: 0.000    rwait: 0.026    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr86   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr87   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr88   inwait: 0.000    rwait: 0.033    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr89   inwait: 0.000    rwait: 0.030    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr90   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr91   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr92   inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr93   inwait: 0.000    rwait: 0.031    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr94   inwait: 0.000    rwait: 0.031    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr95   inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr96   inwait: 0.000    rwait: 0.032    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr97   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr98   inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr99   inwait: 0.000    rwait: 0.029    render: 0.010     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr100  inwait: 0.000    rwait: 0.024    render: 0.014     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr101  inwait: 0.000    rwait: 0.026    render: 0.014     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr102  inwait: 0.000    rwait: 0.031    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr103  inwait: 0.000    rwait: 0.028    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr104  inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr105  inwait: 0.000    rwait: 0.028    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr106  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr107  inwait: 0.000    rwait: 0.034    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr108  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr109  inwait: 0.000    rwait: 0.024    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr110  inwait: 0.000    rwait: 0.032    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr111  inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr112  inwait: 0.000    rwait: 0.032    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr113  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr114  inwait: 0.000    rwait: 0.026    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr115  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr116  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr117  inwait: 0.000    rwait: 0.034    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr118  inwait: 0.000    rwait: 0.028    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr119  inwait: 0.000    rwait: 0.031    render: 0.010     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr120  inwait: 0.000    rwait: 0.030    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr121  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr122  inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr123  inwait: 0.000    rwait: 0.031    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr124  inwait: 0.000    rwait: 0.028    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr125  inwait: 0.000    rwait: 0.033    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr126  inwait: 0.000    rwait: 0.029    render: 0.010     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr127  inwait: 0.000    rwait: 0.030    render: 0.010     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr128  inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr129  inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr130  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr131  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr132  inwait: 0.000    rwait: 0.032    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr133  inwait: 0.000    rwait: 0.031    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr134  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr135  inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr136  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr137  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr138  inwait: 0.000    rwait: 0.034    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr139  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr140  inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr141  inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr142  inwait: 0.000    rwait: 0.033    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr143  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr144  inwait: 0.000    rwait: 0.026    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr145  inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr146  inwait: 0.000    rwait: 0.030    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr147  inwait: 0.000    rwait: 0.030    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr148  inwait: 0.000    rwait: 0.028    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr149  inwait: 0.000    rwait: 0.034    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr150  inwait: 0.000    rwait: 0.028    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr151  inwait: 0.000    rwait: 0.028    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr152  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr153  inwait: 0.000    rwait: 0.031    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr154  inwait: 0.000    rwait: 0.029    render: 0.010     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr155  inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr156  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr157  inwait: 0.000    rwait: 0.034    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr158  inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr159  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr160  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr161  inwait: 0.000    rwait: 0.032    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr162  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr163  inwait: 0.000    rwait: 0.031    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr164  inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr165  inwait: 0.000    rwait: 0.032    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr166  inwait: 0.000    rwait: 0.026    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr167  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr168  inwait: 0.000    rwait: 0.030    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr169  inwait: 0.000    rwait: 0.031    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr170  inwait: 0.000    rwait: 0.026    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr171  inwait: 0.000    rwait: 0.031    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr172  inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr173  inwait: 0.000    rwait: 0.034    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr174  inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr175  inwait: 0.000    rwait: 0.034    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr176  inwait: 0.000    rwait: 0.025    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr177  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr178  inwait: 0.000    rwait: 0.033    render: 0.010     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr179  inwait: 0.000    rwait: 0.027    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr180  inwait: 0.000    rwait: 0.028    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr181  inwait: 0.000    rwait: 0.028    render: 0.015     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr182  inwait: 0.000    rwait: 0.031    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr183  inwait: 0.000    rwait: 0.026    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr184  inwait: 0.000    rwait: 0.028    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr185  inwait: 0.000    rwait: 0.029    render: 0.011     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr186  inwait: 0.000    rwait: 0.029    render: 0.145     rfills: 0001    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr187  inwait: 0.000    rwait: 0.000    render: 0.007     rfills: 1001    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr188  inwait: 0.000    rwait: 0.000    render: 0.005     rfills: 1101    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr189  inwait: 0.000    rwait: 0.000    render: 0.005     rfills: 1110    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr190  inwait: 0.000    rwait: 0.000    render: 0.005     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr191  inwait: 0.000    rwait: 0.034    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr192  inwait: 0.000    rwait: 0.035    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr193  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr194  inwait: 0.000    rwait: 0.030    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr195  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr196  inwait: 0.000    rwait: 0.033    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr197  inwait: 0.000    rwait: 0.034    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr198  inwait: 0.000    rwait: 0.031    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr199  inwait: 0.000    rwait: 0.030    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr200  inwait: 0.000    rwait: 0.031    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr201  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr202  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr203  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr204  inwait: 0.000    rwait: 0.035    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr205  inwait: 0.000    rwait: 0.029    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr206  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr207  inwait: 0.000    rwait: 0.035    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr208  inwait: 0.000    rwait: 0.029    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr209  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr210  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr211  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr212  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr213  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr214  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr215  inwait: 0.000    rwait: 0.036    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr216  inwait: 0.000    rwait: 0.030    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr217  inwait: 0.000    rwait: 0.031    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr218  inwait: 0.000    rwait: 0.030    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr219  inwait: 0.000    rwait: 0.036    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr220  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr221  inwait: 0.000    rwait: 0.028    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr222  inwait: 0.000    rwait: 0.031    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr223  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr224  inwait: 0.000    rwait: 0.035    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr225  inwait: 0.000    rwait: 0.033    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr226  inwait: 0.000    rwait: 0.028    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr227  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr228  inwait: 0.000    rwait: 0.034    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr229  inwait: 0.000    rwait: 0.030    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr230  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr231  inwait: 0.000    rwait: 0.036    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr232  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.119     copies: 0.001      
+
+fr233  inwait: 0.000    rwait: 0.033    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.001     copies: 0.001      
+
+fr234  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.002     copies: 0.001      
+
+fr235  inwait: 0.000    rwait: 0.028    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.001     copies: 0.001      
+
+fr236  inwait: 0.000    rwait: 0.035    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr237  inwait: 0.000    rwait: 0.029    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr238  inwait: 0.000    rwait: 0.031    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr239  inwait: 0.000    rwait: 0.036    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr240  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr241  inwait: 0.000    rwait: 0.028    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr242  inwait: 0.000    rwait: 0.031    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr243  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr244  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr245  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr246  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr247  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr248  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr249  inwait: 0.000    rwait: 0.036    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr250  inwait: 0.000    rwait: 0.028    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr251  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr252  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr253  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr254  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr255  inwait: 0.000    rwait: 0.036    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr256  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr257  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr258  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr259  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr260  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr261  inwait: 0.000    rwait: 0.027    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr262  inwait: 0.000    rwait: 0.031    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr263  inwait: 0.000    rwait: 0.035    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr264  inwait: 0.000    rwait: 0.030    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr265  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr266  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr267  inwait: 0.000    rwait: 0.036    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr268  inwait: 0.000    rwait: 0.031    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr269  inwait: 0.000    rwait: 0.029    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr270  inwait: 0.000    rwait: 0.035    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr271  inwait: 0.000    rwait: 0.029    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr272  inwait: 0.000    rwait: 0.034    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr273  inwait: 0.000    rwait: 0.030    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr274  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr275  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr276  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr277  inwait: 0.000    rwait: 0.036    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr278  inwait: 0.000    rwait: 0.028    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr279  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr280  inwait: 0.000    rwait: 0.033    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr281  inwait: 0.000    rwait: 0.031    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr282  inwait: 0.000    rwait: 0.036    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr283  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr284  inwait: 0.000    rwait: 0.031    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr285  inwait: 0.000    rwait: 0.030    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr286  inwait: 0.000    rwait: 0.030    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr287  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr288  inwait: 0.000    rwait: 0.036    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr289  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr290  inwait: 0.000    rwait: 0.031    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr291  inwait: 0.000    rwait: 0.031    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr292  inwait: 0.000    rwait: 0.033    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr293  inwait: 0.000    rwait: 0.031    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr294  inwait: 0.000    rwait: 0.030    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr295  inwait: 0.000    rwait: 0.036    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr296  inwait: 0.000    rwait: 0.028    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr297  inwait: 0.000    rwait: 0.032    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr298  inwait: 0.000    rwait: 0.036    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+fr299  inwait: 0.000    rwait: 0.029    render: 0.008     rfills: 1111    out_syncs: 0.000     out_waits: 0.000     copies: 0.001      
+
+

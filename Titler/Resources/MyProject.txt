@@ -4,6 +4,7 @@ JtpProject
 Header
 {
 	Version:  1
+	LastScenePath: "Resources/Scenes/Table/Table.txt"
 };
 
 
@@ -13,4 +14,5 @@ Scenes
 	"Resources/Scenes/Championship/Championship.txt"
 	"Resources/Scenes/Time/Time.txt"
 	"Resources/Scenes/Scores/Scores.txt"
+	"Resources/Scenes/ManyTexts/ManyTexts.txt"
 };

@@ -17,7 +17,6 @@ uses
   VideoSetsHeader in 'VideoSetsHeader.pas',
   JTPStudio in '..\JTPStudio\JTPStudio.pas',
   TypesJTP in '..\JTPStudio\TypesJTP.pas',
-  Decklink in 'Decklink.pas',
   PluginJTP in '..\JTPStudio\PluginJTP.pas',
   Vector in '..\JtpStudio\Vector.pas';
 

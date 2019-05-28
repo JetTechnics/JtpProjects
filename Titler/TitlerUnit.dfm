@@ -1,7 +1,7 @@
-object TitlerForm: TTitlerForm
+object MainForm: TMainForm
   Left = 0
   Top = 0
-  Caption = 'TitlerForm'
+  Caption = 'MainForm'
   ClientHeight = 672
   ClientWidth = 1248
   Color = clBtnFace
@@ -19,32 +19,32 @@ object TitlerForm: TTitlerForm
     Left = 8
     Top = 8
     Width = 121
-    Height = 25
+    Height = 35
     Caption = 'Start'
     TabOrder = 0
     OnClick = StartButtonClick
   end
-  object Out1VideoPanel: TPanel
-    Left = 200
-    Top = 8
+  object OutVideoPanel1: TPanel
+    Left = 210
+    Top = 54
     Width = 512
     Height = 288
-    Caption = 'Out1VideoPanel'
+    Caption = 'OutVideoPanel1'
     TabOrder = 1
   end
-  object Out2VideoPanel: TPanel
+  object OutVideoPanel2: TPanel
     Left = 728
-    Top = 8
+    Top = 54
     Width = 512
     Height = 288
-    Caption = 'Out2VideoPanel'
+    Caption = 'OutVideoPanel2'
     TabOrder = 2
   end
   object TableGroupBox: TGroupBox
-    Left = 9
-    Top = 208
+    Left = 8
+    Top = 224
     Width = 185
-    Height = 105
+    Height = 89
     Caption = ' '#1058#1072#1073#1083#1080#1094#1072' '#1048#1075#1088#1086#1082#1086#1074' '
     TabOrder = 3
     object TableButton: TButton
@@ -82,9 +82,9 @@ object TitlerForm: TTitlerForm
   end
   object ChampionshipGroupBox: TGroupBox
     Left = 9
-    Top = 96
+    Top = 120
     Width = 185
-    Height = 97
+    Height = 89
     Caption = ' '#1063#1077#1084#1087#1080#1086#1085#1072#1090' '
     TabOrder = 5
     object ChampionshipShowButton: TButton
@@ -112,6 +112,7 @@ object TitlerForm: TTitlerForm
       Height = 25
       Caption = '2-'#1103' '#1095#1072#1089#1090#1100
       TabOrder = 2
+      OnClick = Button1Click
     end
   end
   object TimeGroupBox: TGroupBox
@@ -151,7 +152,7 @@ object TitlerForm: TTitlerForm
   end
   object BeginButton: TButton
     Left = 8
-    Top = 65
+    Top = 49
     Width = 121
     Height = 25
     Caption = #1053#1072#1095#1072#1083#1086' '#1084#1072#1090#1095#1072
@@ -160,7 +161,7 @@ object TitlerForm: TTitlerForm
   end
   object ScoresGroupBox: TGroupBox
     Left = 8
-    Top = 423
+    Top = 431
     Width = 178
     Height = 81
     Caption = ' '#1057#1095#1105#1090' '
@@ -201,6 +202,48 @@ object TitlerForm: TTitlerForm
       TabOrder = 3
       OnClick = CloseScoresButtonClick
     end
+  end
+  object SimOutBox: TCheckBox
+    Left = 143
+    Top = 8
+    Width = 121
+    Height = 17
+    Caption = #1057#1080#1084#1091#1083#1103#1090#1086#1088' '#1074#1099#1074#1086#1076#1072
+    Checked = True
+    State = cbChecked
+    TabOrder = 9
+  end
+  object SimInputBox: TCheckBox
+    Left = 143
+    Top = 26
+    Width = 121
+    Height = 17
+    Caption = #1057#1080#1084#1091#1083#1103#1090#1086#1088' '#1079#1072#1093#1074#1072#1090#1072
+    TabOrder = 10
+  end
+  object NumRequestTrunksBox: TGroupBox
+    Left = 278
+    Top = 8
+    Width = 121
+    Height = 40
+    Caption = #1050#1086#1083#1080#1095#1077#1089#1090#1074#1086' '#1089#1090#1074#1086#1083#1086#1074
+    TabOrder = 11
+    object NumRequestTrunksEdit: TEdit
+      Left = 11
+      Top = 16
+      Width = 54
+      Height = 21
+      TabOrder = 0
+      Text = '2'
+    end
+  end
+  object PreviewCheckBox: TCheckBox
+    Left = 8
+    Top = 80
+    Width = 65
+    Height = 17
+    Caption = #1055#1088#1077#1074#1100#1102
+    TabOrder = 12
   end
   object Timer1: TTimer
     Enabled = False

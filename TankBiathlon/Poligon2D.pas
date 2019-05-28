@@ -44,7 +44,7 @@ Type PIdArray = ^TIdArray;
 // Public.
 procedure  ShowPoligon2D( NumTanks: integer; VideoTrunk: integer;  Ids : PIdArray );
 
-function UpdateTankPoligon( SceneName: PAnsiChar;  Flags: dword;  pEvents: PJtpEvent;  FrameTime: single;  pReserve: pointer ) : UInt64;  stdcall;
+function UpdateTankPoligon( SceneName: PAnsiChar;  Flags: dword;  pEvents: PJtpEvent;  FrameTime: single;  pReserve: pointer ) : JtpRes;  stdcall;
 
 // Private.
 procedure MoveCameraToTanks( FrameTime: single );
@@ -56,10 +56,10 @@ implementation
 
 procedure ShowPoligon2D( NumTanks: integer; VideoTrunk: integer;  Ids : PIdArray );
 var
-  Res : UInt64;
+  Res : JtpRes;
   i : integer;
-  PlaySceneData : TPlaySceneData;
-  CloneObjectData : TCloneObjectData;
+  PlaySceneData : TPlayScene;
+  CloneObjectData : TCloneObject;
   // Color : TJTPColor;
   Orient : TVector;
 begin
@@ -79,6 +79,8 @@ begin
 
     //  Инициализируем подвижные средства
     for i := 1 to MaxTanks do begin
+
+      CloneObjectData.Create();
 
       Res := CloneObject( @PoligonSceneName, 'Tank', nil, nil, nil, nil, 0.0, JTP_ABSOLUTE, @CloneObjectData );
 
@@ -118,12 +120,13 @@ end;
 
 
 
-function UpdateTankPoligon( SceneName: PAnsiChar;  Flags: dword;  pEvents: PJtpEvent;  FrameTime: single;  pReserve: pointer ) : UInt64;  stdcall;
+function UpdateTankPoligon( SceneName: PAnsiChar;  Flags: dword;  pEvents: PJtpEvent;  FrameTime: single;  pReserve: pointer ) : JtpRes;  stdcall;
 const
   MaxPacketNum = 20;
   CamMinDist = 200;
 var
-  res, i : integer;
+  Res : JtpRes;
+  i : integer;
   kk: integer;
   GpsData : TGpsData;
   Pos, Dir, Target : TVector;

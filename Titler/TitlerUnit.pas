@@ -3,16 +3,17 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.AnsiStrings,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   JTPStudio, VideoSetsHeader, TypesJTP, Vector,
   PreviewUnit;
 
 type
-  TTitlerForm = class(TForm)
+  TMainForm = class(TForm)
     StartButton: TButton;
-    Out1VideoPanel: TPanel;
-    Out2VideoPanel: TPanel;
+    OutVideoPanel1: TPanel;
+    OutVideoPanel2: TPanel;
     TableGroupBox: TGroupBox;
     TableButton: TButton;
     LogListBox: TListBox;
@@ -32,6 +33,11 @@ type
     Scores2Button: TButton;
     CityButton: TButton;
     CloseScoresButton: TButton;
+    SimOutBox: TCheckBox;
+    SimInputBox: TCheckBox;
+    NumRequestTrunksBox: TGroupBox;
+    NumRequestTrunksEdit: TEdit;
+    PreviewCheckBox: TCheckBox;
     procedure StartButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure TableButtonClick(Sender: TObject);
@@ -48,6 +54,7 @@ type
     procedure Scores2ButtonClick(Sender: TObject);
     procedure CityButtonClick(Sender: TObject);
     procedure CloseScoresButtonClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -55,69 +62,172 @@ type
   end;
 
 var
-  TitlerForm: TTitlerForm;
+  MainForm: TMainForm;
 
-  MyVersion : integer = 1;
+  SoftVersion: integer = 1;
 
-  VideoTrunk1 : integer = -1;
-  VideoTrunk2 : integer = -1;
+  VideoSets : TVideoSets;
+
+  NumActiveTrunks: integer = 0;
+
+  //VideoTrunk1 : integer = -1;
+  //VideoTrunk2 : integer = -1;
+
+  GPreviewWindows : array[0..MAX_PREVIEW_WINDOWS-1] of HWND;
 
   ProjectPath : array[0..1] of TPath;
 
   Textures : array[0..4095] of TPath;
 
+  function VideoCloseSetsFunc( Flags: integer;  VideoSets: PVideoSets ) : integer;  stdcall;
+
+  //  Функция-callback. Вызывается из графического движка, если есть какие-либо ошибки.
+  function  ErrorsFunctionCB( pErrors : PAnsiChar;  pReserved : pointer ) : DWORD;  stdcall;
+
+  procedure AddErrorStrings( pErrors : PAnsiChar );
+
 implementation
 
 {$R *.dfm}
 
-procedure AddErrorStrings( pErrors : PAnsiChar );
-var L : integer;
-begin
-	if( pErrors = nil ) then exit;
 
-  while( pErrors[0] <> #0 ) do begin
-	  TitlerForm.LogListBox.Items.Add( String(pErrors) );
-    L := StrLen( pErrors );
-    pErrors := pErrors + L + 1;
+procedure TMainForm.FormCreate(Sender: TObject);
+begin
+  //  Для x64 нет FPU команд. Отключим FPU исключения.
+  SetMXCSR($1F80);
+end;
+
+procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  CloseEngine(0, nil);
+end;
+
+
+
+
+procedure TMainForm.StartButtonClick(Sender: TObject);      //  Покажем окно видео настроек.
+Var
+  hVideoSetsDll : HMODULE;
+
+  pGetVersionFunc : TGetVersionVideoSetsFunc;
+  pStartFunc : TVideoStartSetsFunc;
+
+  Res : JtpRes;
+  Version : integer;
+  //OutWindows : array [0..LAST_VIDEO_TRUNK] of HWND;
+  EngineVersion : integer;
+begin
+  StartButton.Enabled := false;
+
+  VideoSets.Clear();
+
+  // Кол-во запрашиваемых стволов на панели видео настроек.
+  VideoSets.NumRequestTrunks := StrToInt( NumRequestTrunksEdit.Text );
+
+  // Покажем видео входы.
+  VideoSets.InputProperties.Present := 1;
+
+  //  Симуляторы видео ввода/вывода
+  //if( SimOutBox.Checked ) then
+  //  VideoSets.SimulatorOutput := 1;
+  //if( SimInputBox.Checked ) then
+  //  VideoSets.SimulatorInput := 1;
+
+	EngineVersion := Get3DEngineVersion();
+
+  // Загрузим dll, показывающую окно видео настроек.
+  hVideoSetsDll := LoadLibrary( JTPStudioPath + 'VideoSettings.dll' );
+  if( hVideoSetsDll <> 0 ) then begin
+
+    // Получим версию окна видео настроек.
+    pGetVersionFunc := GetProcAddress( hVideoSetsDll, 'GetVersionVideoSets' );
+    if( @pGetVersionFunc <> nil ) then begin
+      Version := pGetVersionFunc( 0, nil );
+    end;
+
+    // Функция, запускающая окно видео настроек.
+    pStartFunc := GetProcAddress( hVideoSetsDll, 'VideoStartSets' );
+    if( @pStartFunc <> nil ) then begin
+
+      // VideoCloseSetsFunc вызвается при закрытии окна видео настроек.
+      Res := pStartFunc( 0, Application, @VideoSets, VideoCloseSetsFunc, nil );
+      if( Res <> 0 ) then begin
+      end;
+    end;
   end;
 end;
 
 
 
-//  Функция-callback. Вызывается из графического движка, если есть какие-либо ошибки.
-function  ErrorsFunctionCB( pErrors : PAnsiChar;  pReserved : pointer ) : DWORD;  stdcall;
-var L : integer;
-Begin
-	while( pErrors[0] <> #0 ) do begin
-    L := StrLen( pErrors );
-    pErrors := pErrors + L + 1;
+function VideoCloseSetsFunc( Flags: integer;  VideoSets: PVideoSets ) : integer;  stdcall;
+var
+  Res : JtpRes;
+  ProjectPath : array[0..1] of TPath;
+  Textures : array [0..1023] of TPath;
+
+  LoadProjectData : TLoadProjectData;
+  InitVideoData : TInitVideo;
+  StartEngineData : TStartEngineData;
+
+  tex, i, trunk : integer;
+  Panel : TPanel;
+  CurrDir : AnsiString;
+  str : string;
+
+  iscene, iobject, iscenario : integer;
+  pSceneName : PName;
+  pObjectName: PName;
+  pScenarioName : PName;
+  NumSurfElems : integer;
+  SceneInfoData : TSceneInfo;
+  ObjectInfoData : TObjectInfo;
+
+begin
+
+  LoadProjectData.Create();
+  InitVideoData.Create();
+  StartEngineData.Create();
+
+  //  Пройдём по выбранным стволам. Назначим окна для видеовывода. Запомним окна превью.
+  for trunk := 1 to VideoSets.NumRequestTrunks do begin
+
+    if( VideoSets.Trunks[trunk-1].Enabled <> 0 ) then begin
+
+      str := 'OutVideoPanel' + IntToStr(trunk);
+      Panel := TPanel( MainForm.FindChildControl(str) );
+      if( Panel <> nil ) then begin
+        VideoSets.Trunks[trunk-1].hOutWindow := Panel.Handle;
+      end;
+
+      str := 'PreviewPanel' + IntToStr(trunk);
+      Panel := TPanel( PreviewForm.FindChildControl(str) );
+      if( Panel <> nil ) then begin
+        GPreviewWindows[trunk-1] := Panel.Handle;
+      end;
+
+      inc(NumActiveTrunks);
+    end;
   end;
 
-  ErrorsFunctionCB := 0;
-End;
+  //  Измерение производительности движка.
+  InitVideoData.NumTimingFrames := 300;
+  InitVideoData.TimingItems := TIMING_RENDER_WAIT or TIMING_RENDER or TIMING_COPY_DEVICE or TIMING_RNDR_FILLS or
+                               TIMING_OUT_SYNCS or TIMING_WAIT_RNDR_FRAME or TIMING_INPUT_READIES or TIMING_INPUT_WAITS;
 
+  //  Инициализируем видео.
+  Res := InitVideo( 0, @VideoSets.Trunks, @VideoSets.InputProperties, @InitVideoData );
+  if( Res <> JTP_OK ) then begin
 
+    if( InitVideoData.pErrorsStr <> nil ) then begin
+      MessageDlg(InitVideoData.pErrorsStr, mtError, [mbOk], 0);
+    end;
 
-//  Закрыли видео настройки.
-//  Загрузим проект. Перечислим сцены проекта. Перечислим объекты внутри сцен.
+    Exit;
+  end;
 
-function VideoCloseSetsFunc( Flags: integer;  VideoSets: PVideoSets ) : integer;  stdcall;
-var Res: UInt64;
-		i : integer;
-    ObjName, SceneName, ScenarioName : TName;
-    pSceneNames : PName;
-    LoadProjectData : TJtpLoadProjectData;
-    StartEngineData : TJtpFuncData;
-    SceneInfoData : TSceneInfoData;
-    ObjectInfoData : TObjectInfoData;
-    pObjectsNames : PName;
-    pScenariesNames : PName;
-    NumSurfElems : integer;
-begin
-  VideoTrunk1 := VideoSets.Trunk1;
-  VideoTrunk2 := VideoSets.Trunk2;
-
-  ProjectPath[0].text := 'C:/ALEXBASE/Development/JTPProjects/Titler/Resources/MyProject.prj';
+  // Проект MyProject.
+  CurrDir := GetCurrentDir() + '\Resources\MyProject.txt';
+  System.AnsiStrings.StrCopy( ProjectPath[0].text, PAnsiChar(CurrDir) );
   ProjectPath[1].text := '';
 
   //  Пути к картинкам.
@@ -126,106 +236,64 @@ begin
   Textures[2].Text := 'Resources/Fotos/Foto3.jpg';
   Textures[3].Text := '';
 
+  // Загрузим проект со сценами, текстурами и т.д.
   Res := LoadProject( @ProjectPath, @Textures, 0, @LoadProjectData );
   if( Res <> JTP_OK ) then begin
   	AddErrorStrings( LoadProjectData.pErrorsStr );
+    MessageDlg('Ошибка при загрузке проекта.', mtError, [mbOk], 0);
+    VideoCloseSetsFunc := -1;
+    Exit;
   end;
 
-  //  Пример перечисления сцен проекта.
-  pSceneNames := LoadProjectData.pSceneNames;
-  for i := 0 to LoadProjectData.NumScenes-1 do begin
+  //  Просмотрим данные проекта.
+  //  Перечислим сцены..
+  pSceneName := LoadProjectData.pSceneNames;
+  for iscene := 0 to LoadProjectData.NumScenes-1 do begin
 
-    StrCopy( SceneName.text, pSceneNames.text );
+    //  Получаем инфо о сцене.
+    SceneInfoData.Create();
+    Res := GetSceneInfo( pSceneName.text, @SceneInfoData );
+    if( Res = JTP_OK ) then begin
 
-    Inc( pSceneNames );
+      //  Перечисляем объекты..
+      pObjectName := SceneInfoData.pObjectsNames;
+      for iobject := 0 to SceneInfoData.NumObjects-1 do begin
+
+        //  Получаем инфо об объекте.
+        ObjectInfoData.Create();
+        Res := GetObjectInfo( pSceneName.text, pObjectName.text, @ObjectInfoData );
+        if( Res = JTP_OK ) then begin
+
+          //  Перечисляем surface элементы..
+          NumSurfElems := ObjectInfoData.NumSurfElems;
+        end;
+
+        Inc( pObjectName );
+      end;
+
+      //  Перечислим сценарии в сцене..
+      pScenarioName := SceneInfoData.pScenariesNames;
+      for iscenario := 0 to SceneInfoData.NumScenaries-1 do begin
+        Inc( pScenarioName );
+      end;
   end;
 
-  Res := StartEngine( MyVersion, 0, ErrorsFunctionCB, @StartEngineData );
+    Inc( pSceneName );
+  end;
+
+  // Запустим движёк.
+  Res := StartEngine( SoftVersion, 0, ErrorsFunctionCB, @StartEngineData );
   if( Res <> JTP_OK ) then begin
     AddErrorStrings( StartEngineData.pErrorsStr );
-  end;
-
-  //  Пример перечисления объектов в сцене.
-  OpenRecords( 0, nil );
-
-  //  Получаем инфо о сцене.
-  SceneInfoData.Create;
-  Res := GetSceneInfo( 'Scores', @SceneInfoData );
-  pObjectsNames := SceneInfoData.pObjectsNames;
-
-  //  Перечисление объектов.
-  for i := 0 to SceneInfoData.NumObjects-1 do begin
-    StrCopy( ObjName.text, pObjectsNames.text );
-
-    //  Пример получения данных об объекте.
-    if( ObjName.text = 'RightBlack' ) then begin
-      GetObjectInfo( 'Scores', 'RightBlack', @ObjectInfoData );
-
-      NumSurfElems := ObjectInfoData.NumSurfElems;
-    end;
-
-    Inc( pObjectsNames );
-  end;
-
-  //  Перечисление сценариев в сцене
-  pScenariesNames := SceneInfoData.pScenariesNames;
-  for i := 0 to SceneInfoData.NumScenaries-1 do begin
-    StrCopy( ScenarioName.text, pScenariesNames.text );
-    Inc( pScenariesNames );
-  end;
-
-  CloseRecords( 0, nil );
-end;
-
-
-
-procedure TTitlerForm.FormCreate(Sender: TObject);
-begin
-  //  Для x64 нет FPU команд. Отключим FPU исключения.
-  SetMXCSR($1F80);
-end;
-
-
-procedure TTitlerForm.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  CloseEngine(0);
-end;
-
-
-
-
-procedure TTitlerForm.StartButtonClick(Sender: TObject);      //  Покажем окно видео настроек.
-Var
-  hVideoSetsDll : HMODULE;
-  VideoSets : TVideoSets;
-  pStartFunc : TVideoStartSetsFunc;
-  Res : integer;
-  OutWindows : array [0..LAST_VIDEO_TRUNK] of HWND;
-  EngineVersion : integer;
-begin
-  StartButton.Enabled := false;
-
-	EngineVersion := Get3DEngineVersion();
-
-  hVideoSetsDll := LoadLibrary( JTPStudioPath + 'VideoSettings.dll' );
-  if( hVideoSetsDll <> 0) then begin
-
-    pStartFunc := GetProcAddress( hVideoSetsDll, 'VideoStartSets' );
-    if( @pStartFunc <> nil ) then begin
-      OutWindows[0] := Out1VideoPanel.Handle;
-      OutWindows[1] := Out2VideoPanel.Handle;
-      OutWindows[2] := 0;
-      OutWindows[3] := 0;
-      Res := pStartFunc( 0, Application, @OutWindows, nil, VideoCloseSetsFunc, nil );
-    end;
-
+    MessageDlg('Ошибка запуска графического движка.', mtError, [mbOk], 0);
+    Exit;
   end;
 end;
 
 
 
 
-procedure TTitlerForm.BeginButtonClick(Sender: TObject);   //  Запуск таймера матча.
+procedure TMainForm.BeginButtonClick(Sender: TObject);   //  Запуск таймера матча.
 begin
   Timer1.Enabled := true;
 end;
@@ -237,44 +305,44 @@ end;
 ///////////////////////    Т и т р    " Ч Е М П И О Н А Т "    /////////////////////////////
 
 var
-  ChampionshipScene : TName;
+  ChampionshipScenes : array[1..4] of TName;  // Четыре имени сцены, 2 на превью, 2 в плейаут.
   ChampIndices : array[0..31] of integer;
   PreviewChamp : integer = 0;
 
-procedure TTitlerForm.ChampionshipShowButtonClick(Sender: TObject);
-Var Res : UInt64;
-    PlaySceneData : TPlaySceneData;
-    i, y : integer;
+procedure TMainForm.ChampionshipShowButtonClick(Sender: TObject);
+Var Res : JtpRes;
+    PlaySceneData : TPlayScene;
+    i, trunk, y, sc_offset : integer;
     SurfElemData : TSurfElemData;
 begin
 
-	PlaySceneData.Create();
-  SurfElemData.Create();
+  if( PreviewCheckBox.Checked ) then begin
+    sc_offset := 0;
+    PreviewForm.Show();
+  end else begin
+    sc_offset := NumActiveTrunks;       // на превью уже есть сцены
+  end;
 
   OpenRecords( 0, nil );
 
-    if( VideoTrunk1 > 0 ) then begin
+  for trunk := 1 to VideoSets.NumRequestTrunks do begin
+    if( VideoSets.Trunks[trunk-1].Enabled <> 0 ) then begin
 
-      if( PreviewChamp = 0 ) then begin
-        PreviewChamp := 1;
-        PlaySceneData.hPreviewWnds[0] := PreviewForm.Handle;
-        PreviewForm.Show();
-      end
-      else begin
-        PreviewChamp := 0;
-      end;
+      PlaySceneData.Create();
 
-	    Res := PlayScene( 'Championship', 0.0, 0, VideoTrunk1, @PlaySceneData );
+      if( PreviewCheckBox.Checked ) then
+        PlaySceneData.hPreviewWnds[0] := GPreviewWindows[trunk-1];
+
+      Res := PlayScene( 'Championship', 0.0, 0, trunk, @PlaySceneData );
   	  if( Res = JTP_OK ) then begin
 
-      //  Сцена на preview автоматически удаляется. Не будем запоминать её имя.
-      if( PlaySceneData.hPreviewWnds[0] = 0 ) then
-    		StrCopy( ChampionshipScene.text, PlaySceneData.SceneName.text );
-
-        y := 20;
+        System.AnsiStrings.StrCopy( ChampionshipScenes[trunk+sc_offset].text, PlaySceneData.SceneName.text );
 
         //  Создадим новые копии строк команд.
+        y := 20;
         for i := 1 to 8 do begin
+
+          SurfElemData.Create();
 
           Res := CloneSurfaceElement( PlaySceneData.SceneName.text, 'Table', 2, 1, nil, 'Текст', nil, 0, y, INT_UNDEF, INT_UNDEF, 0.0, JTP_RELATIVE, @SurfElemData );
 
@@ -287,29 +355,64 @@ begin
 
           y := y + 20;
         end;
-
-	    end else begin
+      end else begin
   	  	AddErrorStrings( PlaySceneData.pErrorsStr );
     	end;
     end;
+  end;
 
   CloseRecords( 0, nil );
 end;
 
 
 
-procedure TTitlerForm.ChampionshipCloseButtonClick(Sender: TObject);
+procedure TMainForm.Button1Click(Sender: TObject);
+var
+  Res : JtpRes;
+  trunk, sc_offset : integer;
+  SurfElemData : TSurfElemData;
+begin
+  if( PreviewCheckBox.Checked ) then begin
+    sc_offset := 0;
+    PreviewForm.Show();
+  end else begin
+    sc_offset := NumActiveTrunks;
+  end;
+
+  OpenRecords( 0, nil );
+
+  for trunk := 1 to VideoSets.NumRequestTrunks do begin
+    if( VideoSets.Trunks[trunk-1].Enabled <> 0 ) then begin
+
+      SurfElemData.Create();
+
+      Res := UpdateSurfaceElement( ChampionshipScenes[trunk+sc_offset].text, 'Table', 1, 1, nil, 'Češi. Sluneční soustava obsahuje centrální hvězdu a několik planet', nil,
+											            INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData );
+
+    end;
+  end;
+
+  CloseRecords( 0, nil );
+end;
+
+
+
+procedure TMainForm.ChampionshipCloseButtonClick(Sender: TObject);
 var CloseSceneData : TJtpFuncData;
-    Res : UInt64;
+    Res : JtpRes;
+    i : integer;
 begin
 	OpenRecords( 0, nil );
 
-  	if( ChampionshipScene.text[0] <> #0 ) then begin
-	  	Res := CloseScene( ChampionshipScene.text, FLT_UNDEF, @CloseSceneData );
+  for i := 1 to 4 do begin
+    if( ChampionshipScenes[i].text[0] <> #0 ) then begin
+      CloseSceneData.Create();
+	  	Res := CloseScene( @ChampionshipScenes[i], FLT_UNDEF, 0, @CloseSceneData );
 		  if( Res <> JTP_OK ) then
 			  AddErrorStrings( CloseSceneData.pErrorsStr );
-      ChampionshipScene.text[0] := #0;
+      ChampionshipScenes[i].text[0] := #0;
     end;
+  end;
 
   CloseRecords( 0, nil );
 end;
@@ -326,44 +429,41 @@ end;
 //////////////////    Т и т р   " Т А Б Л И Ц А  И Г Р О К О В "    //////////////////////
 
 var
-	TableScene1 : TName;
-  TableScene2 : TName;
-  PreviewTable : integer = 0;
+	PlayersTableScenes : array[1..4] of TName; // Два ствола, два превью.
 
-procedure TTitlerForm.TableButtonClick(Sender: TObject);
-Var Res : UInt64;
-    PlaySceneData : TPlaySceneData;
-    CloneObjectData : TCloneObjectData;
+procedure TMainForm.TableButtonClick(Sender: TObject);
+Var Res : JtpRes;
+    PlaySceneData : TPlayScene;
+    CloneObjectData : TCloneObject;
     Delay : single;
     VPos : TVector;
-    i : integer;
+    i, sc_offset, trunk : integer;
     SurfElemData : TSurfElemData;
     Text, TextIter : string;
     StringObjects : array[0..31] of TName;
 begin
 
-	PlaySceneData.Create;
-  SurfElemData.Create;
+  if( PreviewCheckBox.Checked ) then begin
+    sc_offset := 0;
+    PreviewForm.Show();
+  end else begin
+    sc_offset := NumActiveTrunks;       // на превью уже есть сцены
+  end;
 
   OpenRecords( 0, nil );
 
-    if( VideoTrunk1 > 0 ) then begin
+  for trunk := 1 to VideoSets.NumRequestTrunks do begin
+    if( VideoSets.Trunks[trunk-1].Enabled <> 0 ) then begin
 
-      if( PreviewTable = 0 ) then begin
-        PreviewTable := 1;
-        PlaySceneData.hPreviewWnds[0] := PreviewForm.Handle;
-        PreviewForm.Show();
-      end
-      else begin
-        PreviewTable := 0;
-      end;
+      PlaySceneData.Create();
 
-	    Res := PlayScene( 'Table', 0.0, 0, VideoTrunk1, @PlaySceneData );
+      if( PreviewCheckBox.Checked ) then
+        PlaySceneData.hPreviewWnds[0] := GPreviewWindows[trunk-1];
+
+      Res := PlayScene( 'Table', 0.0, 0, trunk, @PlaySceneData );
   	  if( Res = JTP_OK ) then begin
 
-      //  Сцена на preview автоматически удаляется. Не будем запоминать её имя.
-      if( PlaySceneData.hPreviewWnds[0] = 0 ) then
-    		StrCopy( TableScene1.text, PlaySceneData.SceneName.text );
+        System.AnsiStrings.StrCopy( PlayersTableScenes[trunk+sc_offset].text, PlaySceneData.SceneName.text );
 
         Delay := 0.2;
 
@@ -374,10 +474,24 @@ begin
         //  Создадим новые копии строк.
         for i := 1 to 4 do begin
 
+          CloneObjectData.Create();
+
           Res := CloneObject( PlaySceneData.SceneName.text, 'String1', @VPos, nil, nil, nil, Delay, JTP_RELATIVE, @CloneObjectData );
 
           if( Res = JTP_OK ) then begin
             StringObjects[i].text := CloneObjectData.ObjectName.text;
+
+            //  Обновим текст.
+            Text := 'Der Bestätigungstext ';
+      	    TextIter := Text + IntToStr(i+1);
+
+            SurfElemData.Create();
+
+            Res := UpdateSurfaceElement( PlaySceneData.SceneName.text, StringObjects[i].text, 1, 1, nil, PWideChar(TextIter), nil,
+											            INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData );
+
+            if( Res <> JTP_OK ) then
+              AddErrorStrings( SurfElemData.pErrorsStr );
 	        end else begin
             AddErrorStrings( CloneObjectData.pErrorsStr );
           end;
@@ -386,63 +500,30 @@ begin
           Delay := Delay + 0.2;
 
         end;
-
-        //  Обновим текст на строках.
-        Text := 'Der Bestätigungstext ';
-
-        for i := 0 to 4 do begin
-
-        	TextIter := Text + IntToStr(i+1);
-
-          Res := UpdateSurfaceElement( PlaySceneData.SceneName.text, StringObjects[i].text, 1, 1, nil, PWideChar(TextIter), nil,
-											            INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData );
-
-          if( Res <> JTP_OK ) then begin
-            AddErrorStrings( SurfElemData.pErrorsStr );
-          end;
-
-        end;
-
-	    end else begin
-  	  	AddErrorStrings( PlaySceneData.pErrorsStr );
-    	end;
+      end;
     end;
-
-{
-    if( VideoTrunk2 > 0 ) then begin
-
-	    Res := PlayScene( 'Table', 0.0, 0, VideoTrunk2, @PlaySceneData );
-  	  if( Res = JTP_OK ) then begin
-
-	    end else begin
-  	  	AddErrorStrings( PlaySceneData.pErrorsStr );
-    	end;
-    end;
-}
+  end;
 
   CloseRecords( 0, nil );
 end;
 
 
-procedure TTitlerForm.TableCloseClick(Sender: TObject);
+procedure TMainForm.TableCloseClick(Sender: TObject);
 var CloseSceneData : TJtpFuncData;
-    Res : UInt64;
+    Res : JtpRes;
+    i : integer;
 begin
 	OpenRecords( 0, nil );
 
-  	if( TableScene1.text[0] <> #0 ) then begin
-	  	Res := CloseScene( TableScene1.text, FLT_UNDEF, @CloseSceneData );
+  for i := 1 to 4 do begin
+    if( PlayersTableScenes[i].text[0] <> #0 ) then begin
+      CloseSceneData.Create();
+	  	Res := CloseScene( @PlayersTableScenes[i], FLT_UNDEF, 0, @CloseSceneData );
 		  if( Res <> JTP_OK ) then
 			  AddErrorStrings( CloseSceneData.pErrorsStr );
-      TableScene1.text[0] := #0;
+      PlayersTableScenes[i].text[0] := #0;
     end;
-
-    if( TableScene2.text[0] <> #0 ) then begin
-		  Res := CloseScene( TableScene2.text, FLT_UNDEF, @CloseSceneData );
-  		if( Res <> JTP_OK ) then
-	  		AddErrorStrings( CloseSceneData.pErrorsStr );
-      TableScene2.text[0] := #0;
-    end;
+  end;
 
   CloseRecords( 0, nil );
 end;
@@ -458,25 +539,34 @@ end;
 ///////////////////////    Т и т р   " В Р Е М Я "    ///////////////////////////////
 
 var
-	TimeScene1 : TName;
-  TimeScene2 : TName;
+  TimeScenes : array[1..2] of TName; // Два ствола, превью нет.
   TimeSceneEnabled : boolean = false;
   TimeSceneCity : boolean = false;
 
 
-procedure TTitlerForm.ShowTimeButtonClick(Sender: TObject);
-Var Res : UInt64;
-    PlaySceneData : TPlaySceneData;
+procedure TMainForm.ShowTimeButtonClick(Sender: TObject);
+Var Res : JtpRes;
+    PlaySceneData : TPlayScene;
+    trunk : integer;
 begin
-  PlaySceneData.Create();
-
   TimeSceneCity := false;
 
   OpenRecords( 0, nil );
 
-  Res := PlayScene( 'Time', 0.0, 0, VideoTrunk1, @PlaySceneData );
-  if( Res = JTP_OK ) then begin
-    StrCopy( TimeScene1.text, PlaySceneData.SceneName.text );
+  for trunk := 1 to VideoSets.NumRequestTrunks do begin
+    if( VideoSets.Trunks[trunk-1].Enabled <> 0 ) then begin
+
+      PlaySceneData.Create();
+
+      if( PreviewCheckBox.Checked ) then
+        PlaySceneData.hPreviewWnds[0] := GPreviewWindows[trunk-1];
+
+      Res := PlayScene( 'Time', 0.0, 0, trunk, @PlaySceneData );
+      if( Res = JTP_OK ) then begin
+
+        System.AnsiStrings.StrCopy( TimeScenes[trunk].text, PlaySceneData.SceneName.text );
+        end;
+    end;
   end;
 
   CloseRecords( 0, nil );
@@ -488,9 +578,11 @@ end;
 var
   TimeMin, TimeSec, TimeSec100 : integer;
 
-procedure TTitlerForm.Timer1Timer(Sender: TObject);
-Var Res : UInt64;
+procedure TMainForm.Timer1Timer(Sender: TObject);
+Var Res : JtpRes;
     TimeText : string;
+    i : integer;
+    SurfElemData : TSurfElemData;
 begin
   //  Таймер. Сотые, секунды, минуты.
   Inc(TimeSec100);
@@ -522,71 +614,85 @@ begin
 
     OpenRecords( 0, nil );
 
-  	Res := UpdateSurfaceElement( TimeScene1.text, 'TimePlane', 1, 1, nil, PWideChar(TimeText), nil,
-											            INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, nil {@SurfElemData} );
-	  //  Ошибку можно не смотреть. Таймер тикает весь матч (или приходит по com порту). Но сцена с таймером висит на экране не всегда.
-  	{if( Res <> JTP_OK ) then begin
-	    AddErrorStrings( SurfElemData.pErrorsStr );
-  	end;}
+    for i := 1 to 2 do begin
+
+      if( TimeScenes[i].text[0] <> #0 ) then begin
+
+        SurfElemData.Create();
+
+        Res := UpdateSurfaceElement( TimeScenes[i].text, 'TimePlane', 1, 1, nil, PWideChar(TimeText), nil,
+                                    INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, FLT_UNDEF, 0, @SurfElemData );
+        if( Res <> JTP_OK ) then
+          AddErrorStrings( SurfElemData.pErrorsStr );
+      end;
+    end;
 
 	  CloseRecords( 0, nil );
   end;
 end;
 
 
-procedure TTitlerForm.CityButtonClick(Sender: TObject);
+procedure TMainForm.CityButtonClick(Sender: TObject);
 var PlayScenarioData : TJtpFuncData;
     SurfElemData : TSurfElemData;
-    Res : UInt64;
+    Res : JtpRes;
+    i : integer;
 begin
-  PlayScenarioData.Create;
-  SurfElemData.Create;
-
   TimeSceneCity := true;
 
   OpenRecords( 0, nil );
 
-  Res := UpdateSurfaceElement( TimeScene1.text, 'CityPlane', 1, 1, nil, PWideChar('Санкт-Петербург'), nil,
-											            INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, 0.0, 0, @SurfElemData );
-  if( Res <> JTP_OK ) then
-    AddErrorStrings( SurfElemData.pErrorsStr );
+  for i := 1 to 2 do begin
 
-  Res := PlayScenario( TimeScene1.text, 'CityAndTemperature', FLT_UNDEF, 0, @PlayScenarioData );
-  if( Res <> JTP_OK ) then
-    AddErrorStrings( PlayScenarioData.pErrorsStr );
+    if( TimeScenes[i].text[0] <> #0 ) then begin
+
+      PlayScenarioData.Create();
+      SurfElemData.Create();
+
+      Res := UpdateSurfaceElement( TimeScenes[i].text, 'CityPlane', 1, 1, nil, PWideChar('Санкт-Петербург'), nil,
+                                    INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, 0.0, 0, @SurfElemData );
+      if( Res <> JTP_OK ) then
+        AddErrorStrings( SurfElemData.pErrorsStr );
+
+      Res := PlayScenario( TimeScenes[i].text, 'CityAndTemperature', FLT_UNDEF, 0, @PlayScenarioData );
+      if( Res <> JTP_OK ) then
+        AddErrorStrings( PlayScenarioData.pErrorsStr );
+    end;
+  end;
 
   CloseRecords( 0, nil );
 end;
 
 
-procedure TTitlerForm.CloseTimeButtonClick(Sender: TObject);
+procedure TMainForm.CloseTimeButtonClick(Sender: TObject);
 var CloseSceneData : TJtpFuncData;
     PlayAnimationData : TJtpFuncData;
-    Res : UInt64;
+    Res : JtpRes;
+    i :integer;
 begin
   TimeSceneEnabled := false;
 
   OpenRecords( 0, nil );
 
-  if( TimeSceneCity ) then begin
-    Res := PlayAnimation( TimeScene1.text, 'CityPlane', 'MoveUp', FLT_UNDEF, 0, @PlayAnimationData );
+  for i := 1 to 2 do begin
+
+    if( TimeScenes[i].text[0] <> #0 ) then begin
+
+    if( TimeSceneCity ) then begin
+      PlayAnimationData.Create();
+      Res := PlayAnimation( TimeScenes[i].text, 'CityPlane', 'MoveUp', FLT_UNDEF, 0, @PlayAnimationData );
+      if( Res <> JTP_OK ) then
+          AddErrorStrings( PlayAnimationData.pErrorsStr );
+    end;
+
+    CloseSceneData.Create();
+    Res := CloseScene( @TimeScenes[i], FLT_UNDEF, 0, @CloseSceneData );
     if( Res <> JTP_OK ) then
-			  AddErrorStrings( PlayAnimationData.pErrorsStr );
+      AddErrorStrings( CloseSceneData.pErrorsStr );
+
+    TimeScenes[i].text[0] := #0;
+    end;
   end;
-
-  if( TimeScene1.text[0] <> #0 ) then begin
-	  	Res := CloseScene( TimeScene1.text, FLT_UNDEF, @CloseSceneData );
-		  if( Res <> JTP_OK ) then
-			  AddErrorStrings( CloseSceneData.pErrorsStr );
-      TimeScene1.text[0] := #0;
-    end;
-
-    if( TimeScene2.text[0] <> #0 ) then begin
-		  Res := CloseScene( TimeScene2.text, FLT_UNDEF, @CloseSceneData );
-  		if( Res <> JTP_OK ) then
-	  		AddErrorStrings( CloseSceneData.pErrorsStr );
-      TimeScene2.text[0] := #0;
-    end;
 
   CloseRecords( 0, nil );
 end;
@@ -606,31 +712,34 @@ var
   Scores1 : integer = 0;
   Scores2 : integer = 0;
 
-procedure TTitlerForm.ShowScoresButtonClick(Sender: TObject);
-Var Res : UInt64;
-    PlaySceneData : TPlaySceneData;
+procedure TMainForm.ShowScoresButtonClick(Sender: TObject);
+Var Res : JtpRes;
+    PlaySceneData : TPlayScene;
+    SurfElemData : TSurfElemData;
 begin
   PlaySceneData.Create();
 
-  OpenRecords( 0, nil );
+  {OpenRecords( 0, nil );
 
   Res := PlayScene( 'Scores', 0.0, 0, VideoTrunk1, @PlaySceneData );
   if( Res = JTP_OK ) then begin
     StrCopy( ScoresScene.text, PlaySceneData.SceneName.text );
 
+    SurfElemData.Create();
    	Res := UpdateSurfaceElement( ScoresScene.text, 'CenterBlue', 1, 1, nil, PWideChar('ЦСКА'), nil,
-											            INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, 0.0, 0, nil {@SurfElemData} );
+											            INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, 0.0, 0, @SurfElemData );
 
+    SurfElemData.Create();
     Res := UpdateSurfaceElement( ScoresScene.text, 'CenterBlue', 2, 1, nil, PWideChar('СПАРТАК'), nil,
-											            INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, 0.0, 0, nil {@SurfElemData} );
+											            INT_UNDEF, INT_UNDEF, INT_UNDEF, INT_UNDEF, 0.0, 0, @SurfElemData );
   end;
 
-  CloseRecords( 0, nil );
+  CloseRecords( 0, nil );}
 end;
 
 
-procedure TTitlerForm.Scores1ButtonClick(Sender: TObject);
-Var Res : UInt64;
+procedure TMainForm.Scores1ButtonClick(Sender: TObject);
+Var Res : JtpRes;
 	  PlayAnimationData : TJtpFuncData;
     ScoresText : string;
 begin
@@ -651,8 +760,8 @@ begin
 end;
 
 
-procedure TTitlerForm.Scores2ButtonClick(Sender: TObject);
-Var Res : UInt64;
+procedure TMainForm.Scores2ButtonClick(Sender: TObject);
+Var Res : JtpRes;
 	  PlayAnimationData : TJtpFuncData;
     ScoresText : string;
     Pos : TVector;
@@ -689,14 +798,16 @@ begin
 end;
 
 
-procedure TTitlerForm.CloseScoresButtonClick(Sender: TObject);
+procedure TMainForm.CloseScoresButtonClick(Sender: TObject);
 Var Res : integer;
     CloseSceneData : TJtpFuncData;
 begin
     OpenRecords( 0, nil );
 
+    CloseSceneData.Create();
+
   	if( ScoresScene.text[0] <> #0 ) then begin
-	  	Res := CloseScene( ScoresScene.text, FLT_UNDEF, @CloseSceneData );
+	  	Res := CloseScene( @ScoresScene, FLT_UNDEF, 0, @CloseSceneData );
 		  if( Res <> JTP_OK ) then
 			  AddErrorStrings( CloseSceneData.pErrorsStr );
       ScoresScene.text[0] := #0;
@@ -705,4 +816,35 @@ end;
 
 ///////////////////////    К о н е ц   т и т р а   " С Ч Ё Т "    /////////////////////////////
 
-end.
+
+
+
+
+procedure AddErrorStrings( pErrors : PAnsiChar );
+var L : integer;
+begin
+	if( pErrors = nil ) then exit;
+
+  while( pErrors[0] <> #0 ) do begin
+	  MainForm.LogListBox.Items.Add( String(pErrors) );
+    L := System.AnsiStrings.StrLen( pErrors );
+    pErrors := pErrors + L + 1;
+  end;
+end;
+
+
+
+//  Функция-callback. Вызывается из графического движка, если есть какие-либо ошибки.
+function  ErrorsFunctionCB( pErrors : PAnsiChar;  pReserved : pointer ) : DWORD;  stdcall;
+var L : integer;
+begin
+	while( pErrors[0] <> #0 ) do begin
+    L := System.AnsiStrings.StrLen( pErrors );
+    pErrors := pErrors + L + 1;
+  end;
+
+  ErrorsFunctionCB := 0;
+end;
+
+
+End.

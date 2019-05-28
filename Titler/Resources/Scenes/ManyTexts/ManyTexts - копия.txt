@@ -1,0 +1,288 @@
+
+SceneDeclarations:
+{
+	Version: 3.0
+	Name: "ManyTexts"
+
+	Features:  [  ]
+
+	EditCamPoses:
+	{	Top [ 0.00 150.00 0.00 1.00 ]    Bottom [ 0.00 -50.00 0.00 1.00 ]    Left [ -200.00 50.00 0.00 1.00 ]    Right [ 200.00 50.00 0.00 1.00 ]    
+		Front [ -21.78 35.83 -200.00 1.65 ]    Back [ 0.00 50.00 200.00 1.00 ]    Perspective [ 419.17 411.84 -1121.87 1.00 ]     [ 28.65 25.03 1.36 ]
+	}
+
+	EditCamPerspectiveNearFar: [  Near: 10.000  Far: 5000.000  ]
+};
+
+
+Units:
+{
+	Camera
+	{
+		name:  "Camera"
+		pos:      [  0.000  0.000  -2500.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		target:   [  0.000  0.000  0.000  ]
+		near:  10.00
+		far:   6000.00
+		fov:   14.00
+	};
+
+
+
+	DirLight
+	{
+		name:  "DirLight"
+		pos:      [  0.000  100.000  -250.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		multiplier: 1.00
+		diffuse: on
+		specular: off
+	};
+
+
+
+	JtpPlane3D
+	{
+		name:  "Orange"
+		pos:      [  0.000  8.053  0.000  ]
+		orient:   [  0.000  0.000  0.000  ]
+		size:     [  1024.000  512.000  0.000  ]
+		color:    [  1.000  1.000  1.000  1.000  ]
+
+		sys_controls: [  ~EnableIdle  ~RenderAlways  EditorPresent  Selecting  AutoShaders  ~UnitOrientYaw  ]
+
+		render_queue: 11
+		texture:  "Resources\Textures\Orange.tga"
+		illumination:  0.00
+
+		RenderContext:
+		{
+			
+		};
+
+		Glow:  [  GlowLevel: 1.00    GlowLoLim: 0.51    GlowHiLim: 0.82    GlowVertexExpand: 0.00  ]
+
+		PlaneMirroring:  [  FadingDistance: 1.000    Opacity: 1.000  ]
+
+		SurfaceElements:
+		{
+			Element:
+			{	text:  "Новый Текст 1"
+				font: [  win_name: "Arial"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 10 10 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 2"
+				font: [  win_name: "Book Antiqua"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 200 10 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 3"
+				font: [  win_name: "Book Antiqua"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 400 10 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 4"
+				font: [  win_name: "Arial"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 600 10 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 5"
+				font: [  win_name: "Arial"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 800 10 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 1"
+				font: [  win_name: "Arial"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 10 40 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 2"
+				font: [  win_name: "Book Antiqua"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 200 40 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 3"
+				font: [  win_name: "Book Antiqua"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 400 40 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 4"
+				font: [  win_name: "Arial"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 600 40 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 5"
+				font: [  win_name: "Arial"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 800 40 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 1"
+				font: [  win_name: "Arial"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 10 70 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 2"
+				font: [  win_name: "Book Antiqua"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 200 70 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 3"
+				font: [  win_name: "Book Antiqua"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 400 70 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 4"
+				font: [  win_name: "Arial"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 600 70 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+			Element:
+			{	text:  "Новый Текст 5"
+				font: [  win_name: "Arial"  win_height: 12  weight: 700  ]
+				align: left    text_width: 300
+				pos: [ 800 70 ]     color: 0xFFFFFFFF
+				shadow_pos: [ 0 0 ]    shadow_color: 0x66000000
+				tex_index: 0
+
+				JtpExtended...
+				{
+					case: mixed    small_as_big_symb_h: 0    letter_space: 0    no_mixing    blur: 0    border: 0
+				}
+			}
+
+		};
+
+		SurfElemsViewY: -240    SurfEditorViewScale: 1    SurfEditorViewPnt: [ 0 0 ]
+
+		QuadAlign: 4
+	};
+};

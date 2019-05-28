@@ -107,13 +107,12 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="TitlerUnit.pas">
-            <Form>TitlerForm</Form>
+            <Form>MainForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\JTPStudio\JTPStudio.pas"/>
         <DCCReference Include="..\VideoSettings\VideoSetsHeader.pas"/>
         <DCCReference Include="..\JTPStudio\TypesJTP.pas"/>
-        <DCCReference Include="..\VideoSettings\Decklink.pas"/>
         <DCCReference Include="PreviewUnit.pas">
             <Form>PreviewForm</Form>
             <FormType>dfm</FormType>

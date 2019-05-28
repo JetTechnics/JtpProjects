@@ -1,0 +1,12 @@
+JtpProject
+
+
+Header
+{
+	Version:  1
+};
+
+
+Scenes
+{
+};

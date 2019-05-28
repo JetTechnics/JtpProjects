@@ -188,7 +188,8 @@ implementation
 
 procedure TVehicle.Initialize( VehicleName : PAnsiChar; ArrayIndex : integer ); //, ModelName2: PAnsiChar;  State2: integer );
 var Names : array [0..63] of TName;
-    i, Res : integer;
+    i : integer;
+    Res : JtpRes;
     Clr, P : TVector;
     str : ansistring;
     PlayAnimationData : TJtpFuncData;
@@ -401,7 +402,7 @@ var
   TempName : AnsiString;
   VColor: TJTPColor;
   SetObjectSpaceData : TSetObjectSpace;
-  Res : UInt64;
+  Res : JtpRes;
 begin
   VColor.VSet( FLT_UNDEF, FLT_UNDEF, FLT_UNDEF, Alpha );
 
@@ -421,7 +422,7 @@ var
   TempName : AnsiString;
   VColor: TJTPColor;
   SetObjectSpaceData : TSetObjectSpace;
-  Res : UInt64;
+  Res : JtpRes;
 begin
   VColor.VSet( FLT_UNDEF, FLT_UNDEF, FLT_UNDEF, Alpha );
 

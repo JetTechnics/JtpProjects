@@ -1,14 +1,13 @@
-program Titler;
+program VideoPlayers;
 
 uses
   Vcl.Forms,
-  TitlerUnit in 'TitlerUnit.pas' {MainForm},
+  MainUnit in 'MainUnit.pas' {MainForm},
   JTPStudio in '..\JTPStudio\JTPStudio.pas',
-  VideoSetsHeader in '..\VideoSettings\VideoSetsHeader.pas',
+  PluginJTP in '..\JtpStudio\PluginJTP.pas',
   TypesJTP in '..\JTPStudio\TypesJTP.pas',
-  PreviewUnit in 'PreviewUnit.pas' {PreviewForm},
   Vector in '..\JtpStudio\Vector.pas',
-  PluginJTP in '..\JtpStudio\PluginJTP.pas';
+  VideoSetsHeader in '..\VideoSettings\VideoSetsHeader.pas';
 
 {$R *.res}
 
@@ -16,6 +15,5 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainForm, MainForm);
-  Application.CreateForm(TPreviewForm, PreviewForm);
   Application.Run;
 end.
